@@ -1,37 +1,32 @@
-<!DOCTYPE html>
-<!--
-Copyright 2012 Google Inc. All Rights Reserved.
+/**
+ * Copyright 2012 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+/**
+ * @fileoverview Unit tests for merge().
+ * @author bnkuhn@gmail.com (Brian Kuhn)
+ */
 
-    http://www.apache.org/licenses/LICENSE-2.0
+test('merge', function() {
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-Author: bkuhn@google.com (Brian Kuhn)
--->
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<title>merge_test.html</title>
-<script src="../../../../javascript/closure/base.js"></script>
-<script>goog.require('goog.testing.jsunit');</script>
-<script src="jquery-1.8.2.min.js"></script>
-<script src="../data_layer_helper_raw.js"></script>
-<script>
-
-function testMerge() {
   function assertMerge(from, to, expected) {
     var fromCopy = isArray_(from) ? [] : {};
     jQuery.extend(true, fromCopy, from);
     merge_(from, to);
-    assertObjectEquals(fromCopy, from);
-    assertObjectEquals(expected, to);
+    deepEqual(from, fromCopy);
+    deepEqual(to, expected);
   }
 
   // If <from> property is array and <to> property is "other", <to> property
@@ -270,6 +265,5 @@ function testMerge() {
       {a: [[[[[[[[1]]]]]]]]},
       {a: [[[[[[[[2, 3]]]]]]]]},
       {a: [[[[[[[[1, 3]]]]]]]]});
-}
-</script>
+});
 

@@ -1,32 +1,27 @@
-<!DOCTYPE html>
-<!--
-Copyright 2012 Google Inc. All Rights Reserved.
+/**
+ * Copyright 2012 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+/**
+ * @fileoverview Unit tests for expandKeyValue.
+ * @author bnkuhn@gmail.com (Brian Kuhn)
+ */
 
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-Author: bkuhn@google.com (Brian Kuhn)
--->
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<title>expandKeyValue_test.html</title>
-<script src="../../../../javascript/closure/base.js"></script>
-<script>goog.require('goog.testing.jsunit');</script>
-<script src="../data_layer_helper_raw.js"></script>
-<script>
-
-function testExpandKeyValue() {
+test('expandKeyValue', function() {
   function assertExpand(key, value, expected) {
-    assertObjectEquals(expected, expandKeyValue_(key, value));
+    deepEqual(expandKeyValue_(key, value), expected);
   }
 
   assertExpand('a', 1, {a: 1});
@@ -57,6 +52,5 @@ function testExpandKeyValue() {
   assertExpand('a..b', 2, {a: {'': {b: 2}}});
   assertExpand('a', {'b.c': 1}, {a: {'b.c': 1}});
   assertExpand('a.b', {'b.c': 1}, {a: {b: {'b.c': 1}}});
-}
-</script>
+});
 

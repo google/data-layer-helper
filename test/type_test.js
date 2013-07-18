@@ -15,15 +15,14 @@
  */
 
 /**
- * @fileoverview Unit tests for plain.type.
+ * @fileoverview Unit tests for type().
+ * @author bnkuhn@gmail.com (Brian Kuhn)
  */
 
-goog.require('goog.testing.jsunit');
-goog.require('plain');
+test("type", function() {
 
-function testType() {
   function assertType(value, expected) {
-    assertEquals(expected, plain.type(value));
+    equal(type(value), expected);
   }
 
   assertType(null, 'null');
@@ -64,5 +63,5 @@ function testType() {
   assertType(window, 'object');
   assertType(document, 'object');
   assertType(document.getElementsByTagName('script')[0], 'object');
-}
+});
 

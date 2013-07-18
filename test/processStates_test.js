@@ -1,29 +1,23 @@
-<!DOCTYPE html>
-<!--
-Copyright 2012 Google Inc. All Rights Reserved.
+/**
+ * Copyright 2012 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-Author: bkuhn@google.com (Brian Kuhn)
--->
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<title>processStates_test.html</title>
-<script src="../../../../javascript/closure/base.js"></script>
-<script>goog.require('goog.testing.jsunit');</script>
-<script src="jquery-1.8.2.min.js"></script>
-<script src="../data_layer_helper_raw.js"></script>
-<script>
+/**
+ * @fileoverview Unit tests for processStates().
+ * @author bnkuhn@gmail.com (Brian Kuhn)
+ */
 
 /**
  * Asserts that calling processStates_ with the given arguments will result
@@ -51,23 +45,21 @@ function assertProcessStates(states, expectedModel, expectedListenerCalls) {
     MockHelper.prototype = new DataLayerHelper([]);
     var helper = new MockHelper();
     DataLayerHelper.prototype.processStates_.call(helper, states, skipListener);
-    assertObjectEquals(expectedModel, helper.model_);
-    assertObjectEquals(skipListener ? [] : expectedListenerCalls,
-        helper.listenerCalls_);
-    assertObjectEquals([], helper.unprocessed_);
-    assertEquals(false, helper.executingListener_);
+    deepEqual(helper.model_, expectedModel);
+    deepEqual(helper.listenerCalls_, skipListener ? [] : expectedListenerCalls);
+    deepEqual(helper.unprocessed_, []);
+    equal(helper.executingListener_, false);
   }
   doAssert(true);
   doAssert(false);
 }
 
-function testProcessStates() {
+test('processStates', function() {
   assertProcessStates([], {}, []);
   assertProcessStates([{a: 1}], {a: 1}, [[{a: 1}, {a: 1}]]);
   assertProcessStates([{a: 1}, {a: 2}], {a: 2},
       [[{a: 1}, {a: 1}], [{a: 2}, {a: 2}]]);
   assertProcessStates([{'a.b': 1}], {a: {b: 1}},
       [[{a: {b: 1}}, {'a.b': 1}]]);
-}
-</script>
+});
 

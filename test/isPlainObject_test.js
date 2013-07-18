@@ -15,17 +15,15 @@
  */
 
 /**
- * @fileoverview Unit tests for plain.isPlainObject.
+ * @fileoverview Unit tests for isPlainObject().
+ * @author bnkuhn@gmail.com (Brian Kuhn)
  */
 
-goog.require('goog.testing.jsunit');
-goog.require('plain');
-
 function assertIsPlainObject(value, expected) {
-  assertEquals(expected, plain.isPlainObject(value));
+  equal(isPlainObject(value), expected);
 }
 
-function testIsPlainObject() {
+test('isPlainObject', function() {
   assertIsPlainObject(null, false);
   assertIsPlainObject(undefined, false);
   assertIsPlainObject(true, false);
@@ -63,9 +61,9 @@ function testIsPlainObject() {
   assertIsPlainObject(new Object(), true);
   function Foo() {}
   assertIsPlainObject(new Foo(), false);
-}
+});
 
-function testIsPlainObject_inherited() {
+test('isPlainObject_inherited', function() {
   if (!Object.create) {
     Object.create = function(o) {
       if (arguments.length != 1) {
@@ -79,4 +77,5 @@ function testIsPlainObject_inherited() {
   assertIsPlainObject(Object.create({}), true);
   assertIsPlainObject(Object.create({foo: 1}), false);
   assertIsPlainObject(Object.create(new Date()), false);
-}
+});
+

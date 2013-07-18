@@ -15,15 +15,13 @@
  */
 
 /**
- * @fileoverview Unit tests for plain.hasOwn.
+ * @fileoverview Unit tests for hasOwn().
+ * @author bnkuhn@gmail.com (Brian Kuhn)
  */
 
-goog.require('goog.testing.jsunit');
-goog.require('plain');
-
-function testHasOwn() {
+test('hasOwn', function() {
   function assertHasOwn(value, key, expected) {
-    assertEquals(expected, plain.hasOwn(value, key));
+    equal(hasOwn(value, key), expected);
   }
 
   assertHasOwn(23, 'valueOf', false);
@@ -35,14 +33,14 @@ function testHasOwn() {
 
   assertHasOwn('string', 'length', true);
   assertHasOwn('string', 'size', false);
-  assert(!!'string'['split']);
+  ok(!!'string'['split']);
   assertHasOwn('string', 'split', false);
 
   assertHasOwn([1, 2], '0', true);
   assertHasOwn([1, 2], '1', true);
   assertHasOwn([1, 2], '2', false);
   assertHasOwn([1, 2], '3', false);
-  assert(!!([1, 2])['join']);
+  ok(!!([1, 2])['join']);
   assertHasOwn([1, 2], 'join', false);
 
   assertHasOwn({a: 1}, '0', false);
@@ -56,5 +54,5 @@ function testHasOwn() {
   assertHasOwn(fn, 'arguments', true);
   assertHasOwn(fn, 'constructor', false);
   assertHasOwn(fn, 'valueOf', false);
-}
+});
 
