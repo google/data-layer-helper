@@ -2,14 +2,13 @@
 
 This project is still in the process of being pieced together. Nothing works yet. Do not use this.
 
-
 # dataLayer_helper
 
 This library provides the ability to process messages passed onto a dataLayer queue.
 
 For more background on what a "dataLayer" is, please see:
-http://cutroni.com/blog/2012/05/14/make-analytics-better-with-tag-management-and-a-data-layer/
-https://developers.google.com/tag-manager/devguide#datalayer
+(http://cutroni.com/blog/2012/05/14/make-analytics-better-with-tag-management-and-a-data-layer/)
+(https://developers.google.com/tag-manager/devguide#datalayer)
 
 TODO(bkuhn): More docs.
 
