@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--
+Copyright 2012 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Author: bkuhn@google.com (Brian Kuhn)
+-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>get_test.html</title>
+<script src="../../../../javascript/closure/base.js"></script>
+<script>goog.require('goog.testing.jsunit');</script>
+<script src="../data_layer_helper_raw.js"></script>
+<script>
+
+function testGet() {
+  var helper = new DataLayerHelper([{
+    a: 1,
+    b: {
+      c: {
+        d: 4
+      },
+      e: 5,
+      f: null
+    }
+  }]);
+
+  assertEquals(1, helper.get('a'));
+  assertObjectEquals({c: {d: 4}, e: 5, f: null}, helper.get('b'));
+  assertObjectEquals({d: 4}, helper.get('b.c'));
+  assertEquals(4, helper.get('b.c.d'));
+  assertEquals(5, helper.get('b.e'));
+  assertEquals(null, helper.get('b.f'));
+
+  assertEquals(undefined, helper.get('blah'));
+  assertEquals(undefined, helper.get('c'));
+  assertEquals(undefined, helper.get('d'));
+  assertEquals(undefined, helper.get('e'));
+}
+</script>
+
