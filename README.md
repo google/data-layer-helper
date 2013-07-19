@@ -8,11 +8,15 @@ This project is still in the process of being pieced together. It's probably bro
 This library provides the ability to process messages passed onto a dataLayer queue.
 
 A dataLayer queue is simply a JavaScript array that lives on a webpage. Page authors can append
-messages onto the queue in order to emit information about the page and its state. For example,
-the page author may want to expose details about the page that aren't otherwise easily obtained.
-This could be metadata about the page content, information about the visitor, or data about events
-happening on the page. This library provides the ability to listen for these messages and to read
-the key/value pairs that have been set by all the previous messages.
+messages onto the queue in order to emit information about the page and its state. These messages
+are simply JavaScript objects containing a hierarchy of key/value pairs. They can be metadata
+about the page content, information about the visitor, or data about events happening on the page.
+This system allows tools like analytics libraries and tag management systems to access this data
+in a standard way, so page authors can avoid using a bunch of proprietary, repetitive APIs.
+
+This library provides the ability to listen for dataLayer messages and to read the key/value pairs
+that have been set by all the previous messages. It can be used by the tools/vendors mentioned
+above, or by page authors that need to read back the data they've emitted.
 
 TODO(bkuhn): Add example of using the dataLayer and the helper once the API is a bit more stable.
 
@@ -41,10 +45,11 @@ Install the [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli) p
 npm install -g grunt-cli
 ```
 
-Enter the dataLayer_helper directory and install the Node dependencies, this time *without* specifying a global(-g) install:
+Enter the dataLayer_helper directory and install the Node dependencies, this time *without* specifying a global install:
 
 ```bash
-cd dataLayer_helper && npm install
+cd dataLayer_helper
+npm install
 ```
 
 Make sure you have `grunt` installed by testing:
@@ -59,7 +64,7 @@ Then, to get a complete, minified (w/ Uglify.js), linted (w/ JSHint) version, ty
 grunt
 ```
 
-The built version of be put in the `dist/` subdirectory, along with the minified copy.
+The built version will be in the `dist/` subdirectory, along with a minified copy.
 
 
 ## License
