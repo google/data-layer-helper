@@ -36,7 +36,7 @@ A few prerequisites:
 Clone a copy of the project repo by running:
 
 ```bash
-git clone git://github.com/google/dataLayer_helper.git
+git clone git://github.com/google/data-layer-helper.git
 ```
 
 Install the [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli) package if you haven't before. This should be done as global install:
@@ -45,10 +45,10 @@ Install the [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli) p
 npm install -g grunt-cli
 ```
 
-Enter the dataLayer_helper directory and install the Node dependencies, this time *without* specifying a global install:
+Enter the data-layer-helper directory and install the Node dependencies, this time *without* specifying a global install:
 
 ```bash
-cd dataLayer_helper
+cd data-layer-helper
 npm install
 ```
 

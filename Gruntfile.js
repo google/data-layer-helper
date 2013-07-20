@@ -31,13 +31,13 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
-      },
       dist: {
         files: {
           'dist/<%= pkg.name %>.js': ['<%= concat.dist.dest %>']
         }
+      },
+      options: {
+        wrap: 'DataLayerHelper'
       }
     },
 
@@ -46,17 +46,7 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      //files: ['gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
-      files: ['gruntfile.js', 'src/**/*.js'],
-      options: {
-        // options here to override JSHint defaults
-        globals: {
-          jQuery: true,
-          console: true,
-          module: true,
-          document: true
-        }
-      }
+      files: ['gruntfile.js', 'src/**/*.js']
     },
 
     watch: {
