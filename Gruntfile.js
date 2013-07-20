@@ -17,51 +17,55 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
-
     pkg: grunt.file.readJSON('package.json'),
 
-    concat: {
+    closureBuilder:  {
       options: {
-        separator: '\n'
+        // [REQUIRED] To find the builder executable we need either the path to
+        //    closure library or directly the filepath to the builder:
+        closureLibraryPath: 'path/to/closure-library', // path to closure library
+        // [OPTIONAL] You can define an alternative path of the builder.
+        //    If set it trumps 'closureLibraryPath' which will not be required.
+        builder: 'path/to/closurebuilder.py',
+
+        // [REQUIRED] One of the two following options is required:
+        inputs: 'string|Array', // input files (can just be the entry point)
+        namespaces: 'string|Array', // namespaces
+
+        // [OPTIONAL] The location of the compiler.jar
+        // This is required if you set the option "compile" to true.
+        compilerFile: 'path/to/compiler.jar',
+
+        // [OPTIONAL] output_mode can be 'list', 'script' or 'compiled'.
+        //    If compile is set to true, 'compiled' mode is enforced.
+        //    Default is 'script'.
+        output_mode: '',
+
+        // [OPTIONAL] if we want builder to perform compile
+        compile: false, // boolean
+
+        compilerOpts: {
+          /**
+          * Go wild here...
+          * any key will be used as an option for the compiler
+          * value can be a string or an array
+          * If no value is required use null
+          */
+        },
       },
-      dist: {
-        src: ['src/**/*.js'],
-        dest: 'dist/<%= pkg.name %>.raw.js'
+
+      // any name that describes your operation
+      targetName: {
+
+        // [REQUIRED] paths to be traversed to build the dependencies
+        src: 'string|Array',
+
+        // [OPTIONAL] if not set, will output to stdout
+        dest: ''
       }
-    },
-
-    uglify: {
-      dist: {
-        files: {
-          'dist/<%= pkg.name %>.js': ['<%= concat.dist.dest %>']
-        }
-      },
-      options: {
-        wrap: 'DataLayerHelper'
-      }
-    },
-
-    qunit: {
-      files: ['test/index.html']
-    },
-
-    jshint: {
-      files: ['gruntfile.js', 'src/**/*.js']
-    },
-
-    watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'qunit']
     }
-
   });
 
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-
-  grunt.registerTask('test', ['jshint', 'concat', 'qunit']);
-  grunt.registerTask('default', ['jshint', 'concat', 'qunit', 'uglify']);
+  grunt.loadNpmTasks('grunt-closure-tools');
+  grunt.registerTask('default', ['closureBuilder']);
 };
