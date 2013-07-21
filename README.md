@@ -58,13 +58,13 @@ Make sure you have `grunt` installed by testing:
 grunt -version
 ```
 
-Then, to get a complete, minified (w/ Uglify.js), linted (w/ JSHint) version, type the following:
+Then, to get a compiled version, type the following:
 
 ```bash
 grunt
 ```
 
-The built version will be in the `dist/` subdirectory, along with a minified copy.
+The built version will be in the `dist/` subdirectory.
 
 
 ## License
