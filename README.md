@@ -1,6 +1,6 @@
 # UNDER CONSTRUCTION!
 
-This project is still in the process of being pieced together. It's probably broken. Do not use this.
+This project is currently for demonstration purposes only. Do not use this on real sites (yet).
 
 
 # Data Layer Helper Library
