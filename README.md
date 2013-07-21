@@ -26,7 +26,7 @@ For more background on what a "dataLayer" is, please see:
 2. [Google Tag Manager Docs](https://developers.google.com/tag-manager/devguide#datalayer)
 
 
-## Getting Started
+## Build and Test
 
 A few prerequisites:
 
