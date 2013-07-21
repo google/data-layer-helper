@@ -20,7 +20,7 @@
  */
 
 function assertIsPlainObject(value, expected) {
-  equal(isPlainObject(value), expected);
+  equal(plain.isPlainObject(value), expected);
 }
 
 test('isPlainObject', function() {

@@ -22,7 +22,7 @@
 test("type", function() {
 
   function assertType(value, expected) {
-    equal(type(value), expected);
+    equal(plain.type(value), expected);
   }
 
   assertType(null, 'null');

@@ -22,9 +22,9 @@
 test('merge', function() {
 
   function assertMerge(from, to, expected) {
-    var fromCopy = isArray_(from) ? [] : {};
+    var fromCopy = helper.isArray_(from) ? [] : {};
     jQuery.extend(true, fromCopy, from);
-    merge_(from, to);
+    helper.merge_(from, to);
     deepEqual(from, fromCopy);
     deepEqual(to, expected);
   }

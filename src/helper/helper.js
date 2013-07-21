@@ -1,6 +1,6 @@
+/** @license Copyright 2012 Google Inc. All rights reserved. */
+
 /**
- * Copyright 2012 Google Inc. All rights reserved.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +44,8 @@
  * @author bkuhn@google.com (Brian Kuhn)
  */
 
+goog.provide('helper');
+goog.require('plain');
 
 /**
  * Creates a new helper object for the given dataLayer.
@@ -55,7 +57,7 @@
  * @param {boolean=} opt_listenToPast If true, the given listener will be
  *     executed for state changes that have already happened.
  */
-var DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
+helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
 
   /**
    * The dataLayer to help with.
@@ -106,8 +108,7 @@ var DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
     return result;
   };
 };
-//TODO(bkuhn): Export this some other way.
-//window['DataLayerHelper'] = DataLayerHelper;
+window['DataLayerHelper'] = helper.DataLayerHelper;
 
 /**
  * Returns the value currently assigned to the given key in the helper's
@@ -118,7 +119,7 @@ var DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
  * @return {*} The value found at the given key.
  * @this {DataLayerHelper}
  */
-DataLayerHelper.prototype.get = function(key) {
+helper.DataLayerHelper.prototype['get'] = function(key) {
   var target = this.model_;
   var split = key.split('.');
   for (var i = 0; i < split.length; i++) {
@@ -135,10 +136,10 @@ DataLayerHelper.prototype.get = function(key) {
  *
  * @this {DataLayerHelper}
  */
-DataLayerHelper.prototype.flatten = function() {
+helper.DataLayerHelper.prototype['flatten'] = function() {
   this.dataLayer_.splice(0, this.dataLayer_.length);
   this.dataLayer_[0] = {};
-  merge_(this.model_, this.dataLayer_[0]);
+  helper.merge_(this.model_, this.dataLayer_[0]);
 };
 
 /**
@@ -153,16 +154,16 @@ DataLayerHelper.prototype.flatten = function() {
  *     listener might not care about.
  * @private
  */
-DataLayerHelper.prototype.processStates_ = function(states, opt_skipListener) {
+helper.DataLayerHelper.prototype.processStates_ = function(states, opt_skipListener) {
   this.unprocessed_.push.apply(this.unprocessed_, states);
   // Checking executingListener here protects against multiple levels of
   // loops trying to process the same queue. This can happen if the listener
   // itself is causing new states to be pushed onto the dataLayer.
   while (this.executingListener_ === false && this.unprocessed_.length > 0) {
     var update = this.unprocessed_.shift();
-    if (!isPlainObject(update)) continue;
+    if (!plain.isPlainObject(update)) continue;
     for (var key in update) {
-      merge_(expandKeyValue_(key, update[key]), this.model_);
+      helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
     }
     if (!opt_skipListener) {
       this.executingListener_ = true;
@@ -189,7 +190,7 @@ DataLayerHelper.prototype.processStates_ = function(states, opt_skipListener) {
  *     merged onto the dataLayer's model.
  * @private
  */
-function expandKeyValue_(key, value) {
+helper.expandKeyValue_ = function(key, value) {
   var result = {};
   var target = result;
   var split = key.split('.');
@@ -198,7 +199,7 @@ function expandKeyValue_(key, value) {
   }
   target[split[split.length - 1]] = value;
   return result;
-}
+};
 
 /**
  * Determines if the given value is an array.
@@ -207,9 +208,9 @@ function expandKeyValue_(key, value) {
  * @return {boolean} True iff the given value is an array.
  * @private
  */
-function isArray_(value) {
-  return type(value) == 'array';
-}
+helper.isArray_ = function(value) {
+  return plain.type(value) == 'array';
+};
 
 /**
  * Merges one object into another or one array into another. Scalars and
@@ -224,20 +225,20 @@ function isArray_(value) {
  * @param {Object|Array} to The object or array to merge into.
  * @private
  */
-function merge_(from, to) {
+helper.merge_ = function(from, to) {
   for (var property in from) {
-    if (hasOwn(from, property)) {
+    if (plain.hasOwn(from, property)) {
       var fromProperty = from[property];
-      if (isArray_(fromProperty)) {
-        if (!isArray_(to[property])) to[property] = [];
-        merge_(fromProperty, to[property]);
-      } else if (isPlainObject(fromProperty)) {
-        if (!isPlainObject(to[property])) to[property] = {};
-        merge_(fromProperty, to[property]);
+      if (helper.isArray_(fromProperty)) {
+        if (!helper.isArray_(to[property])) to[property] = [];
+        helper.merge_(fromProperty, to[property]);
+      } else if (plain.isPlainObject(fromProperty)) {
+        if (!plain.isPlainObject(to[property])) to[property] = {};
+        helper.merge_(fromProperty, to[property]);
       } else {
         to[property] = fromProperty;
       }
     }
   }
-}
+};
 

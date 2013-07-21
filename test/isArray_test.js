@@ -15,13 +15,13 @@
  */
 
 /**
- * @fileoverview Unit tests for isArray___().
+ * @fileoverview Unit tests for isArray_().
  * @author bnkuhn@gmail.com (Brian Kuhn)
  */
 
-test('isArray', function() {
+test('isArray_', function() {
   function assertIsArray(value, expected) {
-    equal(isArray_(value), expected);
+    equal(helper.isArray_(value), expected);
   }
 
   assertIsArray(23, false);
@@ -59,6 +59,6 @@ test('isArray_fromAnotherWindow', function() {
   ok(x[0] === 'hello');
   ok([] instanceof Array === true);
   ok(x instanceof Array === false);
-  ok(isArray_([]) === true);
-  ok(isArray_(x) === true);
+  ok(helper.isArray_([]) === true);
+  ok(helper.isArray_(x) === true);
 });

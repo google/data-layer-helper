@@ -25,7 +25,7 @@ test('flatten', function() {
   dataLayer.push({f: 6});
   dataLayer.push({g: 7});
 
-  var helper = new DataLayerHelper(dataLayer);
+  var h = new helper.DataLayerHelper(dataLayer);
   dataLayer.push({g: 8, i: 9});
   dataLayer.push({'b.c': 3});
 
@@ -37,7 +37,7 @@ test('flatten', function() {
     {'b.c': 3}
   ], dataLayer);
 
-  helper.flatten();
+  h.flatten();
 
   deepEqual([{
     a: 1,
@@ -47,7 +47,7 @@ test('flatten', function() {
     i: 9
   }], dataLayer);
 
-  helper.flatten();
+  h.flatten();
 
   deepEqual([{
     a: 1,
@@ -73,7 +73,7 @@ test('flatten', function() {
     }
   ], dataLayer);
 
-  helper.flatten();
+  h.flatten();
 
   deepEqual([{
     a: 1,

@@ -19,53 +19,45 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    closureDepsWriter: {
+      options: {
+        closureLibraryPath: 'third_party/closure-library',
+      },
+      helperDeps: {
+        src: 'src/helper/helper.js',
+        dest: 'src/deps.js'
+      }
+    },
+
     closureBuilder:  {
       options: {
-        // [REQUIRED] To find the builder executable we need either the path to
-        //    closure library or directly the filepath to the builder:
-        closureLibraryPath: 'path/to/closure-library', // path to closure library
-        // [OPTIONAL] You can define an alternative path of the builder.
-        //    If set it trumps 'closureLibraryPath' which will not be required.
-        builder: 'path/to/closurebuilder.py',
-
-        // [REQUIRED] One of the two following options is required:
-        inputs: 'string|Array', // input files (can just be the entry point)
-        namespaces: 'string|Array', // namespaces
-
-        // [OPTIONAL] The location of the compiler.jar
-        // This is required if you set the option "compile" to true.
-        compilerFile: 'path/to/compiler.jar',
-
-        // [OPTIONAL] output_mode can be 'list', 'script' or 'compiled'.
-        //    If compile is set to true, 'compiled' mode is enforced.
-        //    Default is 'script'.
-        output_mode: '',
-
-        // [OPTIONAL] if we want builder to perform compile
-        compile: false, // boolean
-
+        closureLibraryPath: 'third_party/closure-library',
+        compilerFile: 'third_party/closure-compiler/compiler.jar',
+        namespaces: 'helper',
+        compile: true,
         compilerOpts: {
-          /**
-          * Go wild here...
-          * any key will be used as an option for the compiler
-          * value can be a string or an array
-          * If no value is required use null
-          */
+          compilation_level: 'ADVANCED_OPTIMIZATIONS',
+          output_wrapper: '(function(){%output%})();',
         },
       },
+      helper: {
+        src: ['third_party/closure-library', 'src'],
+        dest: 'dist/data-layer-helper.js'
+      },
+    },
 
-      // any name that describes your operation
-      targetName: {
+    qunit: {
+      files: ['test/index.html']
+    },
 
-        // [REQUIRED] paths to be traversed to build the dependencies
-        src: 'string|Array',
-
-        // [OPTIONAL] if not set, will output to stdout
-        dest: ''
-      }
-    }
   });
 
   grunt.loadNpmTasks('grunt-closure-tools');
-  grunt.registerTask('default', ['closureBuilder']);
+  grunt.loadNpmTasks('grunt-contrib-qunit');
+
+  grunt.registerTask('default', [
+    'closureDepsWriter',
+    'closureBuilder',
+    'qunit'
+  ]);
 };

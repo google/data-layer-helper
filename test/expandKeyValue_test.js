@@ -15,13 +15,13 @@
  */
 
 /**
- * @fileoverview Unit tests for expandKeyValue.
+ * @fileoverview Unit tests for expandKeyValue_.
  * @author bnkuhn@gmail.com (Brian Kuhn)
  */
 
-test('expandKeyValue', function() {
+test('expandKeyValue_', function() {
   function assertExpand(key, value, expected) {
-    deepEqual(expandKeyValue_(key, value), expected);
+    deepEqual(helper.expandKeyValue_(key, value), expected);
   }
 
   assertExpand('a', 1, {a: 1});

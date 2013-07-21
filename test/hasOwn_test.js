@@ -21,7 +21,7 @@
 
 test('hasOwn', function() {
   function assertHasOwn(value, key, expected) {
-    equal(hasOwn(value, key), expected);
+    equal(plain.hasOwn(value, key), expected);
   }
 
   assertHasOwn(23, 'valueOf', false);

@@ -20,7 +20,7 @@
  */
 
 test('get', function() {
-  var helper = new DataLayerHelper([{
+  var h = new helper.DataLayerHelper([{
     a: 1,
     b: {
       c: {
@@ -31,15 +31,15 @@ test('get', function() {
     }
   }]);
 
-  equal(helper.get('a'), 1);
-  deepEqual(helper.get('b'), {c: {d: 4}, e: 5, f: null});
-  deepEqual(helper.get('b.c'), {d: 4});
-  equal(helper.get('b.c.d'), 4);
-  equal(helper.get('b.e'), 5);
-  equal(helper.get('b.f'), null);
+  equal(h.get('a'), 1);
+  deepEqual(h.get('b'), {c: {d: 4}, e: 5, f: null});
+  deepEqual(h.get('b.c'), {d: 4});
+  equal(h.get('b.c.d'), 4);
+  equal(h.get('b.e'), 5);
+  equal(h.get('b.f'), null);
 
-  equal(helper.get('blah'), undefined);
-  equal(helper.get('c'), undefined);
-  equal(helper.get('d'), undefined);
-  equal(helper.get('e'), undefined);
+  equal(h.get('blah'), undefined);
+  equal(h.get('c'), undefined);
+  equal(h.get('d'), undefined);
+  equal(h.get('e'), undefined);
 });
