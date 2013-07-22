@@ -52,19 +52,26 @@ cd data-layer-helper
 npm install
 ```
 
-Make sure you have `grunt` installed by testing:
+Enter the third_party/closure-linter directory and install the Closure linter:
+
+```bash
+cd third_party/closure-linter
+python setup.py install
+```
+
+Make sure you have `grunt` installed. From the root directory of the project, run:
 
 ```bash
 grunt -version
 ```
 
-Then, to get a compiled version, type the following:
+That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests.
 
 ```bash
 grunt
 ```
 
-The built version will be in the `dist/` subdirectory.
+The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
 
 
 ## License

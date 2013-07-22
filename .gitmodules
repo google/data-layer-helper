@@ -4,3 +4,6 @@
 [submodule "third_party/closure-library"]
 	path = third_party/closure-library
 	url = https://code.google.com/p/closure-library/
+[submodule "third_party/closure-linter"]
+	path = third_party/closure-linter
+	url = https://github.com/knutwalker/google-closure-linter.git

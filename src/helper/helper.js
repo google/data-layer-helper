@@ -154,7 +154,9 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
  *     listener might not care about.
  * @private
  */
-helper.DataLayerHelper.prototype.processStates_ = function(states, opt_skipListener) {
+helper.DataLayerHelper.prototype.processStates_ =
+    function(states, opt_skipListener) {
+
   this.unprocessed_.push.apply(this.unprocessed_, states);
   // Checking executingListener here protects against multiple levels of
   // loops trying to process the same queue. This can happen if the listener

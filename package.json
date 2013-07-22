@@ -9,6 +9,7 @@
     "grunt-contrib-qunit": "~0.2.2",
     "grunt-contrib-watch": "~0.4.4",
     "grunt-contrib-concat": "~0.3.0",
-    "grunt-closure-tools": "~0.8.3"
+    "grunt-closure-tools": "~0.8.3",
+    "grunt-closure-linter": "~0.1.0"
   }
 }
