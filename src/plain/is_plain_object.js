@@ -30,7 +30,7 @@ plain.TYPE_RE_ =
  *    ======================================
  *     null          |  object   |  null
  *     new Boolean() |  object   |  boolean
- *     new Number()  |  object   |  boolean
+ *     new Number()  |  object   |  number
  *     new String()  |  object   |  string
  *     new Date()    |  object   |  date
  *     [1,2,3]       |  object   |  array
