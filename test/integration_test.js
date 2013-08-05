@@ -83,6 +83,7 @@ test('Basic Operations', function() {
   ok(helper.get('two') === 2);
 
   equal(dataLayer.length, 5);
+  deepEqual(dataLayer, [{one: 1, two: 2}, {two: 3}, {two: 2}, {one: {three: 3}}, {one: {four: 4}}]);
   helper.flatten();
   equal(dataLayer.length, 1);
   deepEqual(dataLayer, [{one: {three: 3, four: 4}, two: 2}]);
