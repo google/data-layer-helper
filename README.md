@@ -36,7 +36,7 @@ A few prerequisites:
 Clone a copy of the project repo by running:
 
 ```bash
-git clone git://github.com/google/data-layer-helper.git
+git clone --recursive git://github.com/google/data-layer-helper.git
 ```
 
 Install the [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli) package if you haven't before. This should be done as global install:
