@@ -78,10 +78,9 @@ test('flatten', function() {
   deepEqual([{
     a: 1,
     b: {c: 3, e: 5},
-    f: 6,
+    f: 7,
     g: 8,
     i: 9,
-    f: 7,
     j: 10
   }], dataLayer);
 
