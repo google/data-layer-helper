@@ -13,6 +13,7 @@
 
 goog.provide('plain');
 
+
 /**
  * Pattern used by plain.type to match [object XXX] strings.
  * @type {RegExp}
@@ -21,6 +22,7 @@ goog.provide('plain');
  */
 plain.TYPE_RE_ =
     /\[object (Boolean|Number|String|Function|Array|Date|RegExp)\]/;
+
 
 /**
  * Returns a string describing the given value's type. Same as typeof, except
@@ -50,6 +52,7 @@ plain.type = function(value) {
   return 'object';
 };
 
+
 /**
  * Determines if the value has a non-inherited property with the given key.
  *
@@ -60,6 +63,7 @@ plain.type = function(value) {
 plain.hasOwn = function(value, key) {
   return Object.prototype.hasOwnProperty.call(Object(value), key);
 };
+
 
 /**
  * Determines if the given value is a "plain" object, meaning it's an object
