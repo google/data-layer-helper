@@ -47,6 +47,8 @@
 goog.provide('helper');
 goog.require('plain');
 
+
+
 /**
  * Creates a new helper object for the given dataLayer.
  *
@@ -110,6 +112,7 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
 };
 window['DataLayerHelper'] = helper.DataLayerHelper;
 
+
 /**
  * Returns the value currently assigned to the given key in the helper's
  * internal model.
@@ -129,6 +132,7 @@ helper.DataLayerHelper.prototype['get'] = function(key) {
   return target;
 };
 
+
 /**
  * Flattens the dataLayer's history into a single object that represents the
  * current state. This is useful for long running apps, where the dataLayer's
@@ -141,6 +145,7 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
   this.dataLayer_[0] = {};
   helper.merge_(this.model_, this.dataLayer_[0]);
 };
+
 
 /**
  * Merges the given update objects (states) onto the helper's model, calling
@@ -175,6 +180,7 @@ helper.DataLayerHelper.prototype.processStates_ =
   }
 };
 
+
 /**
  * Converts the given key value pair into an object that can be merged onto
  * another object. Specifically, this method treats dots in the key as path
@@ -203,6 +209,7 @@ helper.expandKeyValue_ = function(key, value) {
   return result;
 };
 
+
 /**
  * Determines if the given value is an array.
  *
@@ -213,6 +220,7 @@ helper.expandKeyValue_ = function(key, value) {
 helper.isArray_ = function(value) {
   return plain.type(value) == 'array';
 };
+
 
 /**
  * Merges one object into another or one array into another. Scalars and
