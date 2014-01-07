@@ -149,7 +149,9 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
 
 /**
  * Merges the given update objects (states) onto the helper's model, calling
- * the listener each time the model is updated.
+ * the listener each time the model is updated. If a command array is pushed
+ * into the dataLayer, the method will be parsed and applied to the value found
+ * at the key, if a one exists.
  *
  * @param {Array.<Object>} states The update objects to process, each
  *     representing a change to the state of the page.
@@ -168,6 +170,9 @@ helper.DataLayerHelper.prototype.processStates_ =
   // itself is causing new states to be pushed onto the dataLayer.
   while (this.executingListener_ === false && this.unprocessed_.length > 0) {
     var update = this.unprocessed_.shift();
+    if (helper.isArray_(update)) {
+      helper.mutateValue_(update, this.model_);
+    }
     if (!plain.isPlainObject(update)) continue;
     for (var key in update) {
       helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
@@ -207,6 +212,32 @@ helper.expandKeyValue_ = function(key, value) {
   }
   target[split[split.length - 1]] = value;
   return result;
+};
+
+
+/**
+ * Applies the given method to the value in the dataLayer with the given key.
+ * If the method is a valid function of the value, the method will be applies
+ * with any arguments passed in.
+ *
+ * @param {Array.<Object>} commandArray The array containing the key with the
+ *     method to execute and optional arguments for the method.
+ * @param {Object|Array} model The current dataLayer model.
+ * @private
+ */
+helper.mutateValue_ = function(commandArray, model) {
+  if (commandArray.length == 0) return;
+  var keyPath = commandArray[0].split('.');
+  var method = keyPath.pop();
+  var opt_arguments = [].splice.call(commandArray, 1);
+  var target = model;
+  for (var i = 0; i < keyPath.length; i++) {
+    if (target[keyPath[i]] === undefined) return;
+    target = target[keyPath[i]];
+  }
+  if (typeof target[method] === 'function') {
+    target[method].apply(target, opt_arguments);
+  }
 };
 
 
