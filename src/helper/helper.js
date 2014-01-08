@@ -171,7 +171,7 @@ helper.DataLayerHelper.prototype.processStates_ =
   while (this.executingListener_ === false && this.unprocessed_.length > 0) {
     var update = this.unprocessed_.shift();
     if (helper.isArray_(update)) {
-      helper.mutateValue_(update, this.model_);
+      helper.processCommand_(update, this.model_);
     }
     if (!plain.isPlainObject(update)) continue;
     for (var key in update) {
@@ -225,11 +225,11 @@ helper.expandKeyValue_ = function(key, value) {
  * @param {Object|Array} model The current dataLayer model.
  * @private
  */
-helper.mutateValue_ = function(commandArray, model) {
+helper.processCommand_ = function(commandArray, model) {
   if (commandArray.length == 0) return;
   var keyPath = commandArray[0].split('.');
   var method = keyPath.pop();
-  var opt_arguments = [].splice.call(commandArray, 1);
+  var opt_arguments = commandArray.slice(1);
   var target = model;
   for (var i = 0; i < keyPath.length; i++) {
     if (target[keyPath[i]] === undefined) return;
