@@ -275,7 +275,8 @@ helper.isArray_ = function(value) {
 };
 
 
-/** Determines if the given value is a string.
+/** 
+ * Determines if the given value is a string.
  *
  * @param {*} value The value to test.
  * @return {boolean} True iff the given value is a string.
