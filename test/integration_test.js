@@ -98,3 +98,45 @@ test('Basic Operations', function() {
   ok(helper.get('five') === 5);
 });
 
+test('Advanced Operations', function() {
+  var callbacks = [];
+  var expectedCallbackCount = 0;
+  function assertCallback(expected) {
+    expectedCallbackCount++;
+    ok(callbacks.length, expectedCallbackCount);
+    deepEqual(callbacks[callbacks.length - 1], expected);
+  }
+  function callbackListener() {
+    callbacks.push([].slice.call(arguments, 0));
+  }
+
+  var dataLayer = [];
+  var helper = new DataLayerHelper(dataLayer, callbackListener);
+
+  equal(callbacks.length, 0);
+  ok(helper.get('one') === undefined);
+  ok(helper.get('two') === undefined);
+
+  // Test pushing a custom method that calls dataLayer.push(). We expect the
+  // new message to be appended to the queue and processed last.
+  dataLayer.push(
+    {a: 'originalValue'},
+    function() {
+      dataLayer.push({a: 'newValue'});
+    });
+  ok(helper.get('a') === 'newValue');
+
+  dataLayer.push(
+    {numCustomMethodCalls: 0},
+    function() {
+      var method = function() {
+        var numCalls = this.get('numCustomMethodCalls');
+        if (numCalls < 10) {
+          this.set('numCustomMethodCalls', numCalls + 1);
+          dataLayer.push(method);
+        }
+      };
+      dataLayer.push(method);
+    })
+  ok(helper.get('numCustomMethodCalls') === 10);
+});

@@ -63,3 +63,155 @@ test('processStates', function() {
       [[{a: {b: 1}}, {'a.b': 1}]]);
 });
 
+test('processStates_customMethods', function() {
+  // Test the processing of Custom Methods.
+  var customMethod = function() { this.set('a', 1); };
+  assertProcessStates(
+      [{a: 0}, customMethod],
+      {a: 1},
+      [[{a: 0}, {a: 0}], [{a: 1}, customMethod]]);
+
+  customMethod = function() { this.set('b', 'one'); };
+  assertProcessStates(
+      [customMethod],
+      {b: 'one'},
+      [[{b: 'one'}, customMethod]]);
+
+  customMethod = function() { this.set('c.d', [3]); };
+  assertProcessStates(
+      [customMethod],
+      {c: {d: [3]}},
+      [[{c: {d: [3]}}, customMethod]]);
+
+  var customMethod = function() {
+    var a = this.get('a');
+    equal(1, a);
+  };
+  assertProcessStates(
+      [{a: 1, b: 2}, customMethod],
+      {a: 1, b: 2},
+      [
+        [{a: 1, b: 2}, {a: 1, b: 2}],
+        [{a: 1, b: 2}, customMethod]
+      ]);
+
+  customMethod = function() {
+    var b = this.get('a.b');
+    equal(2, b);
+  }
+  assertProcessStates(
+      [{a: {b: 2}}, customMethod],
+      {a: {b: 2}},
+      [
+        [{a: {b: 2}}, {a: {b: 2}}],
+        [{a: {b: 2}}, customMethod]
+      ]);
+
+  customMethod = function() {
+    var a = this.get('a');
+    equal(3, a.b.c[0]);
+  };
+  assertProcessStates(
+      [{a: {b: {c: [3]}}}, customMethod],
+      {a: {b: {c: [3]}}},
+      [
+        [{a: {b: {c: [3]}}}, {a: {b: {c: [3]}}}],
+        [{a: {b: {c: [3]}}}, customMethod]
+      ]);
+
+  var products = [
+    {price: 10},
+    {price: 20},
+    {price: 30}
+  ];
+  customMethod = function() {
+    var products = this.get('products');
+    this.set('numProducts', products.length);
+  };
+  assertProcessStates(
+      [{'products': products}, customMethod],
+      {'products': products, numProducts: 3},
+      [
+        [{'products': products}, {'products': products}],
+        [{'products': products, numProducts: 3}, customMethod]
+      ]);
+
+  var expectedProducts = [
+    {price: 10},
+    {price: 20},
+    {price: 60}
+  ];
+  customMethod = function() {
+    var products = this.get('products');
+    var lastProduct = products.pop();
+    lastProduct.price = lastProduct.price * 2;
+    products.push(lastProduct);
+  }
+  assertProcessStates(
+      [{'products': products}, customMethod],
+      {'products': expectedProducts},
+      [
+        [{'products': products}, {'products': products}],
+        [{'products': expectedProducts}, customMethod]
+      ]);
+
+  customMethod = function() {
+    var products = this.get('products');
+    var total = 0;
+    for (var i = 0; i < products.length; i++) {
+      total += products[i].price;
+    }
+    this.set('orderTotal', total);
+  }
+  assertProcessStates(
+      [{'products': products}, customMethod],
+      {'products': products, orderTotal: 60},
+      [
+        [{'products': products}, {'products': products}],
+        [{'products': products, orderTotal: 60}, customMethod]
+      ]);
+
+  // Test the behavior of processing custom methods where the methods throw
+  // errors.
+  var errorFunction = function() {
+    throw 'Scary Error';
+  };
+  assertProcessStates([errorFunction], {} , [[{}, errorFunction]]);
+
+  errorFunction = function() {
+    this.set('a', 1);
+    throw 'Scary Error';
+    this.set('a', 2);
+  };
+  assertProcessStates(
+      [errorFunction],
+      {a: 1},
+      [[{a: 1}, errorFunction]]);
+
+  errorFunction = function() {
+    this.set('a', 3);
+    throw 'Scary Error';
+    this.set('a', 4);
+  };
+  assertProcessStates(
+      [{a: 1, b: 2}, errorFunction],
+      {a: 3, b: 2},
+      [
+        [{a: 1, b: 2}, {a: 1, b: 2}],
+        [{a: 3, b: 2}, errorFunction]
+      ]);
+
+  // Custom methods throwing errors shouldn't affect any messages further down
+  // the queue.
+  errorFunction = function() {
+    this.set('a', 1);
+    throw 'Scary Error';
+  };
+  assertProcessStates(
+      [errorFunction, {a: 2}],
+      {a: 2},
+      [
+        [{a: 1}, errorFunction],
+        [{a: 2}, {a: 2}]
+      ]);
+});

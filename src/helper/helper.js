@@ -172,16 +172,64 @@ helper.DataLayerHelper.prototype.processStates_ =
     var update = this.unprocessed_.shift();
     if (helper.isArray_(update)) {
       helper.processCommand_(update, this.model_);
-    }
-    if (!plain.isPlainObject(update)) continue;
-    for (var key in update) {
-      helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
+    } else if (typeof update == 'function') {
+      var that = this;
+      var abstractModelInterface = {
+        'set': function(key, value) {
+          helper.merge_(helper.expandKeyValue_(key, value),
+              that.model_);
+        },
+        'get': function(key) {
+          return that.get(key);
+        }
+      };
+      try {
+        update.call(abstractModelInterface);
+      } catch (e) {
+        // Catch any exceptions to we don't drop subsequent updates.
+        // TODO(arnau): Add some sort of logging when this happens.
+      }
+    } else if (plain.isPlainObject(update)) {
+      for (var key in update) {
+        helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
+      }
+    } else {
+      continue;
     }
     if (!opt_skipListener) {
       this.executingListener_ = true;
       this.listener_(this.model_, update);
       this.executingListener_ = false;
     }
+  }
+};
+
+
+/**
+ * Applies the given method to the value in the dataLayer with the given key.
+ * If the method is a valid function of the value, the method will be applies
+ * with any arguments passed in.
+ *
+ * @param {Array.<Object>} command The array containing the key with the
+ *     method to execute and optional arguments for the method.
+ * @param {Object|Array} model The current dataLayer model.
+ * @private
+ */
+helper.processCommand_ = function(command, model) {
+  if (!helper.isString_(command[0])) return;
+  var path = command[0].split('.');
+  var method = path.pop();
+  var args = command.slice(1);
+  var target = model;
+  for (var i = 0; i < path.length; i++) {
+    if (target[path[i]] === undefined) return;
+    target = target[path[i]];
+  }
+  try {
+    target[method].apply(target, args);
+  } catch (e) {
+    // Catch any exception so we don't drop subsequent updates.
+    // TODO(Alex Nau): Add some sort of logging here when this happens.
   }
 };
 
@@ -216,32 +264,6 @@ helper.expandKeyValue_ = function(key, value) {
 
 
 /**
- * Applies the given method to the value in the dataLayer with the given key.
- * If the method is a valid function of the value, the method will be applies
- * with any arguments passed in.
- *
- * @param {Array.<Object>} commandArray The array containing the key with the
- *     method to execute and optional arguments for the method.
- * @param {Object|Array} model The current dataLayer model.
- * @private
- */
-helper.processCommand_ = function(commandArray, model) {
-  if (commandArray.length == 0) return;
-  var keyPath = commandArray[0].split('.');
-  var method = keyPath.pop();
-  var opt_arguments = commandArray.slice(1);
-  var target = model;
-  for (var i = 0; i < keyPath.length; i++) {
-    if (target[keyPath[i]] === undefined) return;
-    target = target[keyPath[i]];
-  }
-  if (typeof target[method] === 'function') {
-    target[method].apply(target, opt_arguments);
-  }
-};
-
-
-/**
  * Determines if the given value is an array.
  *
  * @param {*} value The value to test.
@@ -250,6 +272,17 @@ helper.processCommand_ = function(commandArray, model) {
  */
 helper.isArray_ = function(value) {
   return plain.type(value) == 'array';
+};
+
+
+/** Determines if the given value is a string.
+ *
+ * @param {*} value The value to test.
+ * @return {boolean} True iff the given value is a string.
+ * @private
+ */
+helper.isString_ = function(value) {
+  return plain.type(value) == 'string';
 };
 
 
