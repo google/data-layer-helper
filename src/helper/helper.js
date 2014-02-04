@@ -192,15 +192,6 @@ helper.DataLayerHelper.prototype.processStates_ =
       helper.processCommand_(update, this.model_);
     } else if (typeof update == 'function') {
       var that = this;
-      var abstractModelInterface = {
-        'set': function(key, value) {
-          helper.merge_(helper.expandKeyValue_(key, value),
-              that.model_);
-        },
-        'get': function(key) {
-          return that.get(key);
-        }
-      };
       try {
         update.call(this.abstractModelInterface_);
       } catch (e) {
