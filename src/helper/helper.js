@@ -97,16 +97,34 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
    */
   this.unprocessed_ = [];
 
+  var that = this;
+  /**
+   * The interface to the internal dataLayer model that is exposed to custom
+   * methods. Custom methods will the executed with this interface as the value
+   * of 'this', allowing users to manipulate the model using this.get and
+   * this.set.
+   * @type {!Object}
+   * @private
+   */
+  this.abstractModelInterface_ = {
+    'set': function(key, value) {
+      helper.merge_(helper.expandKeyValue_(key, value), that.model_);
+    },
+    'get': function(key) {
+      return that.get(key);
+    }
+  };
+
+
   // Process the existing/past states.
   this.processStates_(dataLayer, !opt_listenToPast);
 
   // Add listener for future state changes.
-  var helper = this;
   var oldPush = dataLayer.push;
   dataLayer.push = function() {
     var states = [].slice.call(arguments, 0);
     var result = oldPush.apply(dataLayer, states);
-    helper.processStates_(states);
+    that.processStates_(states);
     return result;
   };
 };
@@ -184,7 +202,7 @@ helper.DataLayerHelper.prototype.processStates_ =
         }
       };
       try {
-        update.call(abstractModelInterface);
+        update.call(this.abstractModelInterface_);
       } catch (e) {
         // Catch any exceptions to we don't drop subsequent updates.
         // TODO(arnau): Add some sort of logging when this happens.

@@ -40,6 +40,15 @@ function assertProcessStates(states, expectedModel, expectedListenerCalls) {
       this.listenerCalls_.push(
           jQuery.extend(true, [], [].slice.call(arguments, 0)));
     };
+    var that = this;
+    this.abstractModelInterface_ = {
+      'set': function(key, value) {
+        helper.merge_(helper.expandKeyValue_(key, value), that.model_);
+      },
+      'get': function(key) {
+        return that.get(key);
+      }
+    };
   };
   function doAssert(skipListener) {
     MockHelper.prototype = new DataLayerHelper([]);
