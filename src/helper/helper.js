@@ -105,30 +105,7 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
    * @type {!Object}
    * @private
    */
-  this.abstractModelInterface_ = {};
-
-  /**
-   * Helper function that will build the abstract model interface using the
-   * supplied dataLayerHelper.
-   *
-   * @param {DataLayerHelper} dataLayerHelper The helper class to construct the
-   *     abstract model interface for.
-   * @private
-   */
-  this.buildAbstractModelInterface_ = function(dataLayerHelper) {
-    dataLayerHelper.abstractModelInterface_ = {
-      'set': function(key, value) {
-        helper.merge_(helper.expandKeyValue_(key, value),
-            dataLayerHelper.model_);
-      },
-      'get': function(key) {
-        return dataLayerHelper.get(key);
-      }
-    };
-  };
-
-  // Create the abstract interface used in Custom Methods.
-  this.buildAbstractModelInterface_(this);
+  this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
 
   // Process the existing/past states.
   this.processStates_(dataLayer, !opt_listenToPast);
@@ -226,6 +203,29 @@ helper.DataLayerHelper.prototype.processStates_ =
       this.executingListener_ = false;
     }
   }
+};
+
+
+/**
+ * Helper function that will build the abstract model interface using the
+ * supplied dataLayerHelper.
+ *
+ * @param {DataLayerHelper} dataLayerHelper The helper class to construct the
+ *     abstract model interface for.
+ * @return {Object} The interface to the abstract data layer model that is given
+ *     to Custom Methods.
+ * @private
+ */
+helper.buildAbstractModelInterface_ = function(dataLayerHelper) {
+  return {
+    'set': function(key, value) {
+      helper.merge_(helper.expandKeyValue_(key, value),
+          dataLayerHelper.model_);
+    },
+    'get': function(key) {
+      return dataLayerHelper.get(key);
+    }
+  };
 };
 
 
