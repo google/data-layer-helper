@@ -97,7 +97,6 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
    */
   this.unprocessed_ = [];
 
-  var that = this;
   /**
    * The interface to the internal dataLayer model that is exposed to custom
    * methods. Custom methods will the executed with this interface as the value
@@ -106,21 +105,37 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
    * @type {!Object}
    * @private
    */
-  this.abstractModelInterface_ = {
-    'set': function(key, value) {
-      helper.merge_(helper.expandKeyValue_(key, value), that.model_);
-    },
-    'get': function(key) {
-      return that.get(key);
-    }
+  this.abstractModelInterface_ = {};
+
+  /**
+   * Helper function that will build the abstract model interface using the
+   * supplied dataLayerHelper.
+   *
+   * @param {DataLayerHelper} dataLayerHelper The helper class to construct the
+   *     abstract model interface for.
+   * @private
+   */
+  this.buildAbstractModelInterface_ = function(dataLayerHelper) {
+    dataLayerHelper.abstractModelInterface_ = {
+      'set': function(key, value) {
+        helper.merge_(helper.expandKeyValue_(key, value),
+            dataLayerHelper.model_);
+      },
+      'get': function(key) {
+        return dataLayerHelper.get(key);
+      }
+    };
   };
 
+  // Create the abstract interface used in Custom Methods.
+  this.buildAbstractModelInterface_(this);
 
   // Process the existing/past states.
   this.processStates_(dataLayer, !opt_listenToPast);
 
   // Add listener for future state changes.
   var oldPush = dataLayer.push;
+  var that = this;
   dataLayer.push = function() {
     var states = [].slice.call(arguments, 0);
     var result = oldPush.apply(dataLayer, states);
@@ -196,7 +211,7 @@ helper.DataLayerHelper.prototype.processStates_ =
         update.call(this.abstractModelInterface_);
       } catch (e) {
         // Catch any exceptions to we don't drop subsequent updates.
-        // TODO(arnau): Add some sort of logging when this happens.
+        // TODO: Add some sort of logging when this happens.
       }
     } else if (plain.isPlainObject(update)) {
       for (var key in update) {
@@ -238,7 +253,7 @@ helper.processCommand_ = function(command, model) {
     target[method].apply(target, args);
   } catch (e) {
     // Catch any exception so we don't drop subsequent updates.
-    // TODO(Alex Nau): Add some sort of logging here when this happens.
+    // TODO: Add some sort of logging here when this happens.
   }
 };
 
