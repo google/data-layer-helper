@@ -1,24 +1,72 @@
-# UNDER CONSTRUCTION!
-
-This project is currently for demonstration purposes only. Do not use this on real sites (yet).
-
-
 # Data Layer Helper Library
 
 This library provides the ability to process messages passed onto a dataLayer queue.
 
-A dataLayer queue is simply a JavaScript array that lives on a webpage. Page authors can append
-messages onto the queue in order to emit information about the page and its state. These messages
-are simply JavaScript objects containing a hierarchy of key/value pairs. They can be metadata
-about the page content, information about the visitor, or data about events happening on the page.
-This system allows tools like analytics libraries and tag management systems to access this data
-in a standard way, so page authors can avoid using a bunch of proprietary, repetitive APIs.
+A dataLayer queue is simply a JavaScript array that lives on a webpage. 
 
-This library provides the ability to listen for dataLayer messages and to read the key/value pairs
-that have been set by all the previous messages. It can be used by the tools/vendors mentioned
-above, or by page authors that need to read back the data they've emitted.
+```html
+<script>
+  dataLayer = [];
+</script>
+```
 
-TODO(bkuhn): Add example of using the dataLayer and the helper once the API is a bit more stable.
+Page authors can append messages onto the queue in order to emit information about the page and 
+its state. 
+
+```html
+<script>
+  dataLayer.push({
+    title: "Migratory patterns of ducks",
+    category: "Science",
+    author: "Bradley Wogulis"
+  });
+</script>
+```
+
+These messages are simply JavaScript objects containing a hierarchy of key/value pairs. They can 
+be metadata about the page content, information about the visitor, or data about events happening 
+on the page. This system allows tools like analytics libraries and tag management systems to access 
+this data in a standard way, so page authors can avoid using a bunch of proprietary, repetitive APIs.
+
+* It provides a common, well defined system for exposing page data.
+* It doesn't slow down page rendering.
+* It doesn't pollute the global JavaScript namespace.
+* It doesn't require page authors to learn a different, one-off API for every new tool.
+* It doesn't require page authors to expose the same data multiple times.
+* It allows page authors to add, remove or change vendors easily.
+
+## So why do we need a library?
+
+The dataLayer system make things very easy for page authors. The syntax is simple, and there are no
+libraries to load. But this system does make life a little more difficult for vendors and tools
+that want to consume the data. That's where this library comes in. 
+
+This project provides the ability to listen for dataLayer messages and to read the key/value pairs 
+that have been set by all the previous messages. It can be used by the tools/vendors mentioned above, 
+or by page authors that need to read back the data they've emitted.
+
+To use this library, you'll need to get it onto the page. You can do this by hosting a copy and 
+sourcing it from the page, or by compiling it into your own JavaScript library. Once it's on the 
+page, you can create a new helper object like this:
+
+```js
+var helper = new DataLayerHelper(dataLayer);
+```
+
+This helper object will listen for new messages on the given dataLayer.  Each new message will be 
+merged into the helper's "abstract data model".  This internal model object holds the most recent
+value for all keys which have been set on messages processed by the helper. 
+
+You can retrieve values from the data model by using the helper's get() method:
+
+```js
+helper.get('category');   // Returns "Science".
+```
+
+TODO(bkuhn): More documentation coming here...
+
+
+
 
 For more background on what a "dataLayer" is, please see:
 
