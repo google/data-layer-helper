@@ -3,12 +3,15 @@ This library provides the ability to process messages passed onto a dataLayer qu
 
 - [Background](#what-is-a-datalayer-queue)
 - [Why Do We Need a Library?](#why-do-we-need-a-library)
-- [How Messages Are Merged](#how-messages-are-merged)
+- [The Abstract Data Model](#the-abstract-data-model)
     - [Overwriting Existing Values](#overwriting-existing-values)
     - [Recursively Merging Values](#recursively-merging-values)
     - [Meta Commands](#meta-commands)
     - [Native Methods](#native-methods)
     - [Custom Methods](#custom-methods)
+- [Listening for Messages](#listening-for-messages)
+    - [Processing the Past](#processing-the-past)
+- [Summary](#summary)
 - [Build and Test](#build-and-test)
 - [License](#license)
   
@@ -93,9 +96,11 @@ Using the helper, you can retrieve the nested value using dot-notation:
 helper.get('one.two.three');     // Returns 4.
 helper.get('one.two');           // Returns {three: 4}.
 ```
-## How Messages Are Merged
-As each message is pushed onto the dataLayer, the abstract data model must be updated.
-The helper library does this using a well-defined process. 
+## The Abstract Data Model
+As mentioned above, the abstract data model is an internal representation, which hold
+the most recent value for all keys that have been set by a dataLayer message. This 
+means that as each message is pushed onto the dataLayer, the abstract data model must 
+be updated. The helper library does this using a well-defined process. 
 
 As each message is processed, its key/value pairs will be added to the abstract data 
 model. If the key doesn't currently exist in the model, this operation is simple. 
@@ -362,14 +367,54 @@ The following example demonstrates overwriting a value:
   </tr>
 </table>
 
+## Listening for Messages
+When creating a DataLayerHelper object, you can also specify a callback function to be called 
+whenever a message is pushed onto the given dataLayer. This allows your code to be notified
+immediately whenever the dataLayer has been updated, which is a key advantage of the message
+queue approach.
 
+```js
+function listener(message, model) {
+  // Message has been pushed. 
+  // The helper has merged it onto the model.
+  // Now use the message and the updated model to do something.
+}
+var helper = new DataLayerHelper(dataLayer, listener);
+```
 
+### Processing the Past
+Tools that are loaded onto the page asynchronously or lazily will appreciate that you can also
+opt to process message that were pushed onto the dataLayer in the past. This can be done by 
+passing true as the third parameter in the DataLayerHelper constructor.
 
+```js
+function listener(message, model) {
+  // Message has been pushed. 
+  // The helper has merged it onto the model.
+  // Now use the message and the updated model to do something.
+}
+var helper = new DataLayerHelper(dataLayer, listener, true);
+```
 
-TODO(bkuhn): More documentation coming here...
+Using this option means that your listener callback will be called once for every message that
+has ever been pushed onto the given dataLayer. And on each call to the callback, the model
+will represent the abstract model at the time of the message.
 
+## Summary
+We've seen above that the dataLayer provides a simple API for page authors. They simply define
+an array called dataLayer, then push messages onto it. 
 
+There are three types of messages:
+* Standard Messages (Objects)
+* Native Method Calls (Command Arrays)
+* Custom Method Calls (Functions)
 
+This helper library provides tools and vendors a way to consume these messages. It automatically
+listens for new messages and merges them onto its abstract data model. You can query the model
+using the get() API, or you can get message notifications with a callback function.
+
+At this point, we highly recommend that you read the code and browse the tests for examples of
+how the library works and how it can be used.
 
 ## Build and Test
 
