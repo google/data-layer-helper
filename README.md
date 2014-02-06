@@ -1,5 +1,4 @@
 # Data Layer Helper Library
-
 This library provides the ability to process messages passed onto a dataLayer queue.
 
 A dataLayer queue is simply a JavaScript array that lives on a webpage. 
@@ -36,7 +35,6 @@ this data in a standard way, so page authors can avoid using a bunch of propriet
 * It allows page authors to add, remove or change vendors easily.
 
 ## So why do we need a library?
-
 The dataLayer system make things very easy for page authors. The syntax is simple, and there are no
 libraries to load. But this system does make life a little more difficult for vendors and tools
 that want to consume the data. That's where this library comes in. 
@@ -62,6 +60,65 @@ You can retrieve values from the data model by using the helper's get() method:
 ```js
 helper.get('category');   // Returns "Science".
 ```
+
+As mentioned above, messages passed onto the dataLayer can be hierarchical. For example, a page 
+author might push the following message, which has data multiple levels deep:
+
+```js
+dataLayer.push({
+  one: {
+    two: {
+      three: 4
+    }
+  }
+});
+```
+
+Using the helper, you can retrieve the nested value using dot-notation:
+
+```js
+helper.get('one.two.three');     // Returns 4.
+helper.get('one.two');           // Returns {three: 4}.
+```
+# How messages are merged
+As each message is pushed onto the dataLayer, the abstract data model must be updated.
+The helper library does this using a well-defined process. 
+
+As each message is processed, its key/value pairs will be added to the abstract data 
+model. If the key doesn't currently exist in the model, this operation is simple. 
+The pair is simply added to the model object. But in the case of key conflicts, we have
+to specify how values will be overwritten and/or merged.
+
+There are two possible actions to take when merging a key/value pair onto the abstract 
+model; overwriting the existing value or recursively merging the new value onto the 
+existing value. The action taken will depend on the type of the two values. For this, 
+we define three types of values:
+
+* JavaScript Arrays
+* "Plain" Objects
+* Everything else
+
+Hopefully, JavaScript Arrays are self-explanatory. "Plain" Objects are JavaScript 
+objects that were created via Object literal notation (e.g. {one: 2}) or via "new Object".
+Nulls, Dates, RegExps, Windows, DOM Elements, etc. are not "Plain". Those fall into the 
+category of "everything else", along with strings, numbers, booleans, undefined, etc.  
+
+Once the type of the new and existing values has been categorized this way, we can use the 
+following table to describe what action will happen for that key/value pair:
+
+Existing Value | New Value    | Merging Action
+---------------|--------------|--------------------------
+Array          | Array        | Recursively merge
+Array          | Plain Object | Overwrite existing value
+Array          | Other        | Overwrite existing value
+Plain Object   | Array        | Overwrite existing value
+Plain Object   | Plain Object | Recursively merge
+Plain Object   | Other        | Overwrite existing value
+Other          | Array        | Overwrite existing value
+Other          | Plain Object | Overwrite existing value
+Other          | Other        | Overwrite existing value
+
+
 
 TODO(bkuhn): More documentation coming here...
 
