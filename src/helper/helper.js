@@ -97,16 +97,26 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
    */
   this.unprocessed_ = [];
 
+  /**
+   * The interface to the internal dataLayer model that is exposed to custom
+   * methods. Custom methods will the executed with this interface as the value
+   * of 'this', allowing users to manipulate the model using this.get and
+   * this.set.
+   * @type {!Object}
+   * @private
+   */
+  this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
+
   // Process the existing/past states.
   this.processStates_(dataLayer, !opt_listenToPast);
 
   // Add listener for future state changes.
-  var helper = this;
   var oldPush = dataLayer.push;
+  var that = this;
   dataLayer.push = function() {
     var states = [].slice.call(arguments, 0);
     var result = oldPush.apply(dataLayer, states);
-    helper.processStates_(states);
+    that.processStates_(states);
     return result;
   };
 };
@@ -149,7 +159,9 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
 
 /**
  * Merges the given update objects (states) onto the helper's model, calling
- * the listener each time the model is updated.
+ * the listener each time the model is updated. If a command array is pushed
+ * into the dataLayer, the method will be parsed and applied to the value found
+ * at the key, if a one exists.
  *
  * @param {Array.<Object>} states The update objects to process, each
  *     representing a change to the state of the page.
@@ -168,15 +180,80 @@ helper.DataLayerHelper.prototype.processStates_ =
   // itself is causing new states to be pushed onto the dataLayer.
   while (this.executingListener_ === false && this.unprocessed_.length > 0) {
     var update = this.unprocessed_.shift();
-    if (!plain.isPlainObject(update)) continue;
-    for (var key in update) {
-      helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
+    if (helper.isArray_(update)) {
+      helper.processCommand_(update, this.model_);
+    } else if (typeof update == 'function') {
+      var that = this;
+      try {
+        update.call(this.abstractModelInterface_);
+      } catch (e) {
+        // Catch any exceptions to we don't drop subsequent updates.
+        // TODO: Add some sort of logging when this happens.
+      }
+    } else if (plain.isPlainObject(update)) {
+      for (var key in update) {
+        helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
+      }
+    } else {
+      continue;
     }
     if (!opt_skipListener) {
       this.executingListener_ = true;
       this.listener_(this.model_, update);
       this.executingListener_ = false;
     }
+  }
+};
+
+
+/**
+ * Helper function that will build the abstract model interface using the
+ * supplied dataLayerHelper.
+ *
+ * @param {DataLayerHelper} dataLayerHelper The helper class to construct the
+ *     abstract model interface for.
+ * @return {Object} The interface to the abstract data layer model that is given
+ *     to Custom Methods.
+ * @private
+ */
+helper.buildAbstractModelInterface_ = function(dataLayerHelper) {
+  return {
+    'set': function(key, value) {
+      helper.merge_(helper.expandKeyValue_(key, value),
+          dataLayerHelper.model_);
+    },
+    'get': function(key) {
+      return dataLayerHelper.get(key);
+    }
+  };
+};
+
+
+/**
+ * Applies the given method to the value in the dataLayer with the given key.
+ * If the method is a valid function of the value, the method will be applies
+ * with any arguments passed in.
+ *
+ * @param {Array.<Object>} command The array containing the key with the
+ *     method to execute and optional arguments for the method.
+ * @param {Object|Array} model The current dataLayer model.
+ * @private
+ */
+helper.processCommand_ = function(command, model) {
+  if (!helper.isString_(command[0])) return;
+  var path = command[0].split('.');
+  var method = path.pop();
+  var args = command.slice(1);
+  var target = model;
+  for (var i = 0; i < path.length; i++) {
+    if (target[path[i]] === undefined) return;
+    target = target[path[i]];
+  }
+  try {
+    target[method].apply(target, args);
+  } catch (e) {
+    // Catch any exception so we don't drop subsequent updates.
+    // TODO: Add some sort of logging here when this happens.
   }
 };
 
@@ -219,6 +296,18 @@ helper.expandKeyValue_ = function(key, value) {
  */
 helper.isArray_ = function(value) {
   return plain.type(value) == 'array';
+};
+
+
+/**
+ * Determines if the given value is a string.
+ *
+ * @param {*} value The value to test.
+ * @return {boolean} True iff the given value is a string.
+ * @private
+ */
+helper.isString_ = function(value) {
+  return plain.type(value) == 'string';
 };
 
 
