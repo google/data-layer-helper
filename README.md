@@ -1,6 +1,19 @@
 # Data Layer Helper Library
 This library provides the ability to process messages passed onto a dataLayer queue.
 
+- [Background](#what-is-a-datalayer-queue)
+- [Why Do We Need a Library?](#why-do-we-need-a-library)
+- [How Messages Are Merged](#how-messages-are-merged)
+    - [Overwriting Existing Values](#overwriting-existing-values)
+    - [Recursively Merging Values](#recursively-merging-values)
+    - [Meta Commands](#meta-commands)
+    - [Native Methods](#native-methods)
+    - [Custom Methods](#custom-methods)
+- [Build and Test](#build-and-test)
+- [License](#license)
+  
+
+## What is a dataLayer queue?
 A dataLayer queue is simply a JavaScript array that lives on a webpage. 
 
 ```html
@@ -34,7 +47,7 @@ this data in a standard way, so page authors can avoid using a bunch of propriet
 * It doesn't require page authors to expose the same data multiple times.
 * It allows page authors to add, remove or change vendors easily.
 
-## So why do we need a library?
+## Why do we need a library?
 The dataLayer system make things very easy for page authors. The syntax is simple, and there are no
 libraries to load. But this system does make life a little more difficult for vendors and tools
 that want to consume the data. That's where this library comes in. 
@@ -52,7 +65,7 @@ var helper = new DataLayerHelper(dataLayer);
 ```
 
 This helper object will listen for new messages on the given dataLayer.  Each new message will be 
-merged into the helper's "abstract data model".  This internal model object holds the most recent
+merged into the helper's **"abstract data model"**.  This internal model object holds the most recent
 value for all keys which have been set on messages processed by the helper. 
 
 You can retrieve values from the data model by using the helper's get() method:
@@ -80,7 +93,7 @@ Using the helper, you can retrieve the nested value using dot-notation:
 helper.get('one.two.three');     // Returns 4.
 helper.get('one.two');           // Returns {three: 4}.
 ```
-# How messages are merged
+## How Messages Are Merged
 As each message is pushed onto the dataLayer, the abstract data model must be updated.
 The helper library does this using a well-defined process. 
 
@@ -118,17 +131,244 @@ Other          | Array        | Overwrite existing value
 Other          | Plain Object | Overwrite existing value
 Other          | Other        | Overwrite existing value
 
+### Overwriting Existing Values
+When the merging action is "Overwrite exsting value", the result of the operation is very
+simple. The existing value will be completely discarded and the new value will take its 
+place in the abstract data model. The following table provides some examples:
+
+
+Existing Value   | New Value        | Result of Overwrite
+-----------------|------------------|---------------------
+[1, 2, 3]        | 'hello'          | 'hello'
+{ducks: 'quack'} | [1, 2, 3]        | [1, 2, 3]
+{ducks: 'quack'} | 'hello'          | 'hello'
+'hello'          | [1, 2, 3]        | [1, 2, 3]
+'hello'          | {ducks: 'quack'} | {ducks: 'quack'}
+'hello'          | 42               | 42
+
+### Recursively Merging Values
+When the merging action is "Recursively Merge", the result of the operation will be the 
+result of iterating through each property in the new value, and for each property, deciding 
+how to copy that sub-key/value into the abstract data model by looking at the type of that 
+sub-key in the existing value. If the key does not exist on the existing value, the new 
+value is simply assigned to the abstract model. The following examples demonstrate this:
+
+Existing Value     | New Value                     | Result of Overwrite
+-------------------|-------------------------------|----------------------------
+{one: 1, three: 3} | {two: 2}                      | {one: 1, three: 3, two: 2}
+{one: 1, three: 3} | {three: 4}                    | {one: 1, three: 4}
+{one: {two: 3}}    | {one: {four: 5}}              | {one: {two: 3, four: 5}}
+{one: {two: 3}}    | {two: 4}                      | {one: {two: 3}, two: 4}
+[]                 | ['hello']                     | ['hello']
+[1]                | [undefined, 2]                | [1, 2]
+[1, {two: 3}]      | [undefined, {two: 4, six: 8}] | [1, {two: 4, six: 8}] 
+
+### Meta Commands
+Using the above methods alone, some operations on the abstract model are somewhat cumbersome.
+For example, appending items onto the end of an existing array requires you to know the 
+length of the existing array and then requires you to clumsily build an array that can be 
+merged onto the existing value.  To make these cases easier, we provide a set of alternative 
+syntaxes for updating values that are already in the abstract data model. 
+
+The first of these syntaxes allows you to call any method supported on the existing type. 
+For example, if the existing value in the abstract model is an Array, you'd have a wide 
+variety of APIs that can be called (e.g. push, pop, concat, shift, unshift, etc.).  To invoke
+this syntax, you would push a "command array" onto the dataLayer instead of a normal message 
+object.  
+
+```js
+dataLayer.push(['abc.push', 4, 5, 6]);
+```
+
+A command array is a normal JavaScript array, where the first element is a string. The string 
+contains the key of the value to update, followed by a dot (.), followed by the name of the 
+method to invoke on the value.  In the above example, the key to update is 'abc', and the 
+method to invoke is the 'push' method.  The string may be followed by zero or more arguments, 
+which will be passed to the invoked method.  
+
+If the given method name does not exist on the existing value, or if the invocation throws an 
+exception, the assignment will be ignored, and a warning message will be logged to the browser's 
+developer console (if available).
+
+### Native Methods
+Browsers come with dozens, if not hundreds, of useful APIs. Any method supported by the 
+existing value can be called using the command array syntax. Here are some additional examples:
+
+<table>
+  <tr>
+    <td><b>Existing Key:</b></td>
+    <td>abc</td>
+  </tr>
+  <tr>
+    <td><b>Existing Value:</b></td>
+    <td>[1, 2, 3]</td>
+  </tr>
+  <tr>
+    <td><b>Command Array:</b></td>
+    <td>dataLayer.push(['abc.push', 4, 5, 6])</td>
+  </tr>
+  <tr>
+    <td><b>Result:</b></td>
+    <td>[1, 2, 3, 4, 5, 6]</td>
+  </tr>
+</table>
+
+In the following example, no arguments are provided:
+
+<table>
+  <tr>
+    <td><b>Existing Key:</b></td>
+    <td>abc</td>
+  </tr>
+  <tr>
+    <td><b>Existing Value:</b></td>
+    <td>[1, 2, 3]</td>
+  </tr>
+  <tr>
+    <td><b>Command Array:</b></td>
+    <td>dataLayer.push(['abc.pop'])</td>
+  </tr>
+  <tr>
+    <td><b>Result:</b></td>
+    <td>[1, 2]</td>
+  </tr>
+</table>
+
+
+In the following example, the value to update (bbb) is nested inside a top level object (aaa):
+
+<table>
+  <tr>
+    <td><b>Existing Key:</b></td>
+    <td>aaa.bbb</td>
+  </tr>
+  <tr>
+    <td><b>Existing Value:</b></td>
+    <td>[1, 2, 3]</td>
+  </tr>
+  <tr>
+    <td><b>Command Array:</b></td>
+    <td>dataLayer.push(['aaa.bbb.push', 4])</td>
+  </tr>
+  <tr>
+    <td><b>Result:</b></td>
+    <td>[1, 2, 3, 4]</td>
+  </tr>
+</table>
+
+And the following example demonstrates an operation on a Date object.  Remember that all types 
+are supported, not just Arrays:
+
+<table>
+  <tr>
+    <td><b>Existing Key:</b></td>
+    <td>time</td>
+  </tr>
+  <tr>
+    <td><b>Existing Value:</b></td>
+    <td>Fri Dec 20 2013 15:23:22 GMT-0800 (PST)</td>
+  </tr>
+  <tr>
+    <td><b>Command Array:</b></td>
+    <td>dataLayer.push(['time.setYear', 2014])</td>
+  </tr>
+  <tr>
+    <td><b>Result:</b></td>
+    <td>Fri Dec 20 2014 15:23:22 GMT-0800 (PST)</td>
+  </tr>
+</table>
+
+Notice that because command arrays are processed asynchronously, nothing can be done with the 
+return values from these method invocations. This brings us to our second syntax for updating 
+values in the abstract data model.
+
+### Custom Methods
+So far, we've seen that objects (messages) can be pushed onto the dataLayer, as well as arrays 
+(command arrays). Pushing a function onto the dataLayer will also allow you to update the abstract 
+data model, but with custom code. This technique has the added benefit of being able to handle 
+return values of any native method calls made from within the function.
+
+When a function is processed, it will be executed in the context of the abstract data model. The 
+value of "this" will be an interface that represents the current abstract data model. This 
+interfact will provide two APIs: get(key) and set(key, value). The following examples demonstrate 
+how these APIs can be used to update values in the abstract data model.
+
+<table>
+  <tr>
+    <td><b>Existing Key:</b></td>
+    <td>time</td>
+  </tr>
+  <tr>
+    <td><b>Existing Value:</b></td>
+    <td>Fri Dec 20 2013 15:23:22 GMT-0800 (PST)</td>
+  </tr>
+  <tr>
+    <td><b>Custom function:</b></td>
+    <td><pre>dataLayer.push(function() {
+  this.get('time').setMonth(0); 
+})</pre></td>
+  </tr>
+  <tr>
+    <td><b>Result:</b></td>
+    <td>Fri Jan 20 2013 15:23:22 GMT-0800 (PST)</td>
+  </tr>
+</table>
+
+The following example demonstrates updating a nested value:
+
+<table>
+  <tr>
+    <td><b>Existing Key:</b></td>
+    <td>aaa.bbb.ccc</td>
+  </tr>
+  <tr>
+    <td><b>Existing Value:</b></td>
+    <td>[1, 2, 3]</td>
+  </tr>
+  <tr>
+    <td><b>Custom function:</b></td>
+    <td><pre>dataLayer.push(function() {
+  var ccc = this.get('aaa.bbb.ccc');
+  ccc.push(ccc.pop() * 2);
+})</pre></td>
+  </tr>
+  <tr>
+    <td><b>Result:</b></td>
+    <td>[1, 2, 6]</td>
+  </tr>
+</table>
+
+
+The following example demonstrates overwriting a value:
+
+<table>
+  <tr>
+    <td><b>Existing Key:</b></td>
+    <td>abc</td>
+  </tr>
+  <tr>
+    <td><b>Existing Value:</b></td>
+    <td>[1, 2, 3]</td>
+  </tr>
+  <tr>
+    <td><b>Custom function:</b></td>
+    <td><pre>dataLayer.push(function() {
+  this.set('abc', {xyz: this.get('abc')});
+})</pre></td>
+  </tr>
+  <tr>
+    <td><b>Result:</b></td>
+    <td>{xyz: [1, 2, 3]}</td>
+  </tr>
+</table>
+
+
+
 
 
 TODO(bkuhn): More documentation coming here...
 
 
-
-
-For more background on what a "dataLayer" is, please see:
-
-1. [Justin Cutroni's Original Blog Post](http://cutroni.com/blog/2012/05/14/make-analytics-better-with-tag-management-and-a-data-layer/)
-2. [Google Tag Manager Docs](https://developers.google.com/tag-manager/devguide#datalayer)
 
 
 ## Build and Test
