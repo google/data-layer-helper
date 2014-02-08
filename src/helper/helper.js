@@ -70,7 +70,7 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
 
   /**
    * The listener to notify of changes to the dataLayer.
-   * @type {function(!Object, !Object)}
+   * @type {function(!Object)}
    * @private
    */
   this.listener_ = opt_listener || function() {};
@@ -199,7 +199,7 @@ helper.DataLayerHelper.prototype.processStates_ =
     }
     if (!opt_skipListener) {
       this.executingListener_ = true;
-      this.listener_(this.model_, update);
+      this.listener_.call(this.model_, update);
       this.executingListener_ = false;
     }
   }

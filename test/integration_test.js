@@ -57,27 +57,27 @@ test('Basic Operations', function() {
   ok(helper.get('two') === undefined);
 
   dataLayer.push({one: 1, two: 2});
-  assertCallback([{one: 1, two: 2}, {one: 1, two: 2}]);
+  assertCallback([{one: 1, two: 2}]);
   ok(helper.get('one') === 1);
   ok(helper.get('two') === 2);
 
   dataLayer.push({two: 3});
-  assertCallback([{one: 1, two: 3}, {two: 3}]);
+  assertCallback([{two: 3}]);
   ok(helper.get('one') === 1);
   ok(helper.get('two') === 3);
 
   dataLayer.push({two: 2});
-  assertCallback([{one: 1, two: 2}, {two: 2}]);
+  assertCallback([{two: 2}]);
   ok(helper.get('one') === 1);
   ok(helper.get('two') === 2);
 
   dataLayer.push({one: {three: 3}});
-  assertCallback([{one: {three: 3}, two: 2}, {one: {three: 3}}]);
+  assertCallback([{one: {three: 3}}]);
   deepEqual(helper.get('one'), {three: 3});
   ok(helper.get('two') === 2);
 
   dataLayer.push({one: {four: 4}});
-  assertCallback([{one: {three: 3, four: 4}, two: 2}, {one: {four: 4}}]);
+  assertCallback([{one: {four: 4}}]);
   deepEqual(helper.get('one'), {three: 3, four: 4});
   ok(helper.get('one.four') === 4);
   ok(helper.get('two') === 2);
@@ -92,7 +92,7 @@ test('Basic Operations', function() {
   ok(helper.get('two') === 2);
 
   dataLayer.push({five: 5});
-  assertCallback([{one: {three: 3, four: 4}, two: 2, five: 5}, {five: 5}]);
+  assertCallback([{five: 5}]);
   equal(dataLayer.length, 2);
   ok(helper.get('one.four') === 4);
   ok(helper.get('five') === 5);
