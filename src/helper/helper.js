@@ -199,7 +199,7 @@ helper.DataLayerHelper.prototype.processStates_ =
     }
     if (!opt_skipListener) {
       this.executingListener_ = true;
-      this.listener_.call(this.model_, update);
+      this.listener_.call(this.abstractModelInterface_, update);
       this.executingListener_ = false;
     }
   }
