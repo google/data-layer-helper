@@ -97,7 +97,7 @@ helper.get('one.two.three');     // Returns 4.
 helper.get('one.two');           // Returns {three: 4}.
 ```
 ## The Abstract Data Model
-As mentioned above, the abstract data model is an internal representation, which hold
+As mentioned above, the abstract data model is an internal representation, which holds
 the most recent value for all keys that have been set by a dataLayer message. This 
 means that as each message is pushed onto the dataLayer, the abstract data model must 
 be updated. The helper library does this using a well-defined process. 
