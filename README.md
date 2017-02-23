@@ -374,7 +374,7 @@ immediately whenever the dataLayer has been updated, which is a key advantage of
 queue approach.
 
 ```js
-function listener(message, model) {
+function listener(model, message) {
   // Message has been pushed. 
   // The helper has merged it onto the model.
   // Now use the message and the updated model to do something.
@@ -388,7 +388,7 @@ opt to process message that were pushed onto the dataLayer in the past. This can
 passing true as the third parameter in the DataLayerHelper constructor.
 
 ```js
-function listener(message, model) {
+function listener(model, message) {
   // Message has been pushed. 
   // The helper has merged it onto the model.
   // Now use the message and the updated model to do something.
