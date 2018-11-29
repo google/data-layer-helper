@@ -51,7 +51,7 @@ this data in a standard way, so page authors can avoid using a bunch of propriet
 * It allows page authors to add, remove or change vendors easily.
 
 ## Why do we need a library?
-The dataLayer system make things very easy for page authors. The syntax is simple, and there's no
+The dataLayer system makes things very easy for page authors. The syntax is simple, and there's no
 extra code to load. But this system _does_ make life a little more difficult for vendors and tools
 that want to consume the data. That's where this library comes in. 
 
