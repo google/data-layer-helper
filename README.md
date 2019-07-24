@@ -90,12 +90,35 @@ dataLayer.push({
 });
 ```
 
+## Dot-Notation
+
 Using the helper, you can retrieve the nested value using dot-notation:
 
 ```js
 helper.get('one.two.three');     // Returns 4.
 helper.get('one.two');           // Returns {three: 4}.
 ```
+
+This dot notation can also be used be used when pushing nested values:
+
+```js
+dataLayer.push({
+  'one.two.three': 4
+});
+```
+
+Pushed object keys will only be processed for dot-notation at the top level. Periods
+in nested object keys will be treated literally, not as dot-notation.
+
+Conflicting pushed keys will resolve to the sequentially last pushed value.
+
+```js
+dataLayer.push({
+  'one.two.three': 4, 'one.two': { 'three': 5 }
+});
+helper.get('one.two.three');     // Returns 5.
+```
+
 ## The Abstract Data Model
 As mentioned above, the abstract data model is an internal representation, which holds
 the most recent value for all keys that have been set by a dataLayer message. This 
