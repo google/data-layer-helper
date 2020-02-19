@@ -36,8 +36,9 @@ function assertProcessStates(states, expectedModel, expectedListenerCalls) {
     this.unprocessed_ = [];
     this.executingListener_ = false;
     this.listenerCalls_ = [];
+    var that = this;
     this.listener_ = function() {
-      this.listenerCalls_.push(
+      that.listenerCalls_.push(
           jQuery.extend(true, [], [].slice.call(arguments, 0)));
     };
     this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
@@ -57,11 +58,9 @@ function assertProcessStates(states, expectedModel, expectedListenerCalls) {
 
 test('processStates', function() {
   assertProcessStates([], {}, []);
-  assertProcessStates([{a: 1}], {a: 1}, [[{a: 1}, {a: 1}]]);
-  assertProcessStates([{a: 1}, {a: 2}], {a: 2},
-      [[{a: 1}, {a: 1}], [{a: 2}, {a: 2}]]);
-  assertProcessStates([{'a.b': 1}], {a: {b: 1}},
-      [[{a: {b: 1}}, {'a.b': 1}]]);
+  assertProcessStates([{a: 1}], {a: 1}, [[{a: 1}]]);
+  assertProcessStates([{a: 1}, {a: 2}], {a: 2}, [[{a: 1}], [{a: 2}]]);
+  assertProcessStates([{'a.b': 1}], {a: {b: 1}}, [[{'a.b': 1}]]);
 });
 
 test('processStates_customMethods', function() {
@@ -70,19 +69,19 @@ test('processStates_customMethods', function() {
   assertProcessStates(
       [{a: 0}, customMethod],
       {a: 1},
-      [[{a: 0}, {a: 0}], [{a: 1}, customMethod]]);
+      [[{a: 0}], [customMethod]]);
 
   customMethod = function() { this.set('b', 'one'); };
   assertProcessStates(
       [customMethod],
       {b: 'one'},
-      [[{b: 'one'}, customMethod]]);
+      [[customMethod]]);
 
   customMethod = function() { this.set('c.d', [3]); };
   assertProcessStates(
       [customMethod],
       {c: {d: [3]}},
-      [[{c: {d: [3]}}, customMethod]]);
+      [[customMethod]]);
 
   var customMethod = function() {
     var a = this.get('a');
@@ -92,8 +91,8 @@ test('processStates_customMethods', function() {
       [{a: 1, b: 2}, customMethod],
       {a: 1, b: 2},
       [
-        [{a: 1, b: 2}, {a: 1, b: 2}],
-        [{a: 1, b: 2}, customMethod]
+        [{a: 1, b: 2}],
+        [customMethod]
       ]);
 
   customMethod = function() {
@@ -104,8 +103,8 @@ test('processStates_customMethods', function() {
       [{a: {b: 2}}, customMethod],
       {a: {b: 2}},
       [
-        [{a: {b: 2}}, {a: {b: 2}}],
-        [{a: {b: 2}}, customMethod]
+        [{a: {b: 2}}],
+        [customMethod]
       ]);
 
   customMethod = function() {
@@ -116,8 +115,8 @@ test('processStates_customMethods', function() {
       [{a: {b: {c: [3]}}}, customMethod],
       {a: {b: {c: [3]}}},
       [
-        [{a: {b: {c: [3]}}}, {a: {b: {c: [3]}}}],
-        [{a: {b: {c: [3]}}}, customMethod]
+        [{a: {b: {c: [3]}}}],
+        [customMethod]
       ]);
 
   var products = [
@@ -133,8 +132,8 @@ test('processStates_customMethods', function() {
       [{'products': products}, customMethod],
       {'products': products, numProducts: 3},
       [
-        [{'products': products}, {'products': products}],
-        [{'products': products, numProducts: 3}, customMethod]
+        [{'products': products}],
+        [customMethod]
       ]);
 
   var expectedProducts = [
@@ -152,8 +151,8 @@ test('processStates_customMethods', function() {
       [{'products': products}, customMethod],
       {'products': expectedProducts},
       [
-        [{'products': products}, {'products': products}],
-        [{'products': expectedProducts}, customMethod]
+        [{'products': products}],
+        [customMethod]
       ]);
 
   customMethod = function() {
@@ -168,8 +167,8 @@ test('processStates_customMethods', function() {
       [{'products': products}, customMethod],
       {'products': products, orderTotal: 60},
       [
-        [{'products': products}, {'products': products}],
-        [{'products': products, orderTotal: 60}, customMethod]
+        [{'products': products}],
+        [customMethod]
       ]);
 
   // Test the behavior of processing custom methods where the methods throw
@@ -177,7 +176,7 @@ test('processStates_customMethods', function() {
   var errorFunction = function() {
     throw 'Scary Error';
   };
-  assertProcessStates([errorFunction], {} , [[{}, errorFunction]]);
+  assertProcessStates([errorFunction], {} , [[errorFunction]]);
 
   errorFunction = function() {
     this.set('a', 1);
@@ -187,7 +186,7 @@ test('processStates_customMethods', function() {
   assertProcessStates(
       [errorFunction],
       {a: 1},
-      [[{a: 1}, errorFunction]]);
+      [[errorFunction]]);
 
   errorFunction = function() {
     this.set('a', 3);
@@ -198,8 +197,8 @@ test('processStates_customMethods', function() {
       [{a: 1, b: 2}, errorFunction],
       {a: 3, b: 2},
       [
-        [{a: 1, b: 2}, {a: 1, b: 2}],
-        [{a: 3, b: 2}, errorFunction]
+        [{a: 1, b: 2}],
+        [errorFunction]
       ]);
 
   // Custom methods throwing errors shouldn't affect any messages further down
@@ -212,7 +211,7 @@ test('processStates_customMethods', function() {
       [errorFunction, {a: 2}],
       {a: 2},
       [
-        [{a: 1}, errorFunction],
-        [{a: 2}, {a: 2}]
+        [errorFunction],
+        [{a: 2}]
       ]);
 });
