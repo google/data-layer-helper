@@ -1,5 +1,6 @@
 {
   "name": "data-layer-helper",
+  "description": "JavaScript library for working with dataLayer message queues.",
   "version": "0.1.0",
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -11,5 +12,16 @@
     "grunt-contrib-concat": "~0.3.0",
     "grunt-closure-tools": "~0.8.3",
     "grunt-closure-linter": "~0.1.0"
-  }
+  },
+  "author": "Brian Kuhn <bnkuhn@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/google/data-layer-helper"
+  },
+  "keywords": [
+    "javascript",
+    "array",
+    "queue"
+  ],
+  "license": "Apache-2.0"
 }
