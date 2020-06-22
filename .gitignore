@@ -18,6 +18,9 @@ Desktop.ini
 *.sublime-project
 *.sublime-workspace
 
+# IDEA suite
+.idea/**
+
 # VIM
 .*.sw[a-z]
 *.un~
@@ -63,3 +66,6 @@ scratch/
 build-out/
 build-gen/
 build-bin/
+
+# linter build
+third_party/closure-linter/build/**
