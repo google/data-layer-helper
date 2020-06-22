@@ -463,6 +463,12 @@ grunt
 
 The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
 
+This library is being modernized, and the tests are being moved. You can run the new tests
+
+```bash
+karma start
+```
+
 
 ## License
 

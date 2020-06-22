@@ -13,7 +13,7 @@ module.exports = function(config) {
       // tests
       {pattern: 'spec/**.spec.js'},
       // jquery
-      {pattern: 'spec/lib/jquery*'},
+      {pattern: 'test/lib/jquery*'},
     ],
     preprocessors: {
       // tests are preprocessed for dependencies (closure) and iits
