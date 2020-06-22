@@ -8,7 +8,7 @@ describe('the plain.type function', function() {
 
   describe('null and undefined values', function() {
     it('correctly identifies null', function() {
-      assertType(null,'null');
+      assertType(null, 'null');
     });
 
     it('correctly identifies undefined', function() {
@@ -40,11 +40,11 @@ describe('the plain.type function', function() {
     });
 
     it('identifies small decimals as numbers', function() {
-      assertType(0.000001,'number');
+      assertType(0.000001, 'number');
     });
 
     it('identifies floating points as numbers', function() {
-      assertType(90001.5,'number');
+      assertType(90001.5, 'number');
     });
 
     it('identifies NaN as numbers', function() {
@@ -72,11 +72,11 @@ describe('the plain.type function', function() {
     });
 
     it('identifies functions made with function syntax', function() {
-      assertType(function(){}, 'function');
+      assertType(function() {}, 'function');
     });
 
     it('identifies functions made with arrow notation syntax', function() {
-      assertType(()=>{}, 'function');
+      assertType(() = > {}, 'function');
     });
   });
 
