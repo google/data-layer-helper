@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="521ae45f-4ec5-4c8c-b06b-fc7ff2e49e24" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Gruntfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/Gruntfile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/data-layer-helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/data-layer-helper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/deps.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/deps.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/third_party/closure-compiler" beforeDir="false" afterPath="$PROJECT_DIR$/third_party/closure-compiler" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/third_party/closure-compiler/COPYING" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/third_party/closure-compiler/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/third_party/closure-compiler/compiler.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/third_party/closure-library" beforeDir="false" afterPath="$PROJECT_DIR$/third_party/closure-library" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/third_party/closure-linter" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="tsconfig.json" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1dXkpxQLK20d4eUJKE30VrztxVR" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="javascript.karma.karma_node_package_dir" value="" />
+    <property name="js.buildTools.grunt.grunt-cli.package" value="" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/dist/data-layer-helper2.js" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/dist/data-layer-helper2.js" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/third_party/closure-compiler" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/test" />
+      <recent name="$PROJECT_DIR$/third_party/closure-linter/build" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="js.build_tools.grunt">
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="521ae45f-4ec5-4c8c-b06b-fc7ff2e49e24" name="Default Changelist" comment="" />
+      <created>1592579011669</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1592579011669</updated>
+      <workItem from="1592579016853" duration="74000" />
+      <workItem from="1592579287713" duration="3074000" />
+      <workItem from="1592588931687" duration="4277000" />
+      <workItem from="1592834360496" duration="949000" />
+      <workItem from="1592835619915" duration="427000" />
+      <workItem from="1592839986371" duration="2639000" />
+      <workItem from="1592843054489" duration="7076000" />
+      <workItem from="1592851455762" duration="3797000" />
+      <workItem from="1592855410556" duration="7788000" />
+      <workItem from="1592919168735" duration="5182000" />
+      <workItem from="1592924440135" duration="3587000" />
+      <workItem from="1592930984043" duration="8204000" />
+      <workItem from="1592942700509" duration="5191000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="690" y="687" width="1190" height="363" key="#Closure_Linter" timestamp="1592924595075">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="690" y="687" width="1190" height="363" key="#Closure_Linter/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592924595075" />
+    <state x="735" y="382" width="1185" height="645" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1592858515250">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="735" y="382" width="1185" height="645" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592858515250" />
+    <state x="1132" y="646" width="778" height="405" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1592934360881">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="1132" y="646" width="778" height="405" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592934360881" />
+    <state x="1054" y="484" width="528" height="380" key="#com.intellij.tools.ToolEditorDialog" timestamp="1592858510311">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="1054" y="484" width="528" height="380" key="#com.intellij.tools.ToolEditorDialog/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592858510311" />
+    <state x="105" y="165" width="2990" height="1470" key="DiffContextDialog" timestamp="1592934282359">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="105" y="165" width="2990" height="1470" key="DiffContextDialog/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592934282359" />
+    <state x="966" y="92" width="430" height="268" key="FileChooserDialogImpl" timestamp="1592934072620">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="602" y="191" width="520" height="538" key="FileChooserDialogImpl/0.0.1745.981@0.0.1745.981" timestamp="1592589074735" />
+    <state x="966" y="92" width="430" height="268" key="FileChooserDialogImpl/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592934072620" />
+    <state x="649" y="175" width="1211" height="875" key="SettingsEditor" timestamp="1592858741876">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="649" y="175" width="1211" height="875" key="SettingsEditor/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592858741876" />
+    <state x="1192" y="433" width="262" height="513" key="com.intellij.tools.ToolSelectDialog.dimensionServiceKey" timestamp="1592858510830">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="1192" y="433" width="262" height="513" key="com.intellij.tools.ToolSelectDialog.dimensionServiceKey/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592858510830" />
+    <state x="827" y="-2" width="1541" height="1898" key="search.everywhere.popup" timestamp="1592940134928">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="451" y="-1" width="840" height="1034" key="search.everywhere.popup/0.0.1745.981@0.0.1745.981" timestamp="1592588942896" />
+    <state x="827" y="-2" width="1541" height="1898" key="search.everywhere.popup/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592940134928" />
+    <state x="1309" y="681" width="572" height="280" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1592931014725">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="1309" y="681" width="572" height="280" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592931014725" />
+  </component>
+</project>

@@ -19,17 +19,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    closureLint: {
-      app:{
-        closureLinterPath : 'third_party/closure-linter/closure_linter',
-        src: ['src/**/*.js'],
-        options: {
-          stdout: true,
-          strict: true
-        }
-      }
-    },
-
     closureDepsWriter: {
       options: {
         closureLibraryPath: 'third_party/closure-library',
@@ -40,37 +29,39 @@ module.exports = function(grunt) {
       }
     },
 
-    closureBuilder:  {
+    closureCompiler: {
       options: {
         closureLibraryPath: 'third_party/closure-library',
         compilerFile: 'third_party/closure-compiler/compiler.jar',
-        namespaces: 'helper',
-        compile: true,
         compilerOpts: {
           compilation_level: 'ADVANCED_OPTIMIZATIONS',
-          output_wrapper: '(function(){%output%})();',
+          output_wrapper: `'(function(){%output%})();'`,
+          jscomp_warning: 'lintChecks',
+          closure_pass: true,
         },
+        execOpts: {
+          // fix Error: maxBuffer exceeded
+          maxBuffer: 10000 * 1024,
+        },
+        TieredCompilation: true
       },
       helper: {
-        src: ['third_party/closure-library', 'src'],
-        dest: 'dist/data-layer-helper.js'
-      },
+        src: ['src', 'third_party/closure-library/closure/goog/base.js'],
+        dest: 'dist/data-layer-helper.js',
+      }
     },
 
     qunit: {
       files: ['test/unit.html', 'test/integration.html']
     },
-
   });
 
   grunt.loadNpmTasks('grunt-closure-tools');
-  grunt.loadNpmTasks('grunt-closure-linter');
   grunt.loadNpmTasks('grunt-contrib-qunit');
 
   grunt.registerTask('default', [
-    'closureLint',
     'closureDepsWriter',
-    'closureBuilder',
+    'closureCompiler',
     'qunit'
   ]);
 };
