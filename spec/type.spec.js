@@ -1,12 +1,12 @@
 goog.require('plain');
 
-describe('the plain.type function', function() {
+describe('The plain.type function', function() {
 
   function assertType(value, expected) {
     expect(plain.type(value)).toBe(expected);
   }
 
-  describe('null and undefined values', function() {
+  describe('null and undefined identification behavior', function() {
     it('correctly identifies null', function() {
       assertType(null, 'null');
     });
@@ -16,7 +16,7 @@ describe('the plain.type function', function() {
     });
   });
 
-  describe('boolean values', function() {
+  describe('boolean identification behavior', function() {
     it('identifies true as a boolean', function() {
       assertType(true, 'boolean');
     });
@@ -26,7 +26,7 @@ describe('the plain.type function', function() {
     });
   });
 
-  describe('numeric values', function() {
+  describe('number identification behavior', function() {
     it('identifies 0 as a number', function() {
       assertType(0, 'number');
     });
@@ -76,7 +76,7 @@ describe('the plain.type function', function() {
     });
 
     it('identifies functions made with arrow notation syntax', function() {
-      assertType(() = > {}, 'function');
+      assertType(() => {}, 'function');
     });
   });
 
