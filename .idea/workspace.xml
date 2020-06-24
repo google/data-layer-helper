@@ -20,15 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="521ae45f-4ec5-4c8c-b06b-fc7ff2e49e24" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dist/output.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dist/output.min.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Gruntfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/Gruntfile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/helper/helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/helper/helper.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plain/is_plain_object.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/plain/is_plain_object.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/data-layer-helper-2.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/data-layer-helper-2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/data-layer-helper-2.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/data-layer-helper-2.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/output.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/deps.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/third_party/closure-compiler" beforeDir="false" afterPath="$PROJECT_DIR$/third_party/closure-compiler" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/third_party/closure-compiler/COPYING" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/third_party/closure-compiler/README" beforeDir="false" />
@@ -113,6 +110,7 @@
       <workItem from="1592930984043" duration="8204000" />
       <workItem from="1592942700509" duration="5191000" />
       <workItem from="1593004252979" duration="205000" />
+      <workItem from="1593025129991" duration="914000" />
     </task>
     <servers />
   </component>
@@ -157,6 +155,22 @@
     </state>
     <state x="602" y="191" width="520" height="538" key="FileChooserDialogImpl/0.0.1745.981@0.0.1745.981" timestamp="1592589074735" />
     <state x="966" y="92" width="424" height="238" key="FileChooserDialogImpl/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1593004456099" />
+    <state width="1837" height="272" key="GridCell.Tab.0.bottom" timestamp="1593025170884">
+      <screen x="0" y="0" width="3200" height="1800" />
+    </state>
+    <state width="1837" height="272" key="GridCell.Tab.0.bottom/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1593025170884" />
+    <state width="1837" height="272" key="GridCell.Tab.0.center" timestamp="1593025170884">
+      <screen x="0" y="0" width="3200" height="1800" />
+    </state>
+    <state width="1837" height="272" key="GridCell.Tab.0.center/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1593025170884" />
+    <state width="1837" height="272" key="GridCell.Tab.0.left" timestamp="1593025170884">
+      <screen x="0" y="0" width="3200" height="1800" />
+    </state>
+    <state width="1837" height="272" key="GridCell.Tab.0.left/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1593025170884" />
+    <state width="1837" height="272" key="GridCell.Tab.0.right" timestamp="1593025170884">
+      <screen x="0" y="0" width="3200" height="1800" />
+    </state>
+    <state width="1837" height="272" key="GridCell.Tab.0.right/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1593025170884" />
     <state x="649" y="175" width="1211" height="875" key="SettingsEditor" timestamp="1592858741876">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

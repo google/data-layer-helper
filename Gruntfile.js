@@ -33,15 +33,15 @@ module.exports = function(grunt) {
     },
     // Using https://www.npmjs.com/package/google-closure-compiler
     'closure-compiler': {
-      my_target: {
+      helper: {
         files: {
-          'dist/data-layer-helper-2.js': ['src/**/*.js']
+          'dist/data-layer-helper-2.js':
+              ['src/plain/is_plain_object.js', 'src/helper/helper.js'],
         },
         options: {
-          js: '/node_modules/google-closure-library/**.js',
-         // externs: closurePackage.compiler.CONTRIB_PATH + '/externs/jquery-1.9.js',
-          compilation_level: 'SIMPLE_OPTIMIZATIONS',
-          dependency_mode: 'SORT_ONLY',
+          js: '/node_modules/google-closure-library/closure/goog/base.js',
+          compilation_level: 'SIMPLE',
+          manage_closure_dependencies: false,
           language_in: 'ECMASCRIPT5_STRICT',
           create_source_map: 'dist/data-layer-helper-2.js.map',
           output_wrapper: '(function(){%output%})();'
@@ -66,7 +66,8 @@ module.exports = function(grunt) {
         TieredCompilation: true
       },
       helper: {
-        src: ['src', 'third_party/closure-library/closure/goog/base.js'],
+        src: ['src/plain/js_plain_object.js', 'src/helper/helper.js',
+          'third_party/closure-library/closure/goog/base.js'],
         dest: 'dist/data-layer-helper-3.js',
       }
     },
@@ -80,7 +81,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
 
   grunt.registerTask('default', [
-    'closureDepsWriter',
+    //'closureDepsWriter',
     'closure-compiler',
   //  'closureCompiler',
     'qunit'
