@@ -40,6 +40,7 @@ module.exports = function(grunt) {
         },
         options: {
           js: '/node_modules/google-closure-library/closure/goog/base.js',
+          entry_point: 'src/helper/helper.js',
           compilation_level: 'SIMPLE',
           manage_closure_dependencies: false,
           language_in: 'ECMASCRIPT5_STRICT',
