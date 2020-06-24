@@ -19,7 +19,7 @@ Desktop.ini
 *.sublime-workspace
 
 # IDEA suite
-.idea/**
+.idea
 
 # VIM
 .*.sw[a-z]

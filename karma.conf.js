@@ -11,13 +11,13 @@ module.exports = function(config) {
       // source files
       {pattern: 'src/**/*.js', included: false},
       // tests
-      {pattern: 'spec/**.spec.js'},
+      {pattern: 'test/**_test.js'},
       // jquery
       {pattern: 'test/lib/jquery*'},
     ],
     preprocessors: {
       // tests are preprocessed for dependencies (closure) and iits
-      'spec/**/*.spec.js': ['closure', 'closure-iit'],
+      'test/**/*_test.js': ['closure', 'closure-iit'],
       // source files are preprocessed for dependencies
       'src/*/*.js': ['closure'],
       'third_party/closure-library/closure/goog/deps.js': ['closure-deps'],
