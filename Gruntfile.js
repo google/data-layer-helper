@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+
 module.exports = function(grunt) {
+  const closurePackage = require('google-closure-compiler');
+  closurePackage.grunt(grunt);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -28,7 +31,25 @@ module.exports = function(grunt) {
         dest: 'src/deps.js'
       }
     },
+    // Using https://www.npmjs.com/package/google-closure-compiler
+    'closure-compiler': {
+      my_target: {
+        files: {
+          'dist/data-layer-helper-2.js': ['src/**/*.js']
+        },
+        options: {
+          js: '/node_modules/google-closure-library/**.js',
+         // externs: closurePackage.compiler.CONTRIB_PATH + '/externs/jquery-1.9.js',
+          compilation_level: 'ADVANCED_OPTIMIZATIONS',
+          manage_closure_dependencies: true,
+          language_in: 'ECMASCRIPT5_STRICT',
+          create_source_map: 'dist/data-layer-helper-2.js.map',
+          output_wrapper: '(function(){%output%})();'
+        }
+      }
+    },
 
+    // Using https://www.npmjs.com/package/grunt-closure-tools
     closureCompiler: {
       options: {
         closureLibraryPath: 'third_party/closure-library',
@@ -36,8 +57,7 @@ module.exports = function(grunt) {
         compilerOpts: {
           compilation_level: 'ADVANCED_OPTIMIZATIONS',
           output_wrapper: `'(function(){%output%})();'`,
-          jscomp_warning: 'lintChecks',
-          closure_pass: true,
+//          jscomp_warning: 'lintChecks',
         },
         execOpts: {
           // fix Error: maxBuffer exceeded
@@ -47,7 +67,7 @@ module.exports = function(grunt) {
       },
       helper: {
         src: ['src', 'third_party/closure-library/closure/goog/base.js'],
-        dest: 'dist/data-layer-helper.js',
+        dest: 'dist/data-layer-helper-3.js',
       }
     },
 
@@ -61,6 +81,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', [
     'closureDepsWriter',
+    'closure-compiler',
     'closureCompiler',
     'qunit'
   ]);

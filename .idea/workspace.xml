@@ -20,16 +20,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="521ae45f-4ec5-4c8c-b06b-fc7ff2e49e24" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/dist/output.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/output.min.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Gruntfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/Gruntfile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/data-layer-helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/data-layer-helper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/deps.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/deps.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/helper/helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/helper/helper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plain/is_plain_object.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/plain/is_plain_object.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/third_party/closure-compiler" beforeDir="false" afterPath="$PROJECT_DIR$/third_party/closure-compiler" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/third_party/closure-compiler/COPYING" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/third_party/closure-compiler/README" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/third_party/closure-compiler/compiler.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/third_party/closure-library" beforeDir="false" afterPath="$PROJECT_DIR$/third_party/closure-library" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/third_party/closure-linter" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,8 +61,9 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="javascript.karma.karma_node_package_dir" value="" />
+    <property name="javascript.nodejs.core.library.configured.version" value="14.3.0" />
     <property name="js.buildTools.grunt.grunt-cli.package" value="" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/dist/data-layer-helper2.js" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../measurement-library" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -108,6 +112,7 @@
       <workItem from="1592924440135" duration="3587000" />
       <workItem from="1592930984043" duration="8204000" />
       <workItem from="1592942700509" duration="5191000" />
+      <workItem from="1593004252979" duration="205000" />
     </task>
     <servers />
   </component>
@@ -147,11 +152,11 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="105" y="165" width="2990" height="1470" key="DiffContextDialog/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592934282359" />
-    <state x="966" y="92" width="430" height="268" key="FileChooserDialogImpl" timestamp="1592934072620">
+    <state x="966" y="92" width="424" height="238" key="FileChooserDialogImpl" timestamp="1593004456099">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="602" y="191" width="520" height="538" key="FileChooserDialogImpl/0.0.1745.981@0.0.1745.981" timestamp="1592589074735" />
-    <state x="966" y="92" width="430" height="268" key="FileChooserDialogImpl/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1592934072620" />
+    <state x="966" y="92" width="424" height="238" key="FileChooserDialogImpl/0.0.1920.1080/0.0.3200.1800@0.0.3200.1800" timestamp="1593004456099" />
     <state x="649" y="175" width="1211" height="875" key="SettingsEditor" timestamp="1592858741876">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

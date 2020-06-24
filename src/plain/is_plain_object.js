@@ -10,7 +10,6 @@
  *
  * @author bkuhn@google.com (Brian Kuhn)
  */
-
 goog.provide('plain');
 
 

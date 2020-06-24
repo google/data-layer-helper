@@ -13,6 +13,7 @@
     "grunt-contrib-watch": "~0.4.4"
   },
   "dependencies": {
+    "google-closure-compiler": "^20200614.0.0",
     "google-closure-library": "^20200614.0.0"
   }
 }
