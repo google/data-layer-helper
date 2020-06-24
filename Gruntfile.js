@@ -40,8 +40,8 @@ module.exports = function(grunt) {
         options: {
           js: '/node_modules/google-closure-library/**.js',
          // externs: closurePackage.compiler.CONTRIB_PATH + '/externs/jquery-1.9.js',
-          compilation_level: 'ADVANCED_OPTIMIZATIONS',
-          manage_closure_dependencies: true,
+          compilation_level: 'SIMPLE_OPTIMIZATIONS',
+          dependency_mode: 'SORT_ONLY',
           language_in: 'ECMASCRIPT5_STRICT',
           create_source_map: 'dist/data-layer-helper-2.js.map',
           output_wrapper: '(function(){%output%})();'
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'closureDepsWriter',
     'closure-compiler',
-    'closureCompiler',
+  //  'closureCompiler',
     'qunit'
   ]);
 };
