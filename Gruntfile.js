@@ -61,16 +61,34 @@ module.exports = function(grunt) {
       files: ['test/unit.html', 'test/integration.html']
     },
 
+    karma: {
+      options:{
+        configFile: 'karma.conf.js',
+        browsers: ['ChromeHeadless'],
+        singleRun: true,
+        failOnEmptyTestSuite: false
+      },
+      unit: {
+      },
+      integration: {
+        options: {
+          files: ['test/integration/integration_test.js', 'dist/data-layer-helper.js'],
+          preprocessors: [],
+        }
+      },
+    }
   });
 
   grunt.loadNpmTasks('grunt-closure-tools');
   grunt.loadNpmTasks('grunt-closure-linter');
   grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('default', [
-    'closureLint',
-    'closureDepsWriter',
-    'closureBuilder',
+      'karma',
+   // 'closureLint',
+   // 'closureDepsWriter',
+   // 'closureBuilder',
     'qunit'
   ]);
 };

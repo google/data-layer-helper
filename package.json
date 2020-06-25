@@ -11,6 +11,7 @@
     "grunt-contrib-qunit": "~0.2.2",
     "grunt-contrib-uglify": "~0.2.2",
     "grunt-contrib-watch": "~0.4.4",
+    "grunt-karma": "^4.0.0",
     "jasmine": "^3.5.0",
     "jasmine-core": "^3.5.0",
     "karma": "^5.1.0",
@@ -19,5 +20,6 @@
     "karma-jasmine": "^3.3.1",
     "karma-jasmine-html-reporter": "^1.5.4",
     "karma-spec-reporter": "0.0.32"
-  }
+  },
+  "dependencies": {}
 }
