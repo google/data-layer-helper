@@ -1,0 +1,26 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true,
+    "jasmine": true
+  },
+  "extends": [
+    "closure-es6",
+    "plugin:jasmine/recommended",
+    "google"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 11,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "jasmine",
+    "closure"
+  ],
+  "rules": {
+    "prefer-rest-params": "off"
+  }
+}
