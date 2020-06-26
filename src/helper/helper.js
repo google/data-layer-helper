@@ -182,6 +182,8 @@ helper.DataLayerHelper.prototype.processStates_ =
     var update = this.unprocessed_.shift();
     if (helper.isArray_(update)) {
       helper.processCommand_(update, this.model_);
+    } else if (helper.isArguments_(update)) {
+      helper.processArguments_(update, this.model_);
     } else if (typeof update == 'function') {
       var that = this;
       try {
