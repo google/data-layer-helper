@@ -1,0 +1,22 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jasmine": true
+  },
+  "extends": [
+    "closure-es6",
+    "plugin:jasmine/recommended",
+    "google"
+  ],
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "plugins": [
+    "jasmine",
+    "closure"
+  ],
+  "rules": {
+    "prefer-rest-params": "off"
+  }
+}

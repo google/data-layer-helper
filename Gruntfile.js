@@ -19,17 +19,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    closureLint: {
-      app:{
-        closureLinterPath : 'third_party/closure-linter/closure_linter',
-        src: ['src/**/*.js'],
-        options: {
-          stdout: true,
-          strict: true
-        }
-      }
-    },
-
     closureDepsWriter: {
       options: {
         closureLibraryPath: 'third_party/closure-library',
@@ -80,7 +69,6 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-closure-tools');
-  grunt.loadNpmTasks('grunt-closure-linter');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-karma');
 

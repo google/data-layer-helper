@@ -1,4 +1,5 @@
-// Karma configuration
+const BROWSERS_TO_TEST = ['Chrome']
+
 module.exports = function(config) {
   config.set({
     basePath: '.',
@@ -32,9 +33,8 @@ module.exports = function(config) {
     reporters: ['spec', 'kjhtml'],
     port: 9876,
     colors: true,
-    logLevel: config.LOG_DISABLE,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: BROWSERS_TO_TEST,
     client: {
       clearContext: false
     },

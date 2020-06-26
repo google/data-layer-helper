@@ -1,57 +1,25 @@
-describe('the data layer helper library', function () {
-    describe('variables that pollute the global scope', function () {
-        it('does not pollute with the variable dataLayer', function () {
-            expect(window['dataLayer']).toBe(undefined);
-        });
-        it('does not pollute with the variable goog', function () {
-            expect(window['goog']).toBe(undefined);
-        });
-        it('does not pollute with the variable helper', function () {
-            expect(window['helper']).toBe(undefined);
-        });
-        it('does not pollute with the variable plain', function () {
-            expect(window['plain']).toBe(undefined);
-        });
-        it('does not pollute with the variable isPlainObject', function () {
-            expect(window['isPlainObject']).toBe(undefined);
-        });
-        it('does not pollute with the variable expandKeyValue_', function () {
-            expect(window['explandKeyValue_']).toBe(undefined);
-        });
-    });
+describe('the data layer helper library', function() {
+  it('does not pollute the global scope', function() {
+    expect(window['dataLayer']).toBe(undefined);
+    expect(window['goog']).toBe(undefined);
+    expect(window['helper']).toBe(undefined);
+    expect(window['plain']).toBe(undefined);
+    expect(window['isPlainObject']).toBe(undefined);
+    expect(window['explandKeyValue_']).toBe(undefined);
+  });
 
-    describe('The DataLayerHelper API', function () {
-        let helper;
-        beforeEach(function() {
-            helper = new DataLayerHelper([]);
-        });
+  it('only exposes the DataLayerHelper constructor with get and ' +
+    'flatten methods', function() {
+    let helper = new DataLayerHelper([]);
+    expect(typeof DataLayerHelper).toBe('function');
+    expect(helper.get).toBe('function');
+    expect(helper.flatten).toBe('function');
+    expect(helper.processStates_).toBe(undefined);
+    expect(helper.expandKeyValue_).toBe(undefined);
+    expect(helper.isArray_).toBe(undefined);
+    expect(helper.merge_).toBe(undefined);
+  });
 
-        it('should be created with a function named DataLayerHelper', function () {
-            expect(typeof DataLayerHelper).toBe('function');
-        });
 
-        it('should have a get method', function () {
-            expect(helper.get).toBe('function');
-        });
-
-        it('should have a flatten method', function () {
-            expect(helper.flatten).toBe('function');
-        });
-
-        it('hides the private processStates_ method', function () {
-            expect(helper.processStates_).toBe(undefined);
-        });
-
-        it('hides the private expandKeyValue_ method', function () {
-            expect(helper.expandKeyValue_).toBe(undefined);
-        });
-
-        it('hides the private isArray_ method', function () {
-            expect(helper.isArray_).toBe(undefined);
-        });
-        it('hides the private merge_ method', function () {
-            expect(helper.merge_).toBe(undefined);
-        });
-    });
 
 });
