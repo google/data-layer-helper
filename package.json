@@ -7,7 +7,6 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-jasmine": "^4.1.1",
     "grunt": "~0.4.1",
-    "grunt-closure-linter": "~0.1.0",
     "grunt-closure-tools": "~0.8.3",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-jshint": "~0.6.0",
