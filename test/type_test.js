@@ -1,150 +1,86 @@
 goog.require('plain');
 
-describe('The plain.type function', function() {
-
-  function assertType(value, expected) {
-    expect(plain.type(value)).toBe(expected);
+describe('The plain.type function', function () {
+  /**
+   * Assert that plain.type identifies something as a certain type.
+   * @param value The javascript object to identify.
+   * @param expected The value we explect plain.type to return.
+   * @param context A message describing the value.
+   */
+  function assertType(value, expected, context) {
+    expect(plain.type(value))
+        .withContext('identifies ' + context + ' as ' + expected).toBe(expected);
   }
 
-  describe('null and undefined identification behavior', function() {
-    it('correctly identifies null', function() {
-      assertType(null, 'null');
-    });
-
-    it('correctly identifies undefined', function() {
-      assertType(undefined, 'undefined');
-    });
+  it('correctly identified null and undefined', function () {
+    assertType(null, 'null', 'null');
+    assertType(undefined, 'undefined', 'undefined');
   });
 
-  describe('boolean identification behavior', function() {
-    it('identifies true as a boolean', function() {
-      assertType(true, 'boolean');
-    });
-
-    it('identifies false as a boolean', function() {
-      assertType(false, 'boolean');
-    });
+  it('identifies booleans correctly', function () {
+    assertType(true, 'boolean', 'true');
+    assertType(false, 'boolean', 'false');
   });
 
-  describe('number identification behavior', function() {
-    it('identifies 0 as a number', function() {
-      assertType(0, 'number');
-    });
-
-    it('identifies positive integers as numbers', function() {
-      assertType(43, 'number');
-    });
-
-    it('identifies negative integers as numbers', function() {
-      assertType(-43, 'number');
-    });
-
-    it('identifies small decimals as numbers', function() {
-      assertType(0.000001, 'number');
-    });
-
-    it('identifies floating points as numbers', function() {
-      assertType(90001.5, 'number');
-    });
-
-    it('identifies NaN as numbers', function() {
-      assertType(NaN, 'number');
-    });
-
-    it('identifies infinity as a number', function() {
-      assertType(Infinity, 'number');
-    });
+  it('identifies floats, ints, NaNs, and Infinity as numbers', function() {
+    assertType(0, 'number', 0);
+    assertType(43, 'number', 'positive integers');
+    assertType(-43, 'number', 'negative integers');
+    assertType(0.000001, 'number', 'small decimals');
+    assertType(90001.5, 'number', 'large floating-point values');
+    assertType(NaN, 'number', 'NaN');
+    assertType(Infinity, 'number', 'Infinity');
   });
 
-  describe('string identification behavior', function() {
-    it('identifies the empty string is a string', function() {
-      assertType('', 'string');
-    });
-
-    it('identifies strings independently of content', function() {
-      assertType('number', 'string');
-    });
+  it('identifies any string as a string', function () {
+    assertType('', 'string', 'the empty string');
+    assertType('number', 'string', 'the string number');
   });
 
-  describe('function identification behavior', function() {
-    it('identifies function variables as functions', function() {
-      assertType(assertType, 'function');
-    });
-
-    it('identifies functions made with function syntax', function() {
-      assertType(function() {}, 'function');
-    });
-
-    it('identifies functions made with arrow notation syntax', function() {
-      assertType(() => {}, 'function');
-    });
+  it('identifies all functions independently of how they are constructed',
+      function () {
+    assertType(assertType, 'function',
+        'functions in variables');
+    assertType(function () {}, 'function',
+        'functions made with function() syntax');
+    assertType(() => {}, 'function',
+        'functions made with arrow notation');
   });
 
-  describe('array identification behavior', function() {
-    it('identifies an empty array as an array', function() {
-      assertType([], 'array');
-    });
-
-    it('identifies a nonempty array as an array', function() {
-      assertType(['number'], 'array');
-    });
-
-    it('identifies an empty array made with the Array constructor', function() {
-      assertType(Array(), 'array');
-    });
-
-    it('identifies nonempty array made with the Array constructor', function() {
-      assertType(Array('string'), 'array');
-    });
-
-    it('identifies array made with the object constructor', function() {
-      assertType(Object([]), 'array');
-    });
-
-    it('identifies array made with the object and array constructor', function() {
-      assertType(Object(Array()), 'array');
-    });
+  it('identifies arrays independently of how they are constructed',
+      function () {
+    assertType([], 'array', 'the empty array');
+    assertType(['number'], 'array', 'nonempty arrays');
+    assertType(Array(), 'array',
+        'empty arrays made with the Array constructor');
+    assertType(Array('string'), 'array',
+        'nonempty arrays made with the Array constructor');
+    assertType(Object([]), 'array',
+        'arrays made with the object constructor');
+    assertType(Object(Array()), 'array',
+        'arrays made with the object and array constructor');
   });
 
-  describe('Date behavior', function() {
-    it('identifies dates created without new as strings', function() {
-      assertType(Date(), 'string');
-    });
-
-    it('identifies dates created with new as dates', function() {
-      assertType(new Date(), 'date');
-    });
+  it('Identifies dates only when made with the new Date() syntax',
+      function () {
+    assertType(Date(), 'string', 'dates created without new');
+    assertType(new Date(), 'date', 'dates created with new');
   });
 
-  describe('regex behavior', function() {
-    it('identifies regex created with / / syntax', function() {
-      assertType(/./, 'regexp');
-    });
-
-    it('identifies regex created with constructor syntax', function() {
-      assertType(RegExp(), 'regexp');
-    });
+  it('identifies regex independently of how they are constructed',
+      function () {
+    assertType(/./, 'regexp',
+        'regex made with / / syntax');
+    assertType(RegExp(), 'regexp',
+        'regex made with the RegExp constructor');
   });
 
-  describe('object behavior', function() {
-    it('identifies dictionaries as object', function() {
-      assertType({a: 1}, 'object');
-    });
-
-    it('identifies things made by the object constructor as objects', function() {
-      assertType(Object(), 'object');
-    });
-
-    it('identifies the window type as an object', function() {
-      assertType(window, 'object');
-    });
-
-    it('identifies the document type as an object', function() {
-      assertType(document, 'object');
-    });
-
-    it('identifies other complex types as an object', function() {
-      assertType(document.getElementsByTagName('script')[0], 'object');
-    });
+  it('Recognizes everything else as an object', function () {
+    assertType({a: 1}, 'object', 'dictionaries');
+    assertType(Object(), 'object', 'the empty object constructor');
+    assertType(window, 'object', 'the window object');
+    assertType(document, 'object', 'the document object');
+    assertType(document.getElementsByTagName('script')[0],
+        'object', 'other complex types');
   });
 });
