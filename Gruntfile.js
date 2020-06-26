@@ -22,69 +22,35 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    closureDepsWriter: {
-      options: {
-        closureLibraryPath: 'third_party/closure-library',
-      },
-      helperDeps: {
-        src: 'src/helper/helper.js',
-        dest: 'src/deps.js'
-      }
-    },
     // Using https://www.npmjs.com/package/google-closure-compiler
     'closure-compiler': {
-      helper: {
+      my_target: {
         files: {
-          'dist/data-layer-helper-2.js':
-              ['src/plain/is_plain_object.js', 'src/helper/helper.js'],
+          'dist/data-layer-helper.js': 'src/helper/**.js',
         },
         options: {
-          js: '/node_modules/google-closure-library/closure/goog/base.js',
-          entry_point: 'src/helper/helper.js',
-          compilation_level: 'SIMPLE',
-          manage_closure_dependencies: false,
-          language_in: 'ECMASCRIPT5_STRICT',
-          create_source_map: 'dist/data-layer-helper-2.js.map',
-          output_wrapper: '(function(){%output%})();'
-        }
-      }
-    },
-
-    // Using https://www.npmjs.com/package/grunt-closure-tools
-    closureCompiler: {
-      options: {
-        closureLibraryPath: 'third_party/closure-library',
-        compilerFile: 'third_party/closure-compiler/compiler.jar',
-        compilerOpts: {
+          js: [
+            'node_modules/google-closure-library/closure/goog/base.js',
+            'src/plain/**.js',
+          ],
+          hide_warnings_for: 'google-closure-library',
           compilation_level: 'ADVANCED_OPTIMIZATIONS',
-          output_wrapper: `'(function(){%output%})();'`,
-//          jscomp_warning: 'lintChecks',
+          language_in: 'ECMASCRIPT6',
+          create_source_map: 'dist/data-layer-helper.js.map',
+          output_wrapper: '(function(){%output%})();',
+          jscomp_warning: 'lintChecks',
         },
-        execOpts: {
-          // fix Error: maxBuffer exceeded
-          maxBuffer: 10000 * 1024,
-        },
-        TieredCompilation: true
       },
-      helper: {
-        src: ['src/plain/js_plain_object.js', 'src/helper/helper.js',
-          'third_party/closure-library/closure/goog/base.js'],
-        dest: 'dist/data-layer-helper-3.js',
-      }
     },
-
     qunit: {
-      files: ['test/unit.html', 'test/integration.html']
+      files: ['test/unit.html', 'test/integration.html'],
     },
   });
 
-  grunt.loadNpmTasks('grunt-closure-tools');
   grunt.loadNpmTasks('grunt-contrib-qunit');
 
   grunt.registerTask('default', [
-    //'closureDepsWriter',
     'closure-compiler',
-  //  'closureCompiler',
-    'qunit'
+    'qunit',
   ]);
 };

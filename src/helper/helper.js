@@ -43,6 +43,7 @@
  *
  * @author bkuhn@google.com (Brian Kuhn)
  */
+
 goog.provide('helper');
 goog.require('plain');
 
