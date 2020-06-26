@@ -14,69 +14,62 @@
  * limitations under the License.
  */
 
+
 module.exports = function(grunt) {
+  const closurePackage = require('google-closure-compiler');
+  closurePackage.grunt(grunt);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    closureDepsWriter: {
-      options: {
-        closureLibraryPath: 'third_party/closure-library',
-      },
-      helperDeps: {
-        src: 'src/helper/helper.js',
-        dest: 'src/deps.js'
-      }
-    },
-
-    closureBuilder:  {
-      options: {
-        closureLibraryPath: 'third_party/closure-library',
-        compilerFile: 'third_party/closure-compiler/compiler.jar',
-        namespaces: 'helper',
-        compile: true,
-        compilerOpts: {
+    // Using https://www.npmjs.com/package/google-closure-compiler
+    'closure-compiler': {
+      my_target: {
+        files: {
+          'dist/data-layer-helper.js': 'src/helper/**.js',
+        },
+        options: {
+          js: [
+            'node_modules/google-closure-library/closure/goog/base.js',
+            'src/plain/**.js',
+          ],
+          hide_warnings_for: 'google-closure-library',
           compilation_level: 'ADVANCED_OPTIMIZATIONS',
+          language_in: 'ECMASCRIPT6',
+          create_source_map: 'dist/data-layer-helper.js.map',
           output_wrapper: '(function(){%output%})();',
+          jscomp_warning: 'lintChecks',
         },
       },
-      helper: {
-        src: ['third_party/closure-library', 'src'],
-        dest: 'dist/data-layer-helper.js'
-      },
     },
-
     qunit: {
-      files: ['test/unit.html', 'test/integration.html']
+      files: ['test/unit.html', 'test/integration.html'],
     },
-
     karma: {
-      options:{
+      options: {
         configFile: 'karma.conf.js',
         browsers: ['ChromeHeadless'],
         singleRun: true,
-        failOnEmptyTestSuite: false
+        failOnEmptyTestSuite: false,
       },
-      unit: {
-      },
+      unit: {},
       integration: {
         options: {
-          files: ['test/integration/integration_test.js', 'dist/data-layer-helper.js'],
+          files: [
+            'test/integration/integration_test.js',
+            'dist/data-layer-helper.js'],
           preprocessors: [],
-        }
+        },
       },
-    }
+    },
   });
 
-  grunt.loadNpmTasks('grunt-closure-tools');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('default', [
-      'karma',
-   // 'closureLint',
-   // 'closureDepsWriter',
-   // 'closureBuilder',
-    'qunit'
+    'closure-compiler',
+    'karma',
+    'qunit',
   ]);
 };
