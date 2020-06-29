@@ -470,12 +470,14 @@ To run the new tests, you will need to first install karma globally:
 npm install -g karma
 ```
 
-You can run the new tests with the command
+You can run tests with the command
 
 ```bash
 karma start
 ```
 
+If called in the top level ./ directory, the unit tests will run. If called
+in the ./test/integration directory, the integration tests will run.
 
 ## License
 
