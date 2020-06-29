@@ -1,23 +1,23 @@
 goog.require('plain');
 
-describe('The plain.type function', function () {
+describe('The plain.type function', function() {
   /**
    * Assert that plain.type identifies something as a certain type.
-   * @param value The javascript object to identify.
-   * @param expected The value we explect plain.type to return.
-   * @param context A message describing the value.
+   * @param {?Object} value The javascript object to identify.
+   * @param {string} expected The value we explect plain.type to return.
+   * @param {string} context A message describing the value.
    */
   function assertType(value, expected, context) {
     expect(plain.type(value))
-        .withContext('identifies ' + context + ' as ' + expected).toBe(expected);
+        .withContext(`identifies ${context} as ${expected}`).toBe(expected);
   }
 
-  it('correctly identified null and undefined', function () {
+  it('correctly identified null and undefined', function() {
     assertType(null, 'null', 'null');
     assertType(undefined, 'undefined', 'undefined');
   });
 
-  it('identifies booleans correctly', function () {
+  it('identifies booleans correctly', function() {
     assertType(true, 'boolean', 'true');
     assertType(false, 'boolean', 'false');
   });
@@ -32,50 +32,50 @@ describe('The plain.type function', function () {
     assertType(Infinity, 'number', 'Infinity');
   });
 
-  it('identifies any string as a string', function () {
+  it('identifies any string as a string', function() {
     assertType('', 'string', 'the empty string');
     assertType('number', 'string', 'the string number');
   });
 
   it('identifies all functions independently of how they are constructed',
-      function () {
-    assertType(assertType, 'function',
-        'functions in variables');
-    assertType(function () {}, 'function',
-        'functions made with function() syntax');
-    assertType(() => {}, 'function',
-        'functions made with arrow notation');
-  });
+      function() {
+        assertType(assertType, 'function',
+            'functions in variables');
+        assertType(function() {}, 'function',
+            'functions made with function() syntax');
+        assertType(() => {}, 'function',
+            'functions made with arrow notation');
+      });
 
   it('identifies arrays independently of how they are constructed',
-      function () {
-    assertType([], 'array', 'the empty array');
-    assertType(['number'], 'array', 'nonempty arrays');
-    assertType(Array(), 'array',
-        'empty arrays made with the Array constructor');
-    assertType(Array('string'), 'array',
-        'nonempty arrays made with the Array constructor');
-    assertType(Object([]), 'array',
-        'arrays made with the object constructor');
-    assertType(Object(Array()), 'array',
-        'arrays made with the object and array constructor');
-  });
+      function() {
+        assertType([], 'array', 'the empty array');
+        assertType(['number'], 'array', 'nonempty arrays');
+        assertType(Array(), 'array',
+            'empty arrays made with the Array constructor');
+        assertType(Array('string'), 'array',
+            'nonempty arrays made with the Array constructor');
+        assertType(Object([]), 'array',
+            'arrays made with the object constructor');
+        assertType(Object(Array()), 'array',
+            'arrays made with the object and array constructor');
+      });
 
-  it('Identifies dates only when made with the new Date() syntax',
-      function () {
-    assertType(Date(), 'string', 'dates created without new');
-    assertType(new Date(), 'date', 'dates created with new');
-  });
+  it('identifies dates only when made with the new Date() syntax',
+      function() {
+        assertType(Date(), 'string', 'dates created without new');
+        assertType(new Date(), 'date', 'dates created with new');
+      });
 
   it('identifies regex independently of how they are constructed',
-      function () {
-    assertType(/./, 'regexp',
-        'regex made with / / syntax');
-    assertType(RegExp(), 'regexp',
-        'regex made with the RegExp constructor');
-  });
+      function() {
+        assertType(/./, 'regexp',
+            'regex made with / / syntax');
+        assertType(RegExp(), 'regexp',
+            'regex made with the RegExp constructor');
+      });
 
-  it('Recognizes everything else as an object', function () {
+  it('Recognizes everything else as an object', function() {
     assertType({a: 1}, 'object', 'dictionaries');
     assertType(Object(), 'object', 'the empty object constructor');
     assertType(window, 'object', 'the window object');
