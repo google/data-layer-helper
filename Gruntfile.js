@@ -43,21 +43,28 @@ module.exports = function(grunt) {
       },
     },
     qunit: {
-      files: ['test/unit.html', 'test/integration.html'],
+      files: ['test/unit.html'],
     },
     karma: {
       options: {
         configFile: 'karma.conf.js',
+        // run the karma tests only once in a headless chrome instance
+        // so the build does not freeze
         browsers: ['ChromeHeadless'],
         singleRun: true,
         failOnEmptyTestSuite: false,
       },
       unit: {},
       integration: {
+        // The integration tests require a separate configuration,
+        // we only want to use the distribution files. Karma only supports
+        // running 1 configuration, so it only runs the unit tests when you call
+        // karma start - to run the integration tests, run the build with grunt.
         options: {
           files: [
             'test/integration/integration_test.js',
-            'dist/data-layer-helper.js'],
+            'dist/data-layer-helper.js',
+          ],
           preprocessors: [],
         },
       },
@@ -69,7 +76,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', [
     'closure-compiler',
-    'karma',
     'qunit',
+    'karma',
   ]);
 };
