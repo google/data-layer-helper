@@ -156,6 +156,14 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
   helper.merge_(this.model_, this.dataLayer_[0]);
 };
 
+/**
+ *
+ * @param name
+ * @param method
+ */
+helper.DataLayerHelper.prototype['registerProcessor'] = function(name, method) {
+  return true;
+};
 
 /**
  * Merges the given update objects (states) onto the helper's model, calling
