@@ -48,9 +48,6 @@ plain.type = function(value) {
   if (value == null) return String(value);
   var match = plain.TYPE_RE_.exec(
       Object.prototype.toString.call(Object(value)));
-  if (!match) 
-    match = plain.TYPE_RE_.exec(
-      Object.prototype.toString.call(value));
   if (match) return match[1].toLowerCase();
   return 'object';
 };
