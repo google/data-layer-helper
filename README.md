@@ -463,7 +463,14 @@ grunt
 
 The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
 
-This library is being modernized, and the tests are being moved. You can run the new tests
+This library is being modernized, and the tests are being moved.
+To run the new tests, you will need to first install karma globally:
+
+```bash
+npm install -g karma
+```
+
+You can run the new tests with the command
 
 ```bash
 karma start
