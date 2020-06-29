@@ -35,8 +35,6 @@ tmtags
 .project
 .metadata
 
-.idea
-
 # ==============================================================================
 # Temp generated code
 # ==============================================================================
@@ -68,6 +66,3 @@ scratch/
 build-out/
 build-gen/
 build-bin/
-
-# linter build
-third_party/closure-linter/build/**
