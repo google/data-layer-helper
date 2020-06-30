@@ -60,7 +60,7 @@ class DataLayerHelper {
   /**
    * Creates a new helper object for the given dataLayer.
    *
-   * @param {!Array.<!Object>} dataLayer The dataLayer to help with.
+   * @param {!Array<!Object>} dataLayer The dataLayer to help with.
    * @param {function(!Object, !Object)=} optListener The callback function to
    *     execute when a new state gets pushed onto the dataLayer.
    * @param {boolean=} optListenToPast If true, the given listener will be
@@ -69,7 +69,7 @@ class DataLayerHelper {
   constructor(dataLayer, optListener = () => {}, optListenToPast = false) {
     /**
      * The dataLayer to help with.
-     * @type {!Array.<!Object>}
+     * @type {!Array<!Object>}
      * @private
      */
     this.dataLayer_ = dataLayer;
@@ -99,7 +99,7 @@ class DataLayerHelper {
 
     /**
      * The internal queue of dataLayer updates that have not yet been processed.
-     * @type {!Array.<!Object>}
+     * @type {!Array<!Object>}
      * @private
      */
     this.unprocessed_ = [];
@@ -163,7 +163,7 @@ class DataLayerHelper {
    * into the dataLayer, the method will be parsed and applied to the value
    * found at the key, if a one exists.
    *
-   * @param {!Array.<!Object>} states The update objects to process, each
+   * @param {!Array<!Object>} states The update objects to process, each
    *     representing a change to the state of the page.
    * @param {boolean=} optSkipListener If true, the listener the given states
    *     will be applied to the internal model, but will not cause the listener
@@ -237,7 +237,7 @@ helper.buildAbstractModelInterface_ = function(dataLayerHelper) {
  * If the method is a valid function of the value, the method will be applies
  * with any arguments passed in.
  *
- * @param {!Array.<!Object>} command The array containing the key with the
+ * @param {!Array<!Object>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
  * @param {!Object|!Array} model The current dataLayer model.
  * @private

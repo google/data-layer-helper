@@ -16,7 +16,7 @@ goog.provide('plain');
 
 /**
  * Pattern used by plain.type to match [object XXX] strings.
- * @type {RegExp}
+ * @type {!RegExp}
  * @private
  * @const
  */
