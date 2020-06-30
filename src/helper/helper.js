@@ -44,9 +44,9 @@
  * @author bkuhn@google.com (Brian Kuhn)
  */
 
-goog.provide('helper');
-goog.require('plain');
+goog.module('helper');
 
+const {type, hasOwn, isPlainObject} = goog.require('plain');
 
 
 /**
@@ -59,7 +59,7 @@ goog.require('plain');
  * @param {boolean=} opt_listenToPast If true, the given listener will be
  *     executed for state changes that have already happened.
  */
-helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
+const DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
 
   /**
    * The dataLayer to help with.
@@ -105,7 +105,7 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
    * @type {!Object}
    * @private
    */
-  this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
+  this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
   // Process the existing/past states.
   this.processStates_(dataLayer, !opt_listenToPast);
@@ -120,7 +120,7 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
     return result;
   };
 };
-window['DataLayerHelper'] = helper.DataLayerHelper;
+window['DataLayerHelper'] = DataLayerHelper;
 
 
 /**
@@ -132,7 +132,7 @@ window['DataLayerHelper'] = helper.DataLayerHelper;
  * @return {*} The value found at the given key.
  * @this {DataLayerHelper}
  */
-helper.DataLayerHelper.prototype['get'] = function(key) {
+DataLayerHelper.prototype['get'] = function(key) {
   var target = this.model_;
   var split = key.split('.');
   for (var i = 0; i < split.length; i++) {
@@ -150,10 +150,10 @@ helper.DataLayerHelper.prototype['get'] = function(key) {
  *
  * @this {DataLayerHelper}
  */
-helper.DataLayerHelper.prototype['flatten'] = function() {
+DataLayerHelper.prototype['flatten'] = function() {
   this.dataLayer_.splice(0, this.dataLayer_.length);
   this.dataLayer_[0] = {};
-  helper.merge_(this.model_, this.dataLayer_[0]);
+  merge_(this.model_, this.dataLayer_[0]);
 };
 
 
@@ -171,7 +171,7 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
  *     listener might not care about.
  * @private
  */
-helper.DataLayerHelper.prototype.processStates_ =
+DataLayerHelper.prototype.processStates_ =
     function(states, opt_skipListener) {
 
   this.unprocessed_.push.apply(this.unprocessed_, states);
@@ -180,8 +180,8 @@ helper.DataLayerHelper.prototype.processStates_ =
   // itself is causing new states to be pushed onto the dataLayer.
   while (this.executingListener_ === false && this.unprocessed_.length > 0) {
     var update = this.unprocessed_.shift();
-    if (helper.isArray_(update)) {
-      helper.processCommand_(update, this.model_);
+    if (isArray_(update)) {
+      processCommand_(update, this.model_);
     } else if (typeof update == 'function') {
       var that = this;
       try {
@@ -190,9 +190,9 @@ helper.DataLayerHelper.prototype.processStates_ =
         // Catch any exceptions to we don't drop subsequent updates.
         // TODO: Add some sort of logging when this happens.
       }
-    } else if (plain.isPlainObject(update)) {
+    } else if (isPlainObject(update)) {
       for (var key in update) {
-        helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
+        merge_(expandKeyValue_(key, update[key]), this.model_);
       }
     } else {
       continue;
@@ -216,10 +216,10 @@ helper.DataLayerHelper.prototype.processStates_ =
  *     to Custom Methods.
  * @private
  */
-helper.buildAbstractModelInterface_ = function(dataLayerHelper) {
+const buildAbstractModelInterface_ = function(dataLayerHelper) {
   return {
     'set': function(key, value) {
-      helper.merge_(helper.expandKeyValue_(key, value),
+      merge_(expandKeyValue_(key, value),
           dataLayerHelper.model_);
     },
     'get': function(key) {
@@ -239,8 +239,8 @@ helper.buildAbstractModelInterface_ = function(dataLayerHelper) {
  * @param {Object|Array} model The current dataLayer model.
  * @private
  */
-helper.processCommand_ = function(command, model) {
-  if (!helper.isString_(command[0])) return;
+const processCommand_ = function(command, model) {
+  if (!isString_(command[0])) return;
   var path = command[0].split('.');
   var method = path.pop();
   var args = command.slice(1);
@@ -275,7 +275,7 @@ helper.processCommand_ = function(command, model) {
  *     merged onto the dataLayer's model.
  * @private
  */
-helper.expandKeyValue_ = function(key, value) {
+const expandKeyValue_ = function(key, value) {
   var result = {};
   var target = result;
   var split = key.split('.');
@@ -294,8 +294,8 @@ helper.expandKeyValue_ = function(key, value) {
  * @return {boolean} True iff the given value is an array.
  * @private
  */
-helper.isArray_ = function(value) {
-  return plain.type(value) == 'array';
+const isArray_ = function(value) {
+  return type(value) == 'array';
 };
 
 
@@ -306,8 +306,8 @@ helper.isArray_ = function(value) {
  * @return {boolean} True iff the given value is a string.
  * @private
  */
-helper.isString_ = function(value) {
-  return plain.type(value) == 'string';
+const isString_ = function(value) {
+  return type(value) == 'string';
 };
 
 
@@ -324,16 +324,16 @@ helper.isString_ = function(value) {
  * @param {Object|Array} to The object or array to merge into.
  * @private
  */
-helper.merge_ = function(from, to) {
+const merge_ = function(from, to) {
   for (var property in from) {
-    if (plain.hasOwn(from, property)) {
+    if (hasOwn(from, property)) {
       var fromProperty = from[property];
-      if (helper.isArray_(fromProperty)) {
-        if (!helper.isArray_(to[property])) to[property] = [];
-        helper.merge_(fromProperty, to[property]);
-      } else if (plain.isPlainObject(fromProperty)) {
-        if (!plain.isPlainObject(to[property])) to[property] = {};
-        helper.merge_(fromProperty, to[property]);
+      if (isArray_(fromProperty)) {
+        if (!isArray_(to[property])) to[property] = [];
+        merge_(fromProperty, to[property]);
+      } else if (isPlainObject(fromProperty)) {
+        if (!isPlainObject(to[property])) to[property] = {};
+        merge_(fromProperty, to[property]);
       } else {
         to[property] = fromProperty;
       }
@@ -341,3 +341,12 @@ helper.merge_ = function(from, to) {
   }
 };
 
+exports = {
+  DataLayerHelper,
+  buildAbstractModelInterface_,
+  processCommand_,
+  expandKeyValue_,
+  isArray_,
+  isString_,
+  merge_,
+};
