@@ -18,28 +18,32 @@
  * @fileoverview Unit tests for get.
  * @author bnkuhn@gmail.com (Brian Kuhn)
  */
+goog.module('datalayerhelper.helper.testing.get');
+goog.setTestOnly();
 
-test('get', function() {
-  var h = new helper.DataLayerHelper([{
+const {DataLayerHelper} = goog.require('helper');
+
+it('get', function() {
+  const h = new DataLayerHelper([{
     a: 1,
     b: {
       c: {
-        d: 4
+        d: 4,
       },
       e: 5,
-      f: null
-    }
+      f: null,
+    },
   }]);
 
-  equal(h.get('a'), 1);
-  deepEqual(h.get('b'), {c: {d: 4}, e: 5, f: null});
-  deepEqual(h.get('b.c'), {d: 4});
-  equal(h.get('b.c.d'), 4);
-  equal(h.get('b.e'), 5);
-  equal(h.get('b.f'), null);
+  expect(h.get('a')).toBe(1);
+  expect(h.get('b')).toEqual({c: {d: 4}, e: 5, f: null});
+  expect(h.get('b.c')).toEqual({d: 4});
+  expect(h.get('b.c.d')).toBe(4);
+  expect(h.get('b.e')).toBe(5);
+  expect(h.get('b.f')).toBe(null);
 
-  equal(h.get('blah'), undefined);
-  equal(h.get('c'), undefined);
-  equal(h.get('d'), undefined);
-  equal(h.get('e'), undefined);
+  expect(h.get('blah')).toBe(undefined);
+  expect(h.get('c')).toBe(undefined);
+  expect(h.get('d')).toBe(undefined);
+  expect(h.get('e')).toBe(undefined);
 });
