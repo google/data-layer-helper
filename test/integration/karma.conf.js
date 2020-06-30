@@ -1,4 +1,5 @@
-let baseConfig = require('../../karma.conf');
+const baseConfig = require('../../karma.conf');
+
 module.exports = function(config) {
   baseConfig(config);
   config.set({
@@ -6,5 +7,5 @@ module.exports = function(config) {
       './**_test.js',
       '../../dist/data-layer-helper.js',
     ],
-  })
-}
+  });
+};

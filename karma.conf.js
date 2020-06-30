@@ -1,4 +1,4 @@
-const BROWSERS_TO_TEST = ['Chrome']
+const BROWSERS_TO_TEST = ['Chrome'];
 
 module.exports = function(config) {
   config.set({
@@ -17,18 +17,19 @@ module.exports = function(config) {
       {pattern: 'test/lib/jquery*'},
     ],
     preprocessors: {
-      // tests are preprocessed for dependencies (closure) and iits
+      // Tests are preprocessed for dependencies (closure) and iits.
       'test/**/*_test.js': ['closure', 'closure-iit'],
-      // source files are preprocessed for dependencies
+      // Source files are preprocessed for dependencies/
       'src/*/*.js': ['closure'],
-      'node_modules/google-closure-library/closure/goog/deps.js': ['closure-deps'],
+      'node_modules/google-closure-library/closure/goog/deps.js':
+          ['closure-deps'],
     },
     plugins: [
       require('karma-jasmine'),
       require('karma-closure'),
       require('karma-chrome-launcher'),
       require('karma-spec-reporter'),
-      require('karma-jasmine-html-reporter')
+      require('karma-jasmine-html-reporter'),
     ],
     reporters: ['spec', 'kjhtml'],
     port: 9876,
@@ -36,9 +37,9 @@ module.exports = function(config) {
     autoWatch: true,
     browsers: BROWSERS_TO_TEST,
     client: {
-      clearContext: false
+      clearContext: false,
     },
     singleRun: false,
     concurrency: Infinity,
-  })
-}
+  });
+};
