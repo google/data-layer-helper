@@ -44,13 +44,13 @@ const TYPE_RE_ =
  * @param {*} value The value to extract the type information from.
  * @return {string} The name of the given value's type.
  */
-const type = function(value) {
+function type(value) {
   if (value == null) return String(value);
   var match = TYPE_RE_.exec(
       Object.prototype.toString.call(Object(value)));
   if (match) return match[1].toLowerCase();
   return 'object';
-};
+}
 
 
 /**
@@ -60,9 +60,9 @@ const type = function(value) {
  * @param {string} key The property name to look for.
  * @return {boolean} True iff the property exists.
  */
-const hasOwn = function(value, key) {
+function hasOwn(value, key) {
   return Object.prototype.hasOwnProperty.call(Object(value), key);
-};
+}
 
 
 /**
@@ -73,7 +73,7 @@ const hasOwn = function(value, key) {
  * @param {*} value The value to test.
  * @return {boolean} True iff the given value is a "plain" object.
  */
-const isPlainObject = function(value) {
+function isPlainObject(value) {
   if (!value || type(value) != 'object' ||    // Nulls, dates, etc.
       value.nodeType ||                             // DOM nodes.
       value == value.window) {                      // Window objects.
@@ -99,6 +99,6 @@ const isPlainObject = function(value) {
   var key;
   for (key in value) {}
   return key === undefined || hasOwn(value, key);
-};
+}
 
 exports = {type, hasOwn, isPlainObject};
