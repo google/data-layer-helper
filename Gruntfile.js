@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-
 module.exports = function(grunt) {
   const closurePackage = require('google-closure-compiler');
   closurePackage.grunt(grunt);
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
+    'pkg': grunt.file.readJSON('package.json'),
+
+    'closureDepsWriter': {
+      options: {
+        closureLibraryPath: 'node_modules/google-closure-library',
+      },
+      helperDeps: {
+        src: 'src/helper/helper.js',
+        dest: 'src/deps.js',
+      },
+    },
 
     // Using https://www.npmjs.com/package/google-closure-compiler
     'closure-compiler': {
@@ -36,20 +45,21 @@ module.exports = function(grunt) {
           hide_warnings_for: 'google-closure-library',
           compilation_level: 'ADVANCED_OPTIMIZATIONS',
           language_in: 'ECMASCRIPT6',
-          create_source_map: 'dist/data-layer-helper.js.map',
           output_wrapper: '(function(){%output%})();',
           jscomp_warning: 'lintChecks',
         },
       },
     },
-    qunit: {
+    'qunit': {
       files: ['test/unit.html', 'test/integration.html'],
     },
   });
 
   grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-closure-tools');
 
   grunt.registerTask('default', [
+    'closureDepsWriter',
     'closure-compiler',
     'qunit',
   ]);
