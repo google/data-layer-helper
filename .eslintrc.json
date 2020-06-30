@@ -17,6 +17,7 @@
     "closure"
   ],
   "rules": {
-    "prefer-rest-params": "off"
+    "prefer-rest-params": "off",
+    "prefer-spread": "off"
   }
 }
