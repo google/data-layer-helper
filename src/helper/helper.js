@@ -48,7 +48,6 @@ goog.provide('helper');
 goog.require('plain');
 
 
-
 /**
  * Creates a new helper object for the given dataLayer.
  *
@@ -189,8 +188,7 @@ helper.DataLayerHelper.prototype.processStates_ =
         if (helper.isArray_(update)) {
           helper.processCommand_(update, this.model_);
         } else if (helper.isArguments_(update)) {
-          const newStates = helper.processArguments_(update, this.model_,
-              this.commandProcessors_);
+          const newStates = this.processArguments_(update);
           this.unprocessed_.push.apply(this.unprocessed_, newStates);
         } else if (typeof update == 'function') {
           try {
@@ -215,6 +213,42 @@ helper.DataLayerHelper.prototype.processStates_ =
       }
     };
 
+/**
+ * Applies the given command to the value in the dataLayer with the given key.
+ * If a processor for the command has been registered, the processor function
+ * will be invoked with any arguments passed in.
+ *
+ * @param {Array<Object>} args The arguments object containing the command
+ *     to execute and optional arguments for the processor.
+ * @return {!Array<Object>}states The updates requested to the model state,
+ * in the order they should be processed.
+ * @private
+ */
+helper.DataLayerHelper.prototype.processArguments_ = function(args){
+  // Run all registered processors associated with this command
+  const states = [];
+  const name = args[0];
+  if (this.commandProcessors_[name]) {
+    for (const method of this.commandProcessors_[name]) {
+      states.push(method.apply(this.abstractModelInterface_,
+          [].slice.call(args, 1)));
+    }
+  }
+  return states;
+};
+
+
+/**
+ *
+ * @param {string} name
+ * @param {function} method
+ */
+helper.DataLayerHelper.prototype['registerProcessor'] = function(name, method) {
+  if (!(name in this.commandProcessors_)) {
+    this.commandProcessors_[name] = [];
+  }
+  this.commandProcessors_[name].push(method);
+};
 
 /**
  * Helper function that will build the abstract model interface using the
@@ -267,41 +301,6 @@ helper.processCommand_ = function(command, model) {
   }
 };
 
-/**
- * Applies the given command to the value in the dataLayer with the given key.
- * If a processor for the command has been registered, the processor function
- * will be invoked with any arguments passed in.
- *
- * @param {Array<Object>} args The arguments object containing the command
- *     to execute and optional arguments for the processor.
- * @param {Object|Array} model The current dataLayer model.
- * @param {!Map<string, function>} commandProcessors Commands to be processed.
- * @return {!Array<Object>}states The updates requested to the model state,
- * in the order they should be processed.
- * @private
- */
-helper.processArguments_ = function(args, model, commandProcessors) {
-  // Run all registered processors associated with this command
-  const states = [];
-  const methodArgs = Array.prototype.slice.call(args, 1);
-  for (const method of commandProcessors[args[0]]) {
-    states.push(method(model, methodArgs));
-  }
-  return states;
-};
-
-
-/**
- *
- * @param {string} name
- * @param {function} method
- */
-helper.DataLayerHelper.prototype['registerProcessor'] = function(name, method) {
-  if (!(name in this.commandProcessors_)) {
-    this.commandProcessors_[name] = [];
-  }
-  this.commandProcessors_[name].push(method);
-};
 /**
  * Converts the given key value pair into an object that can be merged onto
  * another object. Specifically, this method treats dots in the key as path
