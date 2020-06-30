@@ -86,7 +86,7 @@ describe('The plain.type function', function() {
 
   it('Identifies an arguments object', function() {
     const argumentsTest = () => {
-      assertType(arguments, 'Arguments', 'Arguments object');
+      assertType(arguments, 'arguments', 'Arguments object');
     };
     argumentsTest(1, 2, 3, 4);
   });
