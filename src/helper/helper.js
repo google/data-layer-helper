@@ -67,7 +67,7 @@ class DataLayerHelper {
    * @param {boolean=} optListenToPast If true, the given listener will be
    *     executed for state changes that have already happened.
    */
-  constructor(dataLayer, optListener, optListenToPast) {
+  constructor(dataLayer, optListener = () => {}, optListenToPast = false) {
     /**
      * The dataLayer to help with.
      * @type {!Array.<!Object>}
@@ -80,7 +80,7 @@ class DataLayerHelper {
      * @type {function(!Object, !Object)}
      * @private
      */
-    this.listener_ = optListener || function() {};
+    this.listener_ = optListener;
 
     /**
      * The internal marker for checking if the listener is
@@ -175,7 +175,7 @@ class DataLayerHelper {
    *     listener might not care about.
    * @private
    */
-  processStates_(states, optSkipListener) {
+  processStates_(states, optSkipListener = false) {
     this.unprocessed_.push.apply(this.unprocessed_, states);
     // Checking executingListener here protects against multiple levels of
     // loops trying to process the same queue. This can happen if the listener
