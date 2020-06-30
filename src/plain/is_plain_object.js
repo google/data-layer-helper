@@ -23,7 +23,6 @@ goog.provide('plain');
 plain.TYPE_RE_ =
     /\[object (Boolean|Number|String|Function|Array|Date|RegExp)\]/;
 
-
 /**
  * Returns a string describing the given value's type. Same as typeof, except
  * in these cases (assuming the value's typeof() method has not been modified):
@@ -46,12 +45,11 @@ plain.TYPE_RE_ =
  */
 plain.type = function(value) {
   if (value == null) return String(value);
-  var match = plain.TYPE_RE_.exec(
+  const match = plain.TYPE_RE_.exec(
       Object.prototype.toString.call(Object(value)));
   if (match) return match[1].toLowerCase();
   return 'object';
 };
-
 
 /**
  * Determines if the value has a non-inherited property with the given key.
@@ -64,7 +62,6 @@ plain.hasOwn = function(value, key) {
   return Object.prototype.hasOwnProperty.call(Object(value), key);
 };
 
-
 /**
  * Determines if the given value is a "plain" object, meaning it's an object
  * with no inherited properties that isn't a null, date, regexp, array,
@@ -74,9 +71,9 @@ plain.hasOwn = function(value, key) {
  * @return {boolean} True iff the given value is a "plain" object.
  */
 plain.isPlainObject = function(value) {
-  if (!value || plain.type(value) != 'object' ||    // Nulls, dates, etc.
-      value.nodeType ||                             // DOM nodes.
-      value == value.window) {                      // Window objects.
+  if (!value || plain.type(value) != 'object' || // Nulls, dates, etc.
+      value.nodeType || // DOM nodes.
+      value == value.window) { // Window objects.
     return false;
   }
   try {
@@ -96,8 +93,7 @@ plain.isPlainObject = function(value) {
   // Lastly, we check that all properties are non-inherited.
   // According to jQuery, inherited properties are always enumerated last, so
   // it's safe to only check the last enumerated property.
-  var key;
+  let key;
   for (key in value) {}
   return key === undefined || plain.hasOwn(value, key);
 };
-
