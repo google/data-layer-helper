@@ -13,7 +13,7 @@ describe('The processStates function', function() {
    *     array represents the arguments passed to the listener during a call.
    */
   function assertProcessStates(states, expectedModel, expectedListenerCalls) {
-    let MockHelper = function() {
+    const MockHelper = function() {
       this.model_ = {};
       this.unprocessed_ = [];
       this.executingListener_ = false;
@@ -25,17 +25,19 @@ describe('The processStates function', function() {
       this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
     };
 
-    function doAssert(skipListener) {
+    const doAssert = (skipListener) => {
       MockHelper.prototype = new DataLayerHelper([]);
-      let helper = new MockHelper();
+      const helper = new MockHelper();
       DataLayerHelper.prototype.processStates_.call(helper, states,
           skipListener);
+
       expect(helper.model_).toEqual(expectedModel);
-      expect(helper.listenerCalls_).
-          toEqual(skipListener ? [] : expectedListenerCalls);
+      expect(helper.listenerCalls_)
+          .toEqual(skipListener ? [] : expectedListenerCalls);
+
       expect(helper.unprocessed_).toEqual([]);
-      expect(helper.executingListener_).toEqual(false);
-    }
+      expect(helper.executingListener_).toBe(false);
+    };
 
     doAssert(true);
     doAssert(false);
@@ -63,7 +65,7 @@ describe('The processStates function', function() {
 
   describe('The behavior with custom setter methods', function() {
     it('makes an overridding setter call', function() {
-      let customMethod = function() {
+      const customMethod = function() {
         this.set('a', 1);
       };
       assertProcessStates(
@@ -73,7 +75,7 @@ describe('The processStates function', function() {
     });
 
     it('makes a setter call on empty state', function() {
-      let customMethod = function() {
+      const customMethod = function() {
         this.set('b', 'one');
       };
       assertProcessStates(
@@ -83,7 +85,7 @@ describe('The processStates function', function() {
     });
 
     it('makes a setter call on a complex nested object', function() {
-      let customMethod = function() {
+      const customMethod = function() {
         this.set('c.d', [3]);
       };
       assertProcessStates(
@@ -93,46 +95,49 @@ describe('The processStates function', function() {
     });
 
     it('maintains state when calling custom methods', function() {
-      let customMethod = function() {
-        let a = this.get('a');
-        expect(a).toEqual(1);
+      const customMethod = function() {
+        const a = this.get('a');
+
+        expect(a).toBe(1);
       };
       assertProcessStates(
           [{a: 1, b: 2}, customMethod],
           {a: 1, b: 2},
-          [
+        [
             [{a: 1, b: 2}, {a: 1, b: 2}],
             [{a: 1, b: 2}, customMethod],
-          ]);
+        ]);
     });
 
     it('maintains nested state when calling custom methods', function() {
-      let customMethod = function() {
-        let b = this.get('a.b');
-        expect(b).toEqual(2);
+      const customMethod = function() {
+        const b = this.get('a.b');
+
+        expect(b).toBe(2);
       };
       assertProcessStates(
           [{a: {b: 2}}, customMethod],
           {a: {b: 2}},
-          [
+        [
             [{a: {b: 2}}, {a: {b: 2}}],
             [{a: {b: 2}}, customMethod],
-          ]);
+        ]);
     });
 
     it('maintains complex, deeply nested state when calling custom methods',
         function() {
-          let customMethod = function() {
-            let a = this.get('a');
-            expect(a.b.c[0]).toEqual(3);
+          const customMethod = function() {
+            const a = this.get('a');
+
+            expect(a.b.c[0]).toBe(3);
           };
           assertProcessStates(
               [{a: {b: {c: [3]}}}, customMethod],
               {a: {b: {c: [3]}}},
-              [
+            [
                 [{a: {b: {c: [3]}}}, {a: {b: {c: [3]}}}],
                 [{a: {b: {c: [3]}}}, customMethod],
-              ]);
+            ]);
         });
   });
 
@@ -145,43 +150,44 @@ describe('The processStates function', function() {
         {price: 30},
       ];
     });
+
     it('maintains the length of an array', function() {
-      let customMethod = function() {
-        let products = this.get('products');
+      const customMethod = function() {
+        const products = this.get('products');
         this.set('numProducts', products.length);
       };
       assertProcessStates([{'products': products}, customMethod],
-          {'products': products, numProducts: 3},
-          [
+          {'products': products, 'numProducts': 3},
+        [
             [{'products': products}, {'products': products}],
-            [{'products': products, numProducts: 3}, customMethod],
-          ]);
+            [{'products': products, 'numProducts': 3}, customMethod],
+        ]);
     });
 
     it('allows for array modification with push and pop', function() {
-      let expectedProducts = [
+      const expectedProducts = [
         {price: 10},
         {price: 20},
         {price: 60},
       ];
-      let customMethod = function() {
-        let products = this.get('products');
-        let lastProduct = products.pop();
+      const customMethod = function() {
+        const products = this.get('products');
+        const lastProduct = products.pop();
         lastProduct.price = lastProduct.price * 2;
         products.push(lastProduct);
-      }
+      };
       assertProcessStates(
           [{'products': products}, customMethod],
           {'products': expectedProducts},
-          [
+        [
             [{'products': products}, {'products': products}],
-            [{'products': expectedProducts}, customMethod]
-          ]);
+            [{'products': expectedProducts}, customMethod],
+        ]);
     });
 
     it('Allows elementwise array access in custom functions', function() {
-      let customMethod = function(){
-        let products = this.get('products');
+      const customMethod = function() {
+        const products = this.get('products');
         let total = 0;
         for (let i = 0; i < products.length; i++) {
           total += products[i].price;
@@ -190,61 +196,63 @@ describe('The processStates function', function() {
       };
       assertProcessStates(
           [{'products': products}, customMethod],
-          {'products': products, orderTotal: 60},
-          [
+          {'products': products, 'orderTotal': 60},
+        [
             [{'products': products}, {'products': products}],
-            [{'products': products, orderTotal: 60}, customMethod],
-          ]);
+            [{'products': products, 'orderTotal': 60}, customMethod],
+        ]);
     });
   });
 
   describe('The behavior with custom methods that throw errors',
       function() {
-    it('Does not crash when an error is thrown ', function() {
-      let errorFunction = () => {throw 'Scary Error';};
-      assertProcessStates([errorFunction], {}, [[{}, errorFunction]]);
-    });
-
-    it('executes setter code before an error is thrown',
-        function() {
-          let errorFunction = function() {
-            this.set('a', 1);
+        it('Does not crash when an error is thrown ', function() {
+          const errorFunction = () => {
             throw 'Scary Error';
           };
-          assertProcessStates(
-              [errorFunction],
-              {a: 1},
-              [[{a: 1}, errorFunction]]);
+          assertProcessStates([errorFunction], {}, [[{}, errorFunction]]);
         });
 
-    it('executes modifying code before an error is thrown',
-        function() {
-          let errorFunction = function() {
-            this.set('a', 3);
-            throw 'Scary Error';
-          };
-          assertProcessStates(
-              [{a: 1, b: 2}, errorFunction],
-              {a: 3, b: 2},
-              [
-                [{a: 1, b: 2}, {a: 1, b: 2}],
-                [{a: 3, b: 2}, errorFunction],
-              ]);
-        });
+        it('executes setter code before an error is thrown',
+            function() {
+              const errorFunction = function() {
+                this.set('a', 1);
+                throw 'Scary Error';
+              };
+              assertProcessStates(
+                  [errorFunction],
+                  {a: 1},
+                  [[{a: 1}, errorFunction]]);
+            });
 
-    it('does not affect messages further down the queue when errors are thrown',
-        function() {
-        let errorFunction = function(){
+        it('executes modifying code before an error is thrown',
+            function() {
+              const errorFunction = function() {
+                this.set('a', 3);
+                throw 'Scary Error';
+              };
+              assertProcessStates(
+                  [{a: 1, b: 2}, errorFunction],
+                  {a: 3, b: 2},
+                [
+                    [{a: 1, b: 2}, {a: 1, b: 2}],
+                    [{a: 3, b: 2}, errorFunction],
+                ]);
+            });
+
+        it('does not affect messages further down' +
+            ' the queue when errors are thrown', function() {
+          const errorFunction = function() {
             this.set('a', 1);
             throw 'Scary Error';
           };
           assertProcessStates(
               [errorFunction, {a: 2}],
               {a: 2},
-              [
+            [
                 [{a: 1}, errorFunction],
                 [{a: 2}, {a: 2}],
-              ]);
+            ]);
         });
-  });
+      });
 });
