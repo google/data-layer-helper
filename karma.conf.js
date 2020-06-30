@@ -6,8 +6,8 @@ module.exports = function(config) {
     frameworks: ['jasmine', 'closure'],
     files: [
       // closure library
-      {pattern: 'third_party/closure-library/closure/goog/base.js'},
-      {pattern: 'third_party/closure-library/closure/goog/deps.js',
+      {pattern: 'node_modules/google-closure-library/closure/goog/base.js'},
+      {pattern: 'node_modules/google-closure-library/closure/goog/deps.js',
         included: false, served: false},
       // source files
       {pattern: 'src/**/*.js', included: false},
@@ -21,7 +21,7 @@ module.exports = function(config) {
       'test/**/*_test.js': ['closure', 'closure-iit'],
       // source files are preprocessed for dependencies
       'src/*/*.js': ['closure'],
-      'third_party/closure-library/closure/goog/deps.js': ['closure-deps'],
+      'node_modules/google-closure-library/closure/goog/deps.js': ['closure-deps'],
     },
     plugins: [
       require('karma-jasmine'),
