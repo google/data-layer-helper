@@ -1,4 +1,7 @@
-goog.require('helper');
+goog.module('datalayerhelper.helper.testing.expandKeyValue_');
+goog.setTestOnly();
+
+const {expandKeyValue_} = goog.require('helper');
 
 describe('The helper.expandKeyValue_ function', function() {
   /**
@@ -11,7 +14,7 @@ describe('The helper.expandKeyValue_ function', function() {
    * @param {string=} context More information about the test being ran.
    */
   function assertExpand(key, value, expected, context = '') {
-    expect(helper.expandKeyValue_(key, value))
+    expect(expandKeyValue_(key, value))
         .withContext(context)
         .toEqual(expected);
   }
