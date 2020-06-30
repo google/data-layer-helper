@@ -98,8 +98,15 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
   this.unprocessed_ = [];
 
   /**
+   * The internal map of processors to run.
+   * @type {Map<string, function>}
+   * @private
+   */
+  this.commandProcessors_ = {};
+
+  /**
    * The interface to the internal dataLayer model that is exposed to custom
-   * methods. Custom methods will the executed with this interface as the value
+   * methods. Custom methods will be executed with this interface as the value
    * of 'this', allowing users to manipulate the model using this.get and
    * this.set.
    * @type {!Object}
@@ -111,11 +118,11 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
   this.processStates_(dataLayer, !opt_listenToPast);
 
   // Add listener for future state changes.
-  var oldPush = dataLayer.push;
-  var that = this;
+  let oldPush = dataLayer.push;
+  let that = this;
   dataLayer.push = function() {
-    var states = [].slice.call(arguments, 0);
-    var result = oldPush.apply(dataLayer, states);
+    let states = [].slice.call(arguments, 0);
+    let result = oldPush.apply(dataLayer, states);
     that.processStates_(states);
     return result;
   };
@@ -157,15 +164,6 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
 };
 
 /**
- *
- * @param name
- * @param method
- */
-helper.DataLayerHelper.prototype['registerProcessor'] = function(name, method) {
-  return true;
-};
-
-/**
  * Merges the given update objects (states) onto the helper's model, calling
  * the listener each time the model is updated. If a command array is pushed
  * into the dataLayer, the method will be parsed and applied to the value found
@@ -173,47 +171,49 @@ helper.DataLayerHelper.prototype['registerProcessor'] = function(name, method) {
  *
  * @param {Array.<Object>} states The update objects to process, each
  *     representing a change to the state of the page.
- * @param {boolean=} opt_skipListener If true, the listener the given states
- *     will be applied to the internal model, but will not cause the listener
- *     to be executed. This is useful for processing past states that the
+ * @param {boolean=} opt_skipListener If true, the given states
+ *     will be applied to the internal model, but the listener will not
+ *     be executed. This is useful for processing past states that the
  *     listener might not care about.
  * @private
  */
 helper.DataLayerHelper.prototype.processStates_ =
     function(states, opt_skipListener) {
-
-  this.unprocessed_.push.apply(this.unprocessed_, states);
-  // Checking executingListener here protects against multiple levels of
-  // loops trying to process the same queue. This can happen if the listener
-  // itself is causing new states to be pushed onto the dataLayer.
-  while (this.executingListener_ === false && this.unprocessed_.length > 0) {
-    var update = this.unprocessed_.shift();
-    if (helper.isArray_(update)) {
-      helper.processCommand_(update, this.model_);
-    } else if (helper.isArguments_(update)) {
-      helper.processArguments_(update, this.model_);
-    } else if (typeof update == 'function') {
-      var that = this;
-      try {
-        update.call(this.abstractModelInterface_);
-      } catch (e) {
-        // Catch any exceptions to we don't drop subsequent updates.
-        // TODO: Add some sort of logging when this happens.
+      this.unprocessed_.push.apply(this.unprocessed_, states);
+      // Checking executingListener here protects against multiple levels of
+      // loops trying to process the same queue. This can happen if the listener
+      // itself is causing new states to be pushed onto the dataLayer.
+      while (this.executingListener_ === false &&
+              this.unprocessed_.length > 0) {
+        const update = this.unprocessed_.shift();
+        if (helper.isArray_(update)) {
+          helper.processCommand_(update, this.model_);
+        } else if (helper.isArguments_(update)) {
+          const newStates = helper.processArguments_(update, this.model_,
+              this.commandProcessors_);
+          this.unprocessed_.push.apply(this.unprocessed_, newStates);
+        } else if (typeof update == 'function') {
+          try {
+            update.call(this.abstractModelInterface_);
+          } catch (e) {
+            // Catch any exceptions to we don't drop subsequent updates.
+            // TODO: Add some sort of logging when this happens.
+          }
+        } else if (plain.isPlainObject(update)) {
+          for (const key in update) {
+            helper.merge_(
+                helper.expandKeyValue_(key, update[key]), this.model_);
+          }
+        } else {
+          continue;
+        }
+        if (!opt_skipListener) {
+          this.executingListener_ = true;
+          this.listener_(this.model_, update);
+          this.executingListener_ = false;
+        }
       }
-    } else if (plain.isPlainObject(update)) {
-      for (var key in update) {
-        helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
-      }
-    } else {
-      continue;
-    }
-    if (!opt_skipListener) {
-      this.executingListener_ = true;
-      this.listener_(this.model_, update);
-      this.executingListener_ = false;
-    }
-  }
-};
+    };
 
 
 /**
@@ -272,15 +272,36 @@ helper.processCommand_ = function(command, model) {
  * If a processor for the command has been registered, the processor function
  * will be invoked with any arguments passed in.
  *
- * @param {Array.<Object>} args The arguments object containing the command
+ * @param {Array<Object>} args The arguments object containing the command
  *     to execute and optional arguments for the processor.
  * @param {Object|Array} model The current dataLayer model.
+ * @param {!Map<string, function>} commandProcessors Commands to be processed.
+ * @return {!Array<Object>}states The updates requested to the model state,
+ * in the order they should be processed.
  * @private
  */
-helper.processArguments_ = function(args, model) {
-  //TODO: add process command code
+helper.processArguments_ = function(args, model, commandProcessors) {
+  // Run all registered processors associated with this command
+  const states = [];
+  const methodArgs = Array.prototype.slice.call(args, 1);
+  for (const method of commandProcessors[args[0]]) {
+    states.push(method(model, methodArgs));
+  }
+  return states;
 };
 
+
+/**
+ *
+ * @param {string} name
+ * @param {function} method
+ */
+helper.DataLayerHelper.prototype['registerProcessor'] = function(name, method) {
+  if (!(name in this.commandProcessors_)) {
+    this.commandProcessors_[name] = [];
+  }
+  this.commandProcessors_[name].push(method);
+};
 /**
  * Converts the given key value pair into an object that can be merged onto
  * another object. Specifically, this method treats dots in the key as path
