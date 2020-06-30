@@ -21,7 +21,7 @@ goog.provide('plain');
  * @const
  */
 plain.TYPE_RE_ =
-    /\[object (Boolean|Number|String|Function|Array|Date|RegExp)\]/;
+    /\[object (Boolean|Number|String|Function|Array|Date|RegExp|Arguments)\]/;
 
 
 /**

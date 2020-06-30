@@ -83,4 +83,11 @@ describe('The plain.type function', function() {
     assertType(document.getElementsByTagName('script')[0],
         'object', 'other complex types');
   });
+
+  it('Identifies an arguments object', function() {
+    const argumentsTest = () => {
+      assertType(arguments, 'Arguments', 'Arguments object');
+    };
+    argumentsTest(1, 2, 3, 4);
+  });
 });
