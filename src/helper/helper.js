@@ -216,7 +216,7 @@ DataLayerHelper.prototype.processStates_ =
  *     to Custom Methods.
  * @private
  */
-const buildAbstractModelInterface_ = function(dataLayerHelper) {
+function buildAbstractModelInterface_(dataLayerHelper) {
   return {
     'set': function(key, value) {
       merge_(expandKeyValue_(key, value),
@@ -226,7 +226,7 @@ const buildAbstractModelInterface_ = function(dataLayerHelper) {
       return dataLayerHelper.get(key);
     }
   };
-};
+}
 
 
 /**
@@ -239,7 +239,7 @@ const buildAbstractModelInterface_ = function(dataLayerHelper) {
  * @param {Object|Array} model The current dataLayer model.
  * @private
  */
-const processCommand_ = function(command, model) {
+function processCommand_(command, model) {
   if (!isString_(command[0])) return;
   var path = command[0].split('.');
   var method = path.pop();
@@ -255,7 +255,7 @@ const processCommand_ = function(command, model) {
     // Catch any exception so we don't drop subsequent updates.
     // TODO: Add some sort of logging here when this happens.
   }
-};
+}
 
 
 /**
@@ -275,7 +275,7 @@ const processCommand_ = function(command, model) {
  *     merged onto the dataLayer's model.
  * @private
  */
-const expandKeyValue_ = function(key, value) {
+function expandKeyValue_(key, value) {
   var result = {};
   var target = result;
   var split = key.split('.');
@@ -284,7 +284,7 @@ const expandKeyValue_ = function(key, value) {
   }
   target[split[split.length - 1]] = value;
   return result;
-};
+}
 
 
 /**
@@ -294,9 +294,9 @@ const expandKeyValue_ = function(key, value) {
  * @return {boolean} True iff the given value is an array.
  * @private
  */
-const isArray_ = function(value) {
+function isArray_(value) {
   return type(value) == 'array';
-};
+}
 
 
 /**
@@ -306,9 +306,9 @@ const isArray_ = function(value) {
  * @return {boolean} True iff the given value is a string.
  * @private
  */
-const isString_ = function(value) {
+function isString_(value) {
   return type(value) == 'string';
-};
+}
 
 
 /**
@@ -324,7 +324,7 @@ const isString_ = function(value) {
  * @param {Object|Array} to The object or array to merge into.
  * @private
  */
-const merge_ = function(from, to) {
+function merge_(from, to) {
   for (var property in from) {
     if (hasOwn(from, property)) {
       var fromProperty = from[property];
@@ -339,7 +339,7 @@ const merge_ = function(from, to) {
       }
     }
   }
-};
+}
 
 exports = {
   DataLayerHelper,
