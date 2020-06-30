@@ -10,6 +10,8 @@ module.exports = function(config) {
       // source files
       {pattern: 'src/**/is_plain_object.js'},
       {pattern: 'src/**/helper.js'},
+      // jquery
+      {pattern: 'test/lib/jquery*'},
       // tests
       {pattern: 'test/*_test.js'},
     ],
