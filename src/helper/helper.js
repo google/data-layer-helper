@@ -60,7 +60,6 @@ class DataLayerHelper {
   /**
    * Creates a new helper object for the given dataLayer.
    *
-   * @constructor
    * @param {!Array.<!Object>} dataLayer The dataLayer to help with.
    * @param {function(!Object, !Object)=} optListener The callback function to
    *     execute when a new state gets pushed onto the dataLayer.
@@ -100,7 +99,7 @@ class DataLayerHelper {
 
     /**
      * The internal queue of dataLayer updates that have not yet been processed.
-     * @type {Array.<Object>}
+     * @type {!Array.<!Object>}
      * @private
      */
     this.unprocessed_ = [];
@@ -136,7 +135,6 @@ class DataLayerHelper {
    * @param {string} key The path of the key to set on the model, where dot (.)
    *     is the path separator.
    * @return {*} The value found at the given key.
-   * @this {DataLayerHelper}
    */
   get(key) {
     let target = this.model_;
@@ -152,8 +150,6 @@ class DataLayerHelper {
    * Flattens the dataLayer's history into a single object that represents the
    * current state. This is useful for long running apps, where the dataLayer's
    * history may get very large.
-   *
-   * @this {DataLayerHelper}
    */
   flatten() {
     this.dataLayer_.splice(0, this.dataLayer_.length);
@@ -167,7 +163,7 @@ class DataLayerHelper {
    * into the dataLayer, the method will be parsed and applied to the value
    * found at the key, if a one exists.
    *
-   * @param {Array.<Object>} states The update objects to process, each
+   * @param {!Array.<!Object>} states The update objects to process, each
    *     representing a change to the state of the page.
    * @param {boolean=} optSkipListener If true, the listener the given states
    *     will be applied to the internal model, but will not cause the listener
@@ -218,9 +214,9 @@ window['DataLayerHelper'] = helper.DataLayerHelper;
  * Helper function that will build the abstract model interface using the
  * supplied dataLayerHelper.
  *
- * @param {DataLayerHelper} dataLayerHelper The helper class to construct the
+ * @param {!DataLayerHelper} dataLayerHelper The helper class to construct the
  *     abstract model interface for.
- * @return {Object} The interface to the abstract data layer model that is given
+ * @return {!Object} The interface to the abstract data layer model that is given
  *     to Custom Methods.
  * @private
  */
@@ -241,9 +237,9 @@ helper.buildAbstractModelInterface_ = function(dataLayerHelper) {
  * If the method is a valid function of the value, the method will be applies
  * with any arguments passed in.
  *
- * @param {Array.<Object>} command The array containing the key with the
+ * @param {!Array.<!Object>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
- * @param {Object|Array} model The current dataLayer model.
+ * @param {!Object|!Array} model The current dataLayer model.
  * @private
  */
 helper.processCommand_ = function(command, model) {
@@ -277,7 +273,7 @@ helper.processCommand_ = function(command, model) {
  *
  * @param {string} key The key's path, where dots are the path separators.
  * @param {*} value The value to set on the given key path.
- * @return {Object} An object representing the given key/value which can be
+ * @return {!Object} An object representing the given key/value which can be
  *     merged onto the dataLayer's model.
  * @private
  */
@@ -323,8 +319,8 @@ helper.isString_ = function(value) {
  * objects get cloned and which get copied. More work is needed to flesh
  * out the details here.
  *
- * @param {Object|Array} from The object or array to merge from.
- * @param {Object|Array} to The object or array to merge into.
+ * @param {!Object|!Array} from The object or array to merge from.
+ * @param {!Object|!Array} to The object or array to merge into.
  * @private
  */
 helper.merge_ = function(from, to) {
