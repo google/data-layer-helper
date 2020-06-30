@@ -23,7 +23,7 @@ goog.setTestOnly();
 
 const {DataLayerHelper} = goog.require('helper');
 
-it('get', function() {
+describe('The helper.get function', function() {
   const h = new DataLayerHelper([{
     a: 1,
     b: {
@@ -35,15 +35,20 @@ it('get', function() {
     },
   }]);
 
-  expect(h.get('a')).toBe(1);
-  expect(h.get('b')).toEqual({c: {d: 4}, e: 5, f: null});
-  expect(h.get('b.c')).toEqual({d: 4});
-  expect(h.get('b.c.d')).toBe(4);
-  expect(h.get('b.e')).toBe(5);
-  expect(h.get('b.f')).toBe(null);
+  it('correctly returns the value currently assigned ' +
+      'to the given key in the helper internal model', function() {
+    expect(h.get('a')).toBe(1);
+    expect(h.get('b')).toEqual({c: {d: 4}, e: 5, f: null});
+    expect(h.get('b.c')).toEqual({d: 4});
+    expect(h.get('b.c.d')).toBe(4);
+    expect(h.get('b.e')).toBe(5);
+    expect(h.get('b.f')).toBe(null);
+  });
 
-  expect(h.get('blah')).toBe(undefined);
-  expect(h.get('c')).toBe(undefined);
-  expect(h.get('d')).toBe(undefined);
-  expect(h.get('e')).toBe(undefined);
+  it('correct returns undefined when key does not exist in model', function() {
+    expect(h.get('blah')).toBe(undefined);
+    expect(h.get('c')).toBe(undefined);
+    expect(h.get('d')).toBe(undefined);
+    expect(h.get('e')).toBe(undefined);
+  });
 });
