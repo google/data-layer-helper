@@ -17,7 +17,6 @@
     "closure"
   ],
   "rules": {
-    "prefer-rest-params": "off", // We don't want this, adds a polyfill
-    "no-invalid-this": "off" // works incorrectly with jasmine
+    "prefer-rest-params": "off" // We don't want this, adds a polyfill
   }
 }
