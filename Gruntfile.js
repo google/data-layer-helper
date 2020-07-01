@@ -50,10 +50,10 @@ module.exports = function(grunt) {
         },
       },
     },
-    qunit: {
+    'qunit': {
       files: ['test/unit.html'],
     },
-    karma: {
+    'karma': {
       options: {
         singleRun: true,
       },
