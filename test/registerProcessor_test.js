@@ -72,8 +72,40 @@ describe('The registerProcessor method', function() {
           expect(x).toBe(3);
         });
 
-    /* TODO: set command not defined yet. Also it might be good to add a test
-     * with a listener
+
+    it('is called before the default listener', function() {
+      let a = 0;
+      const f1 = function() {
+        a = 1;
+      };
+      const f2 = function() {
+        a = 2;
+      };
+      dlh = new helper.DataLayerHelper(dataLayer, f2);
+      dlh.registerProcessor('method', f1);
+      commandAPI('method');
+
+      expect(a).toBe(2);
+    });
+
+    it('can be invoked by the default listener', function() {
+      let a = 0;
+      const f1 = function() {
+        if (!a) {
+          commandAPI('method');
+        }
+      };
+      const f2 = function() {
+        a += 5;
+      };
+      dlh = new helper.DataLayerHelper(dataLayer, f1);
+      dlh.registerProcessor('method', f2);
+      commandAPI('Crazy command');
+
+      expect(a).toBe(5);
+    });
+
+    /* TODO: set command not defined yet.
     it('considers built in functions to be registered first',
         function() {
           dlh.registerProcessor('set', function(key) {
@@ -224,7 +256,7 @@ describe('The registerProcessor method', function() {
       expect(a).toBe(7);
     });
 
-    it('can call the itself with command API', function() {
+    it('can call itself with command API', function() {
       let a = 0;
       dlh.registerProcessor('method', function() {
         if (a < 10) {
