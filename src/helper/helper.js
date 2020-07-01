@@ -162,6 +162,31 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
   helper.merge_(this.model_, this.dataLayer_[0]);
 };
 
+
+/**
+ * Register a function to respond to events with a certain name called by
+ * the command API by storing it in a map. The function will be called any time
+ * the commandAPI is called with first parameter the string name.
+ *
+ * @param {string} name The string which should be passed into the command API
+ * to call the processor.
+ * @param {function} processor The function to register to be called later.
+ * So long as this function is not an arrow function, it can access the abstract
+ * model interface by using the this keyword. It is recommended not to modify
+ * the state within the function using this.set. Changes to the model should
+ * only be achieved by the return value, a dict whose values will
+ * automatically be merged into the model.
+ * @this {DataLayerHelper}
+ */
+helper.DataLayerHelper.prototype['registerProcessor'] =
+    function(name, processor) {
+      if (!(name in this.commandProcessors_)) {
+        this.commandProcessors_[name] = [];
+      }
+      this.commandProcessors_[name].push(processor);
+    };
+
+
 /**
  * Merges the given update objects (states) onto the helper's model, calling
  * the listener each time the model is updated. If a command array is pushed
@@ -213,6 +238,7 @@ helper.DataLayerHelper.prototype.processStates_ =
       }
     };
 
+
 /**
  * Applies the given command to the value in the dataLayer with the given key.
  * If a processor for the command has been registered, the processor function
@@ -220,7 +246,7 @@ helper.DataLayerHelper.prototype.processStates_ =
  *
  * @param {Array<Object>} args The arguments object containing the command
  *     to execute and optional arguments for the processor.
- * @return {!Array<Object>}states The updates requested to the model state,
+ * @return {!Array<Object>} states The updates requested to the model state,
  * in the order they should be processed.
  * @private
  */
@@ -241,18 +267,6 @@ helper.DataLayerHelper.prototype.processArguments_ = function(args) {
   return states;
 };
 
-
-/**
- *
- * @param {string} name
- * @param {function} method
- */
-helper.DataLayerHelper.prototype['registerProcessor'] = function(name, method) {
-  if (!(name in this.commandProcessors_)) {
-    this.commandProcessors_[name] = [];
-  }
-  this.commandProcessors_[name].push(method);
-};
 
 /**
  * Helper function that will build the abstract model interface using the
