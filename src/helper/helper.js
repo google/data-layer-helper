@@ -224,12 +224,16 @@ helper.DataLayerHelper.prototype.processStates_ =
  * in the order they should be processed.
  * @private
  */
-helper.DataLayerHelper.prototype.processArguments_ = function(args){
+helper.DataLayerHelper.prototype.processArguments_ = function(args) {
   // Run all registered processors associated with this command
   const states = [];
   const name = args[0];
   if (this.commandProcessors_[name]) {
-    for (const method of this.commandProcessors_[name]) {
+    // Cache length - don't run processors registered
+    // by other processors after the call.
+    const length = this.commandProcessors_[name].length;
+    for (let i = 0; i < length; i++) {
+      const method = this.commandProcessors_[name][i];
       states.push(method.apply(this.abstractModelInterface_,
           [].slice.call(args, 1)));
     }

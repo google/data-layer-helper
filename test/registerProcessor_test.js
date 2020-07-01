@@ -38,6 +38,20 @@ describe('The registerProcessor method', function() {
   });
 
   describe('Order of calling registered functions', function() {
+    it('calls registered functions only when the commandAPI' +
+        'fires the appropriate event', function() {
+      let x = 0;
+      dlh.registerProcessor('process', function() {
+        x = 1;
+        dlh.registerProcessor('process', function() {
+          x = 2;
+        });
+      });
+      commandAPI('process');
+
+      expect(x).toBe(1);
+    });
+
     it('calls registered functions in the order they were registered',
         function() {
           let x = 0;
@@ -88,18 +102,8 @@ describe('The registerProcessor method', function() {
     });
   });
 
-  describe('behavior of a registered command', function() {
-    it('sets the model according to the return value', function() {
-      dataLayer.push({'a': {'b': 4, 'c': 'bad'}});
-      dlh.registerProcessor('make good', function() {
-        return {'a': {'c': 'good'}};
-      });
-      commandAPI('make good');
-
-      expect(dlh.get('a')).toEqual({'b': 4, 'c': 'good'});
-    });
-
-    it('takes the abstract model as the first argument', function() {
+  describe('The parameters of a registered command', function() {
+    it('can access the model through the this keyword', function() {
       dataLayer.push({'a': {'b': 4, 'c': 'bad'}}, {'x': []});
       dlh.registerProcessor('peek', function() {
         expect(this.get('a')).toEqual({'b': 4, 'c': 'bad'});
@@ -128,57 +132,109 @@ describe('The registerProcessor method', function() {
     });
   });
 
-  describe('updates to the model', function() {
-    beforeEach(function() {
-      dataLayer.push({'a': 1, 'b': {'a': [1]}});
-    });
+  describe(`The registered command's interface with the model`,
+      function() {
+        beforeEach(function() {
+          dataLayer.push({'a': 1, 'b': {'a': [1]}});
+        });
 
-    it('can create a new field in the model', function() {
-      dlh.registerProcessor('method', function(eventName, params) {
-        return {
-          'last_event': `${eventName} ${params['target']}`,
-        };
+        it('can create a new field in the model', function() {
+          dlh.registerProcessor('method', function(eventName, params) {
+            return {
+              'last_event': `${eventName} ${params['target']}`,
+            };
+          });
+          commandAPI('method', 'click', {'target': 'button'});
+
+          expect(dlh.get('last_event')).toBe('click button');
+        });
+
+        it('can overwrite nested fields of the model', function() {
+          dlh.registerProcessor('event', () => {
+            return {
+              'b': {'a': [3]},
+            };
+          });
+          commandAPI('event');
+
+          expect(dlh.get('b.a')).toEqual([3]);
+        });
+
+        it('can add new nested fields of the model', function() {
+          dlh.registerProcessor('event', () => {
+            return {
+              'b': {'b': 2},
+            };
+          });
+          commandAPI('event');
+
+          expect(dlh.get('b')).toEqual({'a': [1], 'b': 2});
+        });
+
+        it('can update nested fields of the model', function() {
+          dlh.registerProcessor('event', function() {
+            const array = this.get('b.a');
+            array.push(2);
+            return {
+              'b': {'a': array},
+            };
+          });
+          commandAPI('event');
+
+          expect(dlh.get('b')).toEqual({'a': [1, 2]});
+        });
+
+        it('sets the model according to the return value', function() {
+          dataLayer.push({'a': {'b': 4, 'c': 'bad'}});
+          dlh.registerProcessor('make good', function() {
+            return {'a': {'c': 'good'}};
+          });
+          commandAPI('make good');
+
+          expect(dlh.get('a')).toEqual({'b': 4, 'c': 'good'});
+        });
+
+        it('can access the abstract model interface through this', function() {
+          dlh.registerProcessor('event', function() {
+            const init = this.get('b.a');
+            this.set('b.a', 'new');
+            const end = this.get('b.a');
+
+            expect(init).toEqual([1]);
+            expect(end).toEqual('new');
+          });
+          commandAPI('event');
+
+          expect(dlh.get('b')).toEqual({'a': 'new'});
+        });
       });
-      commandAPI('method', 'click', {'target': 'button'});
 
-      expect(dlh.get('last_event')).toBe('click button');
-    });
-
-    it('can overwrite nested fields of the model', function() {
-      dlh.registerProcessor('event', () => {
-        return {
-          'b': {'a': [3]},
-        };
+  describe(`The registered command's connection to a command API`, function() {
+    it('can call the command API', function() {
+      let a = 1;
+      dlh.registerProcessor('method', function() {
+        a += 2;
+        commandAPI('method2');
       });
-      commandAPI('event');
-
-      expect(dlh.get('b.a')).toEqual([3]);
-    });
-
-    it('can add new nested fields of the model', function() {
-      dlh.registerProcessor('event', () => {
-        return {
-          'b': {'b': 2},
-        };
+      dlh.registerProcessor('method2', function() {
+        a += 4;
       });
-      commandAPI('event');
+      commandAPI('method');
 
-      expect(dlh.get('b')).toEqual({'a': [1], 'b': 2});
+      expect(a).toBe(7);
     });
 
-    it('can update nested fields of the model', function() {
-      dlh.registerProcessor('event', function() {
-        const array = this.get('b.a');
-        array.push(2);
-        return {
-          'b': {'a': array},
-        };
+    it('can call the itself with command API', function() {
+      let a = 0;
+      dlh.registerProcessor('method', function() {
+        if (a < 10) {
+          a++;
+          commandAPI('method');
+        }
       });
-      commandAPI('event');
+      commandAPI('method');
 
-      expect(dlh.get('b')).toEqual({'a': [1, 2]});
+      expect(a).toBe(10);
     });
-
-    // can it access this.get and this.set?
   });
 });
