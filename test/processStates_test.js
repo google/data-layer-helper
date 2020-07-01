@@ -208,7 +208,7 @@ describe('The processStates function', function() {
       function() {
         it('Does not crash when an error is thrown ', function() {
           const errorFunction = () => {
-            throw 'Scary Error';
+            throw Error('Scary Error');
           };
           assertProcessStates([errorFunction], {}, [[{}, errorFunction]]);
         });
@@ -217,7 +217,7 @@ describe('The processStates function', function() {
             function() {
               const errorFunction = function() {
                 this.set('a', 1);
-                throw 'Scary Error';
+                throw Error('Scary Error');
               };
               assertProcessStates(
                   [errorFunction],
@@ -229,7 +229,7 @@ describe('The processStates function', function() {
             function() {
               const errorFunction = function() {
                 this.set('a', 3);
-                throw 'Scary Error';
+                throw Error('Scary Error');
               };
               assertProcessStates(
                   [{a: 1, b: 2}, errorFunction],
@@ -244,7 +244,7 @@ describe('The processStates function', function() {
             ' the queue when errors are thrown', function() {
           const errorFunction = function() {
             this.set('a', 1);
-            throw 'Scary Error';
+            throw Error('Scary Error');
           };
           assertProcessStates(
               [errorFunction, {a: 2}],
