@@ -116,6 +116,28 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
   // Process the existing/past states.
   this.processStates_(dataLayer, !opt_listenToPast);
 
+  // Register a processor for set command.
+  this.registerProcessor('set', function() {
+    const model = this;
+    const set = function(args) {
+      if (plain.type(args[0]) === 'object') {
+        helper.merge_(args[0], model);
+      }
+    };
+    const set2 = function(args) {
+      const obj = {};
+      obj[args[0]] = args[1];
+      helper.merge_(obj, model);
+    };
+
+    if (arguments.length === 1) {
+      set(arguments);
+    } else if (arguments.length === 2 &&
+        plain.type(arguments[0]) === 'string') {
+      set2(arguments);
+    }
+  });
+
   // Add listener for future state changes.
   let oldPush = dataLayer.push;
   let that = this;
