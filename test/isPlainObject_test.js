@@ -1,9 +1,11 @@
+goog.require('plain');
+
 describe('the isPlainObject method', function() {
   /**
    * Ensure that plain.IsPlainObject recognizes value
    * to be a plain object iff expected is true.
    * @param {*} value The value to check
-   * @param {bool} expected If the value is a plain object.
+   * @param {boolean} expected If the value is a plain object.
    */
   function assertIsPlainObject(value, expected) {
     expect(plain.isPlainObject(value)).toBe(expected);
