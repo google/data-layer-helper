@@ -420,8 +420,9 @@ how the library works and how it can be used.
 
 A few prerequisites:
 
-1. [Install Node.js and npm](http://nodejs.org/download/)
-2. [Install Git](https://help.github.com/articles/set-up-git)
+1. [Install Node.js](http://nodejs.org/download/)
+2. [Install yarn](https://classic.yarnpkg.com/en/docs/install/#debian-stable)
+3. [Install git](https://help.github.com/articles/set-up-git)
 
 Clone a copy of the project repo by running:
 
@@ -432,14 +433,14 @@ git clone --recursive git://github.com/google/data-layer-helper.git
 Install the [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli) package if you haven't before. This should be done as global install:
 
 ```bash
-npm install -g grunt-cli
+yarn global add grunt-cli
 ```
 
 Enter the data-layer-helper directory and install the Node dependencies, this time *without* specifying a global install:
 
 ```bash
 cd data-layer-helper
-npm install
+yarn install
 ```
 
 Enter the third_party/closure-linter directory and install the Closure linter:
@@ -467,7 +468,7 @@ This library is being modernized, and the tests are being moved.
 To run the new tests, you will need to first install karma globally:
 
 ```bash
-npm install -g karma
+yarn global add karma
 ```
 
 You can run the new tests with the command
