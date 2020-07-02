@@ -125,6 +125,8 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
       }
     };
     const set2 = function(args) {
+      // Maintain consistency with how objects are merged
+      // outside of the set command (overwrite or recursively merge).
       const obj = {};
       obj[args[0]] = args[1];
       helper.merge_(obj, model);
