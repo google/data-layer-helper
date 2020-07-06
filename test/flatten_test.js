@@ -6,6 +6,7 @@ goog.setTestOnly();
 
 const {DataLayerHelper} = goog.require('helper');
 const {expectEqualContents} = goog.require('datalayerhelper.helper.testing.utils');
+
 describe(`The 'flatten' method of helper`, function() {
   beforeEach(function() {
     this.dataLayer = [{a: 1, b: {c: {d: 4}, e: 5}}];
