@@ -98,7 +98,7 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
 
   /**
    * The internal map of processors to run.
-   * @type {Map<string, function>}
+   * @type {!Object<string, function(*):!Object>}
    * @private
    */
   this.commandProcessors_ = {};
@@ -117,11 +117,11 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
   this.processStates_(dataLayer, !opt_listenToPast);
 
   // Add listener for future state changes.
-  let oldPush = dataLayer.push;
-  let that = this;
+  const oldPush = dataLayer.push;
+  const that = this;
   dataLayer.push = function() {
-    let states = [].slice.call(arguments, 0);
-    let result = oldPush.apply(dataLayer, states);
+    const states = [].slice.call(arguments, 0);
+    const result = oldPush.apply(dataLayer, states);
     that.processStates_(states);
     return result;
   };
@@ -170,7 +170,7 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
  *
  * @param {string} name The string which should be passed into the command API
  * to call the processor.
- * @param {function} processor The function to register to be called later.
+ * @param {function(*):!Object} processor The function to register to be called later.
  * So long as this function is not an arrow function, it can access the abstract
  * model interface by using the this keyword. It is recommended not to modify
  * the state within the function using this.set. Changes to the model should
@@ -244,7 +244,7 @@ helper.DataLayerHelper.prototype.processStates_ =
  * If a processor for the command has been registered, the processor function
  * will be invoked with any arguments passed in.
  *
- * @param {Array<Object>} args The arguments object containing the command
+ * @param {!Object} args The arguments object containing the command
  *     to execute and optional arguments for the processor.
  * @return {!Array<Object>} states The updates requested to the model state,
  * in the order they should be processed.
