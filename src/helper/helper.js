@@ -48,165 +48,164 @@ goog.provide('helper');
 goog.require('plain');
 
 
-
 /**
- * Creates a new helper object for the given dataLayer.
+ * A helper that will listen for new messages on the given dataLayer.
+ * Each new message will be merged into the helper's "abstract data model".
+ * This internal model object holds the most recent value for all keys which
+ * have been set on messages processed by the helper.
  *
- * @constructor
- * @param {!Array.<!Object>} dataLayer The dataLayer to help with.
- * @param {function(!Object, !Object)=} opt_listener The callback function to
- *     execute when a new state gets pushed onto the dataLayer.
- * @param {boolean=} opt_listenToPast If true, the given listener will be
- *     executed for state changes that have already happened.
+ * You can retrieve values from the data model by using the helper's get method.
  */
-helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
+class DataLayerHelper {
+  /**
+   * Creates a new helper object for the given dataLayer.
+   *
+   * @param {!Array.<!Object>} dataLayer The dataLayer to help with.
+   * @param {function(!Object, !Object)=} opt_listener The callback function to
+   *     execute when a new state gets pushed onto the dataLayer.
+   * @param {boolean=} opt_listenToPast If true, the given listener will be
+   *     executed for state changes that have already happened.
+   */
+  constructor(dataLayer, opt_listener, opt_listenToPast) {
+    /**
+     * The dataLayer to help with.
+     * @type {!Array.<!Object>}
+     * @private
+     */
+    this.dataLayer_ = dataLayer;
+
+    /**
+     * The listener to notify of changes to the dataLayer.
+     * @type {function(!Object, !Object)}
+     * @private
+     */
+    this.listener_ = opt_listener || function() {};
+
+    /**
+     * The internal marker for checking if the listener is currently on the stack.
+     * @type {boolean}
+     * @private
+     */
+    this.executingListener_ = false;
+
+    /**
+     * The internal representation of the dataLayer's state at the time of the
+     * update currently being processed.
+     * @type {!Object}
+     * @private
+     */
+    this.model_ = {};
+
+    /**
+     * The internal queue of dataLayer updates that have not yet been processed.
+     * @type {Array.<Object>}
+     * @private
+     */
+    this.unprocessed_ = [];
+
+    /**
+     * The interface to the internal dataLayer model that is exposed to custom
+     * methods. Custom methods will the executed with this interface as the value
+     * of 'this', allowing users to manipulate the model using this.get and
+     * this.set.
+     * @type {!Object}
+     * @private
+     */
+    this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
+
+    // Process the existing/past states.
+    this.processStates_(dataLayer, !opt_listenToPast);
+
+    // Add listener for future state changes.
+    var oldPush = dataLayer.push;
+    var that = this;
+    dataLayer.push = function() {
+      var states = [].slice.call(arguments, 0);
+      var result = oldPush.apply(dataLayer, states);
+      that.processStates_(states);
+      return result;
+    };
+  }
 
   /**
-   * The dataLayer to help with.
-   * @type {!Array.<!Object>}
-   * @private
+   * Returns the value currently assigned to the given key in the helper's
+   * internal model.
+   *
+   * @param {string} key The path of the key to set on the model, where dot (.)
+   *     is the path separator.
+   * @return {*} The value found at the given key.
    */
-  this.dataLayer_ = dataLayer;
+  get(key) {
+    var target = this.model_;
+    var split = key.split('.');
+    for (var i = 0; i < split.length; i++) {
+      if (target[split[i]] === undefined) return undefined;
+      target = target[split[i]];
+    }
+    return target;
+  }
 
   /**
-   * The listener to notify of changes to the dataLayer.
-   * @type {function(!Object, !Object)}
-   * @private
+   * Flattens the dataLayer's history into a single object that represents the
+   * current state. This is useful for long running apps, where the dataLayer's
+   * history may get very large.
    */
-  this.listener_ = opt_listener || function() {};
+  flatten() {
+    this.dataLayer_.splice(0, this.dataLayer_.length);
+    this.dataLayer_[0] = {};
+    helper.merge_(this.model_, this.dataLayer_[0]);
+  }
 
   /**
-   * The internal marker for checking if the listener is currently on the stack.
-   * @type {boolean}
+   * Merges the given update objects (states) onto the helper's model, calling
+   * the listener each time the model is updated. If a command array is pushed
+   * into the dataLayer, the method will be parsed and applied to the value found
+   * at the key, if a one exists.
+   *
+   * @param {Array.<Object>} states The update objects to process, each
+   *     representing a change to the state of the page.
+   * @param {boolean=} opt_skipListener If true, the listener the given states
+   *     will be applied to the internal model, but will not cause the listener
+   *     to be executed. This is useful for processing past states that the
+   *     listener might not care about.
    * @private
    */
-  this.executingListener_ = false;
-
-  /**
-   * The internal representation of the dataLayer's state at the time of the
-   * update currently being processed.
-   * @type {!Object}
-   * @private
-   */
-  this.model_ = {};
-
-  /**
-   * The internal queue of dataLayer updates that have not yet been processed.
-   * @type {Array.<Object>}
-   * @private
-   */
-  this.unprocessed_ = [];
-
-  /**
-   * The interface to the internal dataLayer model that is exposed to custom
-   * methods. Custom methods will the executed with this interface as the value
-   * of 'this', allowing users to manipulate the model using this.get and
-   * this.set.
-   * @type {!Object}
-   * @private
-   */
-  this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
-
-  // Process the existing/past states.
-  this.processStates_(dataLayer, !opt_listenToPast);
-
-  // Add listener for future state changes.
-  var oldPush = dataLayer.push;
-  var that = this;
-  dataLayer.push = function() {
-    var states = [].slice.call(arguments, 0);
-    var result = oldPush.apply(dataLayer, states);
-    that.processStates_(states);
-    return result;
-  };
-};
+  processStates_(states, opt_skipListener) {
+    this.unprocessed_.push.apply(this.unprocessed_, states);
+    // Checking executingListener here protects against multiple levels of
+    // loops trying to process the same queue. This can happen if the listener
+    // itself is causing new states to be pushed onto the dataLayer.
+    while (this.executingListener_ === false && this.unprocessed_.length > 0) {
+      var update = this.unprocessed_.shift();
+      if (helper.isArray_(update)) {
+        helper.processCommand_(update, this.model_);
+      } else if (helper.isArguments_(update)) {
+        helper.processArguments_(update, this.model_);
+      } else if (typeof update == 'function') {
+        var that = this;
+        try {
+          update.call(this.abstractModelInterface_);
+        } catch (e) {
+          // Catch any exceptions to we don't drop subsequent updates.
+          // TODO: Add some sort of logging when this happens.
+        }
+      } else if (plain.isPlainObject(update)) {
+        for (var key in update) {
+          helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
+        }
+      } else {
+        continue;
+      }
+      if (!opt_skipListener) {
+        this.executingListener_ = true;
+        this.listener_(this.model_, update);
+        this.executingListener_ = false;
+      }
+    }
+  }
+}
+helper.DataLayerHelper = DataLayerHelper;
 window['DataLayerHelper'] = helper.DataLayerHelper;
-
-
-/**
- * Returns the value currently assigned to the given key in the helper's
- * internal model.
- *
- * @param {string} key The path of the key to set on the model, where dot (.)
- *     is the path separator.
- * @return {*} The value found at the given key.
- * @this {DataLayerHelper}
- */
-helper.DataLayerHelper.prototype['get'] = function(key) {
-  var target = this.model_;
-  var split = key.split('.');
-  for (var i = 0; i < split.length; i++) {
-    if (target[split[i]] === undefined) return undefined;
-    target = target[split[i]];
-  }
-  return target;
-};
-
-
-/**
- * Flattens the dataLayer's history into a single object that represents the
- * current state. This is useful for long running apps, where the dataLayer's
- * history may get very large.
- *
- * @this {DataLayerHelper}
- */
-helper.DataLayerHelper.prototype['flatten'] = function() {
-  this.dataLayer_.splice(0, this.dataLayer_.length);
-  this.dataLayer_[0] = {};
-  helper.merge_(this.model_, this.dataLayer_[0]);
-};
-
-
-/**
- * Merges the given update objects (states) onto the helper's model, calling
- * the listener each time the model is updated. If a command array is pushed
- * into the dataLayer, the method will be parsed and applied to the value found
- * at the key, if a one exists.
- *
- * @param {Array.<Object>} states The update objects to process, each
- *     representing a change to the state of the page.
- * @param {boolean=} opt_skipListener If true, the listener the given states
- *     will be applied to the internal model, but will not cause the listener
- *     to be executed. This is useful for processing past states that the
- *     listener might not care about.
- * @private
- */
-helper.DataLayerHelper.prototype.processStates_ =
-    function(states, opt_skipListener) {
-
-  this.unprocessed_.push.apply(this.unprocessed_, states);
-  // Checking executingListener here protects against multiple levels of
-  // loops trying to process the same queue. This can happen if the listener
-  // itself is causing new states to be pushed onto the dataLayer.
-  while (this.executingListener_ === false && this.unprocessed_.length > 0) {
-    var update = this.unprocessed_.shift();
-    if (helper.isArray_(update)) {
-      helper.processCommand_(update, this.model_);
-    } else if (helper.isArguments_(update)) {
-      helper.processArguments_(update, this.model_);
-    } else if (typeof update == 'function') {
-      var that = this;
-      try {
-        update.call(this.abstractModelInterface_);
-      } catch (e) {
-        // Catch any exceptions to we don't drop subsequent updates.
-        // TODO: Add some sort of logging when this happens.
-      }
-    } else if (plain.isPlainObject(update)) {
-      for (var key in update) {
-        helper.merge_(helper.expandKeyValue_(key, update[key]), this.model_);
-      }
-    } else {
-      continue;
-    }
-    if (!opt_skipListener) {
-      this.executingListener_ = true;
-      this.listener_(this.model_, update);
-      this.executingListener_ = false;
-    }
-  }
-};
-
 
 /**
  * Helper function that will build the abstract model interface using the
