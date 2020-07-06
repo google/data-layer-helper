@@ -322,7 +322,7 @@ function isArray_(value) {
  */
 function isArguments_(value) {
   return type(value) === 'arguments';
-};
+}
 
 
 /**
