@@ -196,7 +196,7 @@ describe('The merge function', function() {
         {a: document.body.firstChild});
   });
 
-  it('Does not change existing values when from is an empty object',
+  it('Does not change existing values when merging with an empty object',
       function() {
         assertMerge({}, {}, {});
         assertMerge({}, {a: null}, {a: null});
