@@ -8,10 +8,10 @@ describe('The processStates function', function() {
    * Asserts that calling processStates_ with the given arguments will result
    * in the expected model state and expected calls to the listener.
    *
-   * @param {Array.<Object>} states The states argument for the call to
+   * @param {Array<Object>} states The states argument for the call to
    *     processStates_.
    * @param {Object} expectedModel The expected model state after the call.
-   * @param {Array.<Array.<*>>} expectedListenerCalls The expected calls made
+   * @param {Array<Array<*>>} expectedListenerCalls The expected calls made
    *     to the helper's listener. Should be an array of arrays where each sub-
    *     array represents the arguments passed to the listener during a call.
    */
