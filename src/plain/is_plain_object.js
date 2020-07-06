@@ -37,6 +37,7 @@ plain.TYPE_RE_ =
  *     new Date()    |  object   |  date
  *     [1,2,3]       |  object   |  array
  *     /.+/          |  object   |  regexp
+ *     arguments     |  object   |  arguments
  *
  * This method is also more reliable for detecting the type of objects created
  * in another window.

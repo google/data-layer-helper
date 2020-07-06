@@ -367,7 +367,7 @@ helper.isArray_ = function(value) {
  * @private
  */
 helper.isArguments_ = function(value) {
-  return plain.type(value) == 'arguments';
+  return plain.type(value) === 'arguments';
 };
 
 
