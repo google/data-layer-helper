@@ -59,8 +59,7 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
  * @param {boolean=} optListenToPast If true, the given listener will be
  *     executed for state changes that have already happened.
  */
-const DataLayerHelper = function(dataLayer, optListener, optListenToPast) {
-
+const DataLayerHelper = function(dataLayer, optListener = () => {}, optListenToPast = false) {
   /**
    * The dataLayer to help with.
    * @type {!Array<*>}
@@ -73,7 +72,7 @@ const DataLayerHelper = function(dataLayer, optListener, optListenToPast) {
    * @type {function(!Object, !Object)}
    * @private
    */
-  this.listener_ = optListener || function() {};
+  this.listener_ = optListener;
 
   /**
    * The internal marker for checking if the listener is currently on the stack.
@@ -171,9 +170,7 @@ DataLayerHelper.prototype['flatten'] = function() {
  *     listener might not care about.
  * @private
  */
-DataLayerHelper.prototype.processStates_ =
-    function(states, opt_skipListener) {
-
+processStates_(states, optSkipListener = false) {
   this.unprocessed_.push.apply(this.unprocessed_, states);
   // Checking executingListener here protects against multiple levels of
   // loops trying to process the same queue. This can happen if the listener
@@ -199,7 +196,7 @@ DataLayerHelper.prototype.processStates_ =
     } else {
       continue;
     }
-    if (!opt_skipListener) {
+    if (!optSkipListener) {
       this.executingListener_ = true;
       this.listener_(this.model_, update);
       this.executingListener_ = false;
