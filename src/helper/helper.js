@@ -219,13 +219,13 @@ DataLayerHelper.prototype.processStates_ =
  */
 function buildAbstractModelInterface_(dataLayerHelper) {
   return {
-    'set': function(key, value) {
+    set(key, value) {
       merge_(expandKeyValue_(key, value),
           dataLayerHelper.model_);
     },
-    'get': function(key) {
+    get(key) {
       return dataLayerHelper.get(key);
-    }
+    },
   };
 }
 
