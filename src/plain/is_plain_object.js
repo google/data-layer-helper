@@ -20,7 +20,7 @@ goog.module('plain');
  * @private
  * @const
  */
-plain.TYPE_RE_ =
+const TYPE_RE_ =
     /\[object (Boolean|Number|String|Function|Array|Date|RegExp|Arguments)\]/;
 
 

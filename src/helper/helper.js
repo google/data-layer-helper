@@ -180,10 +180,10 @@ DataLayerHelper.prototype.processStates_ =
   // itself is causing new states to be pushed onto the dataLayer.
   while (this.executingListener_ === false && this.unprocessed_.length > 0) {
     var update = this.unprocessed_.shift();
-    if (helper.isArray_(update)) {
-      helper.processCommand_(update, this.model_);
-    } else if (helper.isArguments_(update)) {
-      helper.processArguments_(update, this.model_);
+    if (isArray_(update)) {
+      processCommand_(update, this.model_);
+    } else if (isArguments_(update)) {
+      processArguments_(update, this.model_);
     } else if (typeof update == 'function') {
       var that = this;
       try {
@@ -269,7 +269,7 @@ function processCommand_(command, model) {
  * @param {Object|Array} model The current dataLayer model.
  * @private
  */
-helper.processArguments_ = function(args, model) {
+function processArguments_(args, model) {
   //TODO: add process command code
 };
 
@@ -320,8 +320,8 @@ function isArray_(value) {
  * @return {boolean} True iff the given value is an arguments object.
  * @private
  */
-helper.isArguments_ = function(value) {
-  return plain.type(value) === 'arguments';
+function isArguments_(value) {
+  return type(value) === 'arguments';
 };
 
 
@@ -371,8 +371,10 @@ exports = {
   DataLayerHelper,
   buildAbstractModelInterface_,
   processCommand_,
+  processArguments_,
   expandKeyValue_,
   isArray_,
+  isArguments_,
   isString_,
   merge_,
 };
