@@ -54,12 +54,12 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
  *
  * @constructor
  * @param {!Array.<!Object>} dataLayer The dataLayer to help with.
- * @param {function(!Object, !Object)=} opt_listener The callback function to
+ * @param {function(!Object, !Object)=} optListener The callback function to
  *     execute when a new state gets pushed onto the dataLayer.
- * @param {boolean=} opt_listenToPast If true, the given listener will be
+ * @param {boolean=} optListenToPast If true, the given listener will be
  *     executed for state changes that have already happened.
  */
-const DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
+const DataLayerHelper = function(dataLayer, optListener, optListenToPast) {
 
   /**
    * The dataLayer to help with.
@@ -73,7 +73,7 @@ const DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
    * @type {function(!Object, !Object)}
    * @private
    */
-  this.listener_ = opt_listener || function() {};
+  this.listener_ = optListener || function() {};
 
   /**
    * The internal marker for checking if the listener is currently on the stack.
@@ -108,7 +108,7 @@ const DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
   this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
   // Process the existing/past states.
-  this.processStates_(dataLayer, !opt_listenToPast);
+  this.processStates_(dataLayer, !optListenToPast);
 
   // Add listener for future state changes.
   var oldPush = dataLayer.push;
