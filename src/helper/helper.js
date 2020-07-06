@@ -75,7 +75,8 @@ const DataLayerHelper = function(dataLayer, optListener = () => {}, optListenToP
   this.listener_ = optListener;
 
   /**
-   * The internal marker for checking if the listener is currently on the stack.
+   * The internal marker for checking if the listener is
+   * currently on the stack.
    * @type {boolean}
    * @private
    */
@@ -98,9 +99,9 @@ const DataLayerHelper = function(dataLayer, optListener = () => {}, optListenToP
 
   /**
    * The interface to the internal dataLayer model that is exposed to custom
-   * methods. Custom methods will the executed with this interface as the value
-   * of 'this', allowing users to manipulate the model using this.get and
-   * this.set.
+   * methods. Custom methods will the executed with this interface as the
+   * value of 'this', allowing users to manipulate the model using this.get
+   * and this.set.
    * @type {!Object}
    * @private
    */
@@ -159,8 +160,8 @@ DataLayerHelper.prototype['flatten'] = function() {
 /**
  * Merges the given update objects (states) onto the helper's model, calling
  * the listener each time the model is updated. If a command array is pushed
- * into the dataLayer, the method will be parsed and applied to the value found
- * at the key, if a one exists.
+ * into the dataLayer, the method will be parsed and applied to the value
+ * found at the key, if a one exists.
  *
  * @param {!Array<*>} states The update objects to process, each
  *     representing a change to the state of the page.
@@ -211,8 +212,8 @@ processStates_(states, optSkipListener = false) {
  *
  * @param {!DataLayerHelper} dataLayerHelper The helper class to construct the
  *     abstract model interface for.
- * @return {!Object} The interface to the abstract data layer model that is given
- *     to Custom Methods.
+ * @return {!Object} The interface to the abstract data layer model that is
+ *     given to Custom Methods.
  * @private
  */
 function buildAbstractModelInterface_(dataLayerHelper) {
