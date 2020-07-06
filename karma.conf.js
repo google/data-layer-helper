@@ -8,6 +8,8 @@ module.exports = function(config) {
       // closure library
       {pattern: 'node_modules/google-closure-library/closure/goog/base.js'},
       // source files
+      // dependencies must be listed before the file they are used in for
+      // the googmodule preprocessor to function properly
       {pattern: 'src/**/is_plain_object.js'},
       {pattern: 'src/**/helper.js'},
       // jquery
