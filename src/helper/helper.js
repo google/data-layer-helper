@@ -182,6 +182,8 @@ helper.DataLayerHelper.prototype.processStates_ =
     var update = this.unprocessed_.shift();
     if (helper.isArray_(update)) {
       helper.processCommand_(update, this.model_);
+    } else if (helper.isArguments_(update)) {
+      helper.processArguments_(update, this.model_);
     } else if (typeof update == 'function') {
       var that = this;
       try {
@@ -257,6 +259,19 @@ helper.processCommand_ = function(command, model) {
   }
 };
 
+/**
+ * Applies the given command to the value in the dataLayer with the given key.
+ * If a processor for the command has been registered, the processor function
+ * will be invoked with any arguments passed in.
+ *
+ * @param {Array.<Object>} args The arguments object containing the command
+ *     to execute and optional arguments for the processor.
+ * @param {Object|Array} model The current dataLayer model.
+ * @private
+ */
+helper.processArguments_ = function(args, model) {
+  //TODO: add process command code
+};
 
 /**
  * Converts the given key value pair into an object that can be merged onto
@@ -296,6 +311,17 @@ helper.expandKeyValue_ = function(key, value) {
  */
 helper.isArray_ = function(value) {
   return plain.type(value) == 'array';
+};
+
+/**
+ * Determines if the given value is an arguments object.
+ *
+ * @param {*} value The value to test.
+ * @return {boolean} True iff the given value is an arguments object.
+ * @private
+ */
+helper.isArguments_ = function(value) {
+  return plain.type(value) === 'arguments';
 };
 
 
