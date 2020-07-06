@@ -1,4 +1,7 @@
-goog.require('plain');
+goog.module('datalayerhelper.plain.testing.isPlainObject');
+goog.setTestOnly();
+
+const {isPlainObject} = goog.require('plain');
 
 describe('the isPlainObject method', function() {
   /**
@@ -8,7 +11,7 @@ describe('the isPlainObject method', function() {
    * @param {boolean} expected If the value is a plain object.
    */
   function assertIsPlainObject(value, expected) {
-    expect(plain.isPlainObject(value)).toBe(expected);
+    expect(isPlainObject(value)).toBe(expected);
   }
 
   it('identifies objects made by the constructor and dicts ' +
