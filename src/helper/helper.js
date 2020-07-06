@@ -111,11 +111,11 @@ const DataLayerHelper = function(dataLayer, optListener = () => {}, optListenToP
   this.processStates_(dataLayer, !optListenToPast);
 
   // Add listener for future state changes.
-  var oldPush = dataLayer.push;
-  var that = this;
+  const oldPush = dataLayer.push;
+  const that = this;
   dataLayer.push = function() {
-    var states = [].slice.call(arguments, 0);
-    var result = oldPush.apply(dataLayer, states);
+    const states = [].slice.call(arguments, 0);
+    const result = oldPush.apply(dataLayer, states);
     that.processStates_(states);
     return result;
   };
@@ -133,9 +133,9 @@ window['DataLayerHelper'] = DataLayerHelper;
  * @this {DataLayerHelper}
  */
 DataLayerHelper.prototype['get'] = function(key) {
-  var target = this.model_;
-  var split = key.split('.');
-  for (var i = 0; i < split.length; i++) {
+  let target = this.model_;
+  const split = key.split('.');
+  for (let i = 0; i < split.length; i++) {
     if (target[split[i]] === undefined) return undefined;
     target = target[split[i]];
   }
@@ -178,7 +178,7 @@ DataLayerHelper.prototype.processStates_ =
   // loops trying to process the same queue. This can happen if the listener
   // itself is causing new states to be pushed onto the dataLayer.
   while (this.executingListener_ === false && this.unprocessed_.length > 0) {
-    var update = this.unprocessed_.shift();
+    const update = this.unprocessed_.shift();
     if (isArray_(update)) {
       processCommand_(update, this.model_);
     } else if (isArguments_(update)) {
@@ -242,11 +242,11 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  */
 function processCommand_(command, model) {
   if (!isString_(command[0])) return;
-  var path = command[0].split('.');
-  var method = path.pop();
-  var args = command.slice(1);
-  var target = model;
-  for (var i = 0; i < path.length; i++) {
+  const path = command[0].split('.');
+  const method = path.pop();
+  const args = command.slice(1);
+  let target = model;
+  for (let i = 0; i < path.length; i++) {
     if (target[path[i]] === undefined) return;
     target = target[path[i]];
   }
@@ -290,10 +290,10 @@ function processArguments_(args, model) {
  * @private
  */
 function expandKeyValue_(key, value) {
-  var result = {};
-  var target = result;
-  var split = key.split('.');
-  for (var i = 0; i < split.length - 1; i++) {
+  const result = {};
+  let target = result;
+  const split = key.split('.');
+  for (let i = 0; i < split.length - 1; i++) {
     target = target[split[i]] = {};
   }
   target[split[split.length - 1]] = value;
@@ -350,9 +350,9 @@ function isString_(value) {
  * @private
  */
 function merge_(from, to) {
-  for (var property in from) {
+  for (const property in from) {
     if (hasOwn(from, property)) {
-      var fromProperty = from[property];
+      const fromProperty = from[property];
       if (isArray_(fromProperty)) {
         if (!isArray_(to[property])) to[property] = [];
         merge_(fromProperty, to[property]);
