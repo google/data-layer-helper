@@ -1,4 +1,7 @@
-goog.require('plain');
+goog.module('datalayerhelper.plain.testing.type');
+goog.setTestOnly();
+
+const {type} = goog.require('plain');
 
 describe('The plain.type function', function() {
   /**
@@ -8,7 +11,7 @@ describe('The plain.type function', function() {
    * @param {string} context A message describing the value.
    */
   function assertType(value, expected, context) {
-    expect(plain.type(value))
+    expect(type(value))
         .withContext(`identifies ${context} as ${expected}`).toBe(expected);
   }
 
@@ -82,5 +85,12 @@ describe('The plain.type function', function() {
     assertType(document, 'object', 'the document object');
     assertType(document.getElementsByTagName('script')[0],
         'object', 'other complex types');
+  });
+
+  it('Identifies an arguments object', function() {
+    const argumentsTest = function() {
+      assertType(arguments, 'arguments', 'Arguments object');
+    };
+    argumentsTest(1, 2, 3, 4);
   });
 });
