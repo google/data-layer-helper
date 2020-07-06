@@ -1,4 +1,7 @@
-goog.require('helper');
+goog.module('datalayerhelper.helper.testing.processStates_');
+goog.setTestOnly();
+
+const helper = goog.require('helper');
 
 describe('The processStates function', function() {
   /**
@@ -52,7 +55,7 @@ describe('The processStates function', function() {
       assertProcessStates([{a: 1}], {a: 1}, [[{a: 1}, {a: 1}]]);
     });
 
-    it('makes two calls when two states needs to be processed', function() {
+    it('makes two calls when two states need to be processed', function() {
       assertProcessStates([{a: 1}, {a: 2}], {a: 2},
           [[{a: 1}, {a: 1}], [{a: 2}, {a: 2}]]);
     });
