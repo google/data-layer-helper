@@ -1,10 +1,10 @@
-goog.require('helper');
-
 /**
  * @fileoverview Unit tests for merge().
  * In this test file, when referring to a variable of 'other' type,
  * we mean a type which is neither an array nor a plain object.
  */
+
+goog.require('helper');
 
 describe('The merge function', function() {
   /**
@@ -23,7 +23,7 @@ describe('The merge function', function() {
     expect(to).toEqual(expected);
   }
 
-  it(`overwrites other type objects when merging with an array`, function() {
+  it(`Overwrites other type objects when merging with an array`, function() {
     assertMerge({a: []}, {}, {a: []});
     assertMerge({a: []}, {a: 1}, {a: []});
     assertMerge({a: []}, {b: 2}, {a: [], b: 2});
@@ -37,7 +37,7 @@ describe('The merge function', function() {
     assertMerge({a: [], b: []}, {a: 1, b: 2, c: 3}, {a: [], b: [], c: 3});
   });
 
-  it(`merges arrays with the same key together`, function() {
+  it(`Merges arrays with the same key together`, function() {
     assertMerge({a: []}, {a: []}, {a: []});
     assertMerge({a: []}, {a: [1]}, {a: [1]});
     assertMerge({a: []}, {a: [undefined, 2]}, {a: [undefined, 2]});
@@ -48,7 +48,7 @@ describe('The merge function', function() {
     assertMerge({a: [1, 2, 3]}, {a: []}, {a: [1, 2, 3]});
   });
 
-  it(`overwrites other type objects when merging with a plain object`,
+  it(`Overwrites other type objects when merging with a plain object`,
       function() {
         assertMerge({a: {}}, {}, {a: {}});
         assertMerge({a: {}}, {a: 1}, {a: {}});
@@ -62,6 +62,21 @@ describe('The merge function', function() {
         assertMerge({a: {}, b: {}}, {a: 1, b: 2}, {a: {}, b: {}});
         assertMerge({a: {}, b: {}}, {a: 1, b: 2, c: 3}, {a: {}, b: {}, c: 3});
       });
+
+  it('Merges plain objects with the same key together ', function() {
+    assertMerge({a: {}}, {a: {}}, {a: {}});
+    assertMerge({a: {}}, {a: {x: 1}}, {a: {x: 1}});
+    assertMerge({a: {}}, {a: {x: undefined, y: 2}}, {a: {x: undefined, y: 2}});
+    assertMerge({a: {x: 1}}, {a: {x: undefined, y: 2}}, {a: {x: 1, y: 2}});
+    assertMerge({a: {x: 1}}, {a: {x: undefined, y: 2}}, {a: {x: 1, y: 2}});
+    assertMerge({a: {x: 1, y: 2}}, {a: {x: undefined, y: 2}},
+        {a: {x: 1, y: 2}});
+    assertMerge({a: {x: 1, y: 2, z: 3}}, {a: {x: undefined, y: 2}},
+        {a: {x: 1, y: 2, z: 3}});
+    assertMerge({a: {x: 1, y: 3, z: 3}}, {a: {x: undefined, y: 2}},
+        {a: {x: 1, y: 3, z: 3}});
+    assertMerge({a: {x: 1, y: 2, z: 3}}, {a: {}}, {a: {x: 1, y: 2, z: 3}});
+  });
 
   it(`Creates a new property if an other type object is inserted with` +
       'a new key', function() {
