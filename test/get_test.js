@@ -15,7 +15,7 @@ describe('The helper.get function', function() {
     },
   }]);
 
-  it('correctly returns the value currently assigned ' +
+  it('returns the value currently assigned ' +
       'to the given key in the helper internal model', function() {
     expect(h.get('a')).toBe(1);
     expect(h.get('b')).toEqual({c: {d: 4}, e: 5, f: null});
@@ -25,10 +25,12 @@ describe('The helper.get function', function() {
     expect(h.get('b.f')).toBe(null);
   });
 
-  it('correct returns undefined when key does not exist in model', function() {
+  it('returns undefined when key does not exist in model', function() {
     expect(h.get('blah')).toBe(undefined);
     expect(h.get('c')).toBe(undefined);
     expect(h.get('d')).toBe(undefined);
     expect(h.get('e')).toBe(undefined);
+    expect(h.get('b.blah')).toBe(undefined);
+    expect(h.get('b.blah.blah.blah')).toBe(undefined);
   });
 });
