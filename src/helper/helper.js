@@ -54,8 +54,8 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
  *
  * @constructor
  * @param {!Array<*>} dataLayer The dataLayer to help with.
- * @param {function(!Object, !Object)=} optListener The callback function to
- *     execute when a new state gets pushed onto the dataLayer.
+ * @param {function(!Object<*,*>, !Object<*,*>)=} optListener The callback
+ *     function to execute when a new state gets pushed onto the dataLayer.
  * @param {boolean=} optListenToPast If true, the given listener will be
  *     executed for state changes that have already happened.
  */
@@ -69,7 +69,7 @@ const DataLayerHelper = function(dataLayer, optListener = () => {}, optListenToP
 
   /**
    * The listener to notify of changes to the dataLayer.
-   * @type {function(!Object, !Object)}
+   * @type {function(!Object<*,*>, !Object<*,*>)}
    * @private
    */
   this.listener_ = optListener;
@@ -85,7 +85,7 @@ const DataLayerHelper = function(dataLayer, optListener = () => {}, optListenToP
   /**
    * The internal representation of the dataLayer's state at the time of the
    * update currently being processed.
-   * @type {!Object}
+   * @type {!Object<*,*>}
    * @private
    */
   this.model_ = {};
@@ -102,7 +102,7 @@ const DataLayerHelper = function(dataLayer, optListener = () => {}, optListenToP
    * methods. Custom methods will the executed with this interface as the
    * value of 'this', allowing users to manipulate the model using this.get
    * and this.set.
-   * @type {!Object}
+   * @type {!Object<*,*>}
    * @private
    */
   this.abstractModelInterface_ = buildAbstractModelInterface_(this);
@@ -171,7 +171,8 @@ DataLayerHelper.prototype['flatten'] = function() {
  *     listener might not care about.
  * @private
  */
-processStates_(states, optSkipListener = false) {
+DataLayerHelper.prototype.processStates_ =
+    function(states, optSkipListener = false) {
   this.unprocessed_.push.apply(this.unprocessed_, states);
   // Checking executingListener here protects against multiple levels of
   // loops trying to process the same queue. This can happen if the listener
@@ -212,7 +213,7 @@ processStates_(states, optSkipListener = false) {
  *
  * @param {!DataLayerHelper} dataLayerHelper The helper class to construct the
  *     abstract model interface for.
- * @return {!Object} The interface to the abstract data layer model that is
+ * @return {!Object<*,*>} The interface to the abstract data layer model that is
  *     given to Custom Methods.
  * @private
  */
@@ -236,7 +237,7 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  *
  * @param {!Array<*>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
- * @param {!Object|!Array} model The current dataLayer model.
+ * @param {!Object<*,*>|!Array<*>} model The current dataLayer model.
  * @private
  */
 function processCommand_(command, model) {
@@ -262,14 +263,14 @@ function processCommand_(command, model) {
  * If a processor for the command has been registered, the processor function
  * will be invoked with any arguments passed in.
  *
- * @param {Array.<Object>} args The arguments object containing the command
+ * @param {!Array<*>} args The arguments object containing the command
  *     to execute and optional arguments for the processor.
- * @param {Object|Array} model The current dataLayer model.
+ * @param {!Object<*,*>|!Array<*>} model The current dataLayer model.
  * @private
  */
 function processArguments_(args, model) {
-  //TODO: add process command code
-};
+  // TODO: add process command code
+}
 
 /**
  * Converts the given key value pair into an object that can be merged onto
@@ -284,7 +285,7 @@ function processArguments_(args, model) {
  *
  * @param {string} key The key's path, where dots are the path separators.
  * @param {*} value The value to set on the given key path.
- * @return {!Object} An object representing the given key/value which can be
+ * @return {!Object<*,*>} An object representing the given key/value which can be
  *     merged onto the dataLayer's model.
  * @private
  */
@@ -344,8 +345,8 @@ function isString_(value) {
  * objects get cloned and which get copied. More work is needed to flesh
  * out the details here.
  *
- * @param {!Object|!Array} from The object or array to merge from.
- * @param {!Object|!Array} to The object or array to merge into.
+ * @param {!Object<*,*>|!Array<*>} from The object or array to merge from.
+ * @param {!Object<*,*>|!Array<*>} to The object or array to merge into.
  * @private
  */
 function merge_(from, to) {
