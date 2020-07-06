@@ -1,6 +1,9 @@
-goog.require('helper');
+goog.module('datalayerhelper.helper.testing.isArray_');
+goog.setTestOnly();
 
-describe('the helper.isArray_ function', function() {
+const {isArray_} = goog.require('helper');
+
+describe('The helper.isArray_ function', function() {
   /**
    * Ensure that plain.IsPlainObject recognizes value
    * to be a array iff expected is true.
@@ -8,7 +11,7 @@ describe('the helper.isArray_ function', function() {
    * @param {boolean} expected If the value is a plain object.
    */
   function assertIsArray(value, expected) {
-    expect(helper.isArray_(value)).toBe(expected);
+    expect(isArray_(value)).toBe(expected);
   }
 
   it(`identifies things that aren't arrays as not arrays`, function() {
