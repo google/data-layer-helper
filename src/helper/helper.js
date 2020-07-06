@@ -53,7 +53,7 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
  * Creates a new helper object for the given dataLayer.
  *
  * @constructor
- * @param {!Array.<!Object>} dataLayer The dataLayer to help with.
+ * @param {!Array<*>} dataLayer The dataLayer to help with.
  * @param {function(!Object, !Object)=} optListener The callback function to
  *     execute when a new state gets pushed onto the dataLayer.
  * @param {boolean=} optListenToPast If true, the given listener will be
@@ -63,7 +63,7 @@ const DataLayerHelper = function(dataLayer, optListener, optListenToPast) {
 
   /**
    * The dataLayer to help with.
-   * @type {!Array.<!Object>}
+   * @type {!Array<*>}
    * @private
    */
   this.dataLayer_ = dataLayer;
@@ -92,7 +92,7 @@ const DataLayerHelper = function(dataLayer, optListener, optListenToPast) {
 
   /**
    * The internal queue of dataLayer updates that have not yet been processed.
-   * @type {Array.<Object>}
+   * @type {!Array<*>}
    * @private
    */
   this.unprocessed_ = [];
@@ -163,9 +163,9 @@ DataLayerHelper.prototype['flatten'] = function() {
  * into the dataLayer, the method will be parsed and applied to the value found
  * at the key, if a one exists.
  *
- * @param {Array.<Object>} states The update objects to process, each
+ * @param {!Array<*>} states The update objects to process, each
  *     representing a change to the state of the page.
- * @param {boolean=} opt_skipListener If true, the listener the given states
+ * @param {boolean=} optSkipListener If true, the listener the given states
  *     will be applied to the internal model, but will not cause the listener
  *     to be executed. This is useful for processing past states that the
  *     listener might not care about.
@@ -212,9 +212,9 @@ DataLayerHelper.prototype.processStates_ =
  * Helper function that will build the abstract model interface using the
  * supplied dataLayerHelper.
  *
- * @param {DataLayerHelper} dataLayerHelper The helper class to construct the
+ * @param {!DataLayerHelper} dataLayerHelper The helper class to construct the
  *     abstract model interface for.
- * @return {Object} The interface to the abstract data layer model that is given
+ * @return {!Object} The interface to the abstract data layer model that is given
  *     to Custom Methods.
  * @private
  */
@@ -236,9 +236,9 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  * If the method is a valid function of the value, the method will be applies
  * with any arguments passed in.
  *
- * @param {Array.<Object>} command The array containing the key with the
+ * @param {!Array<*>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
- * @param {Object|Array} model The current dataLayer model.
+ * @param {!Object|!Array} model The current dataLayer model.
  * @private
  */
 function processCommand_(command, model) {
@@ -286,7 +286,7 @@ function processArguments_(args, model) {
  *
  * @param {string} key The key's path, where dots are the path separators.
  * @param {*} value The value to set on the given key path.
- * @return {Object} An object representing the given key/value which can be
+ * @return {!Object} An object representing the given key/value which can be
  *     merged onto the dataLayer's model.
  * @private
  */
@@ -346,8 +346,8 @@ function isString_(value) {
  * objects get cloned and which get copied. More work is needed to flesh
  * out the details here.
  *
- * @param {Object|Array} from The object or array to merge from.
- * @param {Object|Array} to The object or array to merge into.
+ * @param {!Object|!Array} from The object or array to merge from.
+ * @param {!Object|!Array} to The object or array to merge into.
  * @private
  */
 function merge_(from, to) {
