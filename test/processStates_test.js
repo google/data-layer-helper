@@ -1,7 +1,7 @@
-goog.module('datalayerhelper.helper.testing.processStates_');
+goog.module('datalayerhelper.helper.testing.processStates');
 goog.setTestOnly();
 
-const helper = goog.require('helper');
+const {DataLayerHelper, buildAbstractModelInterface_} = goog.require('helper');
 
 describe('The processStates function', function() {
   /**
@@ -25,7 +25,7 @@ describe('The processStates function', function() {
         this.listenerCalls_.push(
             jQuery.extend(true, [], [].slice.call(arguments, 0)));
       };
-      this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
+      this.abstractModelInterface_ = buildAbstractModelInterface_(this);
     };
 
     const doAssert = (skipListener) => {
