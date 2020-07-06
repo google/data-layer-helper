@@ -4,7 +4,10 @@
  * we mean a type which is neither an array nor a plain object.
  */
 
-goog.require('helper');
+goog.module('datalayerhelper.helper.testing.merge_');
+goog.setTestOnly();
+
+const {isArray_, merge_} = goog.require('helper');
 
 describe('The merge function', function() {
   /**
@@ -15,9 +18,9 @@ describe('The merge function', function() {
    * @param {!Object} expected The expected result
    */
   function assertMerge(from, to, expected) {
-    const fromCopy = helper.isArray_(from) ? [] : {};
+    const fromCopy = isArray_(from) ? [] : {};
     jQuery.extend(true, fromCopy, from);
-    helper.merge_(from, to);
+    merge_(from, to);
 
     expect(from).toEqual(fromCopy);
     expect(to).toEqual(expected);
