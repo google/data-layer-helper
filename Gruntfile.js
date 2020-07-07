@@ -73,7 +73,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'closureDepsWriter',
     'closure-compiler',
-    'qunit',
     'karma',
+    'qunit',
   ]);
 };
