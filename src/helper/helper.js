@@ -119,24 +119,15 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
   // Register a processor for set command.
   this.registerProcessor('set', function() {
     const model = this;
-    const set = function(args) {
-      if (plain.type(args[0]) === 'object') {
-        helper.merge_(args[0], model);
-      }
-    };
-    const set2 = function(args) {
-      // Maintain consistency with how objects are merged
-      // outside of the set command (overwrite or recursively merge).
-      const obj = {};
-      obj[args[0]] = args[1];
-      helper.merge_(obj, model);
-    };
 
-    if (arguments.length === 1) {
-      set(arguments);
+    if (arguments.length === 1 && plain.type(arguments[0]) === 'object') {
+      helper.merge_(arguments[0], model);
     } else if (arguments.length === 2 &&
         plain.type(arguments[0]) === 'string') {
-      set2(arguments);
+      // Maintain consistency with how objects are merged
+      // outside of the set command (overwrite or recursively merge).
+      const obj = helper.expandKeyValue_(arguments[0], arguments[1]);
+      helper.merge_(obj, model);
     }
   });
 
@@ -416,6 +407,10 @@ helper.merge_ = function(from, to) {
       } else if (plain.isPlainObject(fromProperty)) {
         if (!plain.isPlainObject(to[property])) to[property] = {};
         helper.merge_(fromProperty, to[property]);
+      } else if (plain.hasOwn(to, property)) {
+        if (fromProperty !== undefined) {
+          to[property] = fromProperty;
+        }
       } else {
         to[property] = fromProperty;
       }
