@@ -44,9 +44,9 @@
  * @author bkuhn@google.com (Brian Kuhn)
  */
 
-goog.provide('helper');
-goog.require('plain');
+goog.module('helper');
 
+const {type, hasOwn, isPlainObject} = goog.require('plain');
 
 /**
  * Creates a new helper object for the given dataLayer.
@@ -58,8 +58,7 @@ goog.require('plain');
  * @param {boolean=} opt_listenToPast If true, the given listener will be
  *     executed for state changes that have already happened.
  */
-helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
-
+const DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
   /**
    * The dataLayer to help with.
    * @type {!Array.<!Object>}
@@ -111,7 +110,7 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
    * @type {!Object}
    * @private
    */
-  this.abstractModelInterface_ = helper.buildAbstractModelInterface_(this);
+  this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
   // Process the existing/past states.
   this.processStates_(dataLayer, !opt_listenToPast);
@@ -126,7 +125,7 @@ helper.DataLayerHelper = function(dataLayer, opt_listener, opt_listenToPast) {
     return result;
   };
 };
-window['DataLayerHelper'] = helper.DataLayerHelper;
+window['DataLayerHelper'] = DataLayerHelper;
 
 
 /**
@@ -138,10 +137,10 @@ window['DataLayerHelper'] = helper.DataLayerHelper;
  * @return {*} The value found at the given key.
  * @this {DataLayerHelper}
  */
-helper.DataLayerHelper.prototype['get'] = function(key) {
-  var target = this.model_;
-  var split = key.split('.');
-  for (var i = 0; i < split.length; i++) {
+DataLayerHelper.prototype['get'] = function(key) {
+  let target = this.model_;
+  const split = key.split('.');
+  for (let i = 0; i < split.length; i++) {
     if (target[split[i]] === undefined) return undefined;
     target = target[split[i]];
   }
@@ -156,10 +155,10 @@ helper.DataLayerHelper.prototype['get'] = function(key) {
  *
  * @this {DataLayerHelper}
  */
-helper.DataLayerHelper.prototype['flatten'] = function() {
+DataLayerHelper.prototype['flatten'] = function() {
   this.dataLayer_.splice(0, this.dataLayer_.length);
   this.dataLayer_[0] = {};
-  helper.merge_(this.model_, this.dataLayer_[0]);
+  merge_(this.model_, this.dataLayer_[0]);
 };
 
 
@@ -178,7 +177,7 @@ helper.DataLayerHelper.prototype['flatten'] = function() {
  * automatically be merged into the model.
  * @this {DataLayerHelper}
  */
-helper.DataLayerHelper.prototype['registerProcessor'] =
+DataLayerHelper.prototype['registerProcessor'] =
     function(name, processor) {
       if (!(name in this.commandProcessors_)) {
         this.commandProcessors_[name] = [];
@@ -201,31 +200,31 @@ helper.DataLayerHelper.prototype['registerProcessor'] =
  *     listener might not care about.
  * @private
  */
-helper.DataLayerHelper.prototype.processStates_ =
+DataLayerHelper.prototype.processStates_ =
     function(states, opt_skipListener) {
       this.unprocessed_.push.apply(this.unprocessed_, states);
       // Checking executingListener here protects against multiple levels of
       // loops trying to process the same queue. This can happen if the listener
       // itself is causing new states to be pushed onto the dataLayer.
       while (this.executingListener_ === false &&
-              this.unprocessed_.length > 0) {
+          this.unprocessed_.length > 0) {
         const update = this.unprocessed_.shift();
-        if (helper.isArray_(update)) {
-          helper.processCommand_(update, this.model_);
-        } else if (helper.isArguments_(update)) {
+        if (isArray_(update)) {
+          processCommand_(update, this.model_);
+        } else if (isArguments_(update)) {
           const newStates = this.processArguments_(update);
           this.unprocessed_.push.apply(this.unprocessed_, newStates);
         } else if (typeof update == 'function') {
+          const that = this;
           try {
             update.call(this.abstractModelInterface_);
           } catch (e) {
             // Catch any exceptions to we don't drop subsequent updates.
             // TODO: Add some sort of logging when this happens.
           }
-        } else if (plain.isPlainObject(update)) {
+        } else if (isPlainObject(update)) {
           for (const key in update) {
-            helper.merge_(
-                helper.expandKeyValue_(key, update[key]), this.model_);
+            merge_(expandKeyValue_(key, update[key]), this.model_);
           }
         } else {
           continue;
@@ -244,13 +243,13 @@ helper.DataLayerHelper.prototype.processStates_ =
  * If a processor for the command has been registered, the processor function
  * will be invoked with any arguments passed in.
  *
- * @param {!Object} args The arguments object containing the command
+ * @param {Array.<Object>} args The arguments object containing the command
  *     to execute and optional arguments for the processor.
  * @return {!Array<Object>} states The updates requested to the model state,
  * in the order they should be processed.
  * @private
  */
-helper.DataLayerHelper.prototype.processArguments_ = function(args) {
+DataLayerHelper.prototype.processArguments_ = function(args) {
   // Run all registered processors associated with this command
   const states = [];
   const name = args[0];
@@ -278,17 +277,17 @@ helper.DataLayerHelper.prototype.processArguments_ = function(args) {
  *     to Custom Methods.
  * @private
  */
-helper.buildAbstractModelInterface_ = function(dataLayerHelper) {
+function buildAbstractModelInterface_(dataLayerHelper) {
   return {
-    'set': function(key, value) {
-      helper.merge_(helper.expandKeyValue_(key, value),
+    'set'(key, value) {
+      merge_(expandKeyValue_(key, value),
           dataLayerHelper.model_);
     },
-    'get': function(key) {
+    'get'(key) {
       return dataLayerHelper.get(key);
-    }
+    },
   };
-};
+}
 
 
 /**
@@ -301,13 +300,13 @@ helper.buildAbstractModelInterface_ = function(dataLayerHelper) {
  * @param {Object|Array} model The current dataLayer model.
  * @private
  */
-helper.processCommand_ = function(command, model) {
-  if (!helper.isString_(command[0])) return;
-  var path = command[0].split('.');
-  var method = path.pop();
-  var args = command.slice(1);
-  var target = model;
-  for (var i = 0; i < path.length; i++) {
+function processCommand_(command, model) {
+  if (!isString_(command[0])) return;
+  const path = command[0].split('.');
+  const method = path.pop();
+  const args = command.slice(1);
+  let target = model;
+  for (let i = 0; i < path.length; i++) {
     if (target[path[i]] === undefined) return;
     target = target[path[i]];
   }
@@ -317,7 +316,8 @@ helper.processCommand_ = function(command, model) {
     // Catch any exception so we don't drop subsequent updates.
     // TODO: Add some sort of logging here when this happens.
   }
-};
+}
+
 
 /**
  * Converts the given key value pair into an object that can be merged onto
@@ -336,16 +336,16 @@ helper.processCommand_ = function(command, model) {
  *     merged onto the dataLayer's model.
  * @private
  */
-helper.expandKeyValue_ = function(key, value) {
-  var result = {};
-  var target = result;
-  var split = key.split('.');
-  for (var i = 0; i < split.length - 1; i++) {
+function expandKeyValue_(key, value) {
+  const result = {};
+  let target = result;
+  const split = key.split('.');
+  for (let i = 0; i < split.length - 1; i++) {
     target = target[split[i]] = {};
   }
   target[split[split.length - 1]] = value;
   return result;
-};
+}
 
 
 /**
@@ -355,9 +355,9 @@ helper.expandKeyValue_ = function(key, value) {
  * @return {boolean} True iff the given value is an array.
  * @private
  */
-helper.isArray_ = function(value) {
-  return plain.type(value) == 'array';
-};
+function isArray_(value) {
+  return type(value) == 'array';
+}
 
 /**
  * Determines if the given value is an arguments object.
@@ -366,9 +366,9 @@ helper.isArray_ = function(value) {
  * @return {boolean} True iff the given value is an arguments object.
  * @private
  */
-helper.isArguments_ = function(value) {
-  return plain.type(value) === 'arguments';
-};
+function isArguments_(value) {
+  return type(value) === 'arguments';
+}
 
 
 /**
@@ -378,9 +378,9 @@ helper.isArguments_ = function(value) {
  * @return {boolean} True iff the given value is a string.
  * @private
  */
-helper.isString_ = function(value) {
-  return plain.type(value) == 'string';
-};
+function isString_(value) {
+  return type(value) == 'string';
+}
 
 
 /**
@@ -396,20 +396,30 @@ helper.isString_ = function(value) {
  * @param {Object|Array} to The object or array to merge into.
  * @private
  */
-helper.merge_ = function(from, to) {
-  for (var property in from) {
-    if (plain.hasOwn(from, property)) {
-      var fromProperty = from[property];
-      if (helper.isArray_(fromProperty)) {
-        if (!helper.isArray_(to[property])) to[property] = [];
-        helper.merge_(fromProperty, to[property]);
-      } else if (plain.isPlainObject(fromProperty)) {
-        if (!plain.isPlainObject(to[property])) to[property] = {};
-        helper.merge_(fromProperty, to[property]);
+function merge_(from, to) {
+  for (const property in from) {
+    if (hasOwn(from, property)) {
+      const fromProperty = from[property];
+      if (isArray_(fromProperty)) {
+        if (!isArray_(to[property])) to[property] = [];
+        merge_(fromProperty, to[property]);
+      } else if (isPlainObject(fromProperty)) {
+        if (!isPlainObject(to[property])) to[property] = {};
+        merge_(fromProperty, to[property]);
       } else {
         to[property] = fromProperty;
       }
     }
   }
-};
+}
 
+exports = {
+  DataLayerHelper,
+  buildAbstractModelInterface_,
+  processCommand_,
+  expandKeyValue_,
+  isArray_,
+  isArguments_,
+  isString_,
+  merge_,
+};

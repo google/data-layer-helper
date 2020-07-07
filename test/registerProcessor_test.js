@@ -1,4 +1,7 @@
-goog.require('helper');
+goog.module('datalayerhelper.helper.testing.registerProcessor');
+goog.setTestOnly();
+
+const {DataLayerHelper} = goog.require('helper');
 
 describe('The registerProcessor method', function() {
   let dataLayer;
@@ -9,7 +12,7 @@ describe('The registerProcessor method', function() {
     commandAPI = function() {
       dataLayer.push(arguments);
     };
-    dlh = new helper.DataLayerHelper(dataLayer);
+    dlh = new DataLayerHelper(dataLayer);
   });
 
   describe('The function registration process', function() {
@@ -81,7 +84,7 @@ describe('The registerProcessor method', function() {
       const f2 = function() {
         a = 2;
       };
-      dlh = new helper.DataLayerHelper(dataLayer, f2);
+      dlh = new DataLayerHelper(dataLayer, f2);
       dlh.registerProcessor('method', f1);
       commandAPI('method');
 
@@ -98,7 +101,7 @@ describe('The registerProcessor method', function() {
       const f2 = function() {
         a += 5;
       };
-      dlh = new helper.DataLayerHelper(dataLayer, f1);
+      dlh = new DataLayerHelper(dataLayer, f1);
       dlh.registerProcessor('method', f2);
       commandAPI('Crazy command');
 
