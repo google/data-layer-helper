@@ -18,7 +18,7 @@
     "closure"
   ],
   "rules": {
-    "prefer-rest-params": "off",
+    "prefer-rest-params": "off" // We don't want this, adds a polyfill
     // This library requires this to be used in methods as part of the API,
     // and sometimes it's useful to reference this in jasmine as there is
     // special handling.
