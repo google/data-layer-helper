@@ -1,0 +1,60 @@
+goog.module('datalayerhelper.plain.testing.hasOwn');
+goog.setTestOnly();
+
+const {hasOwn} = goog.require('plain');
+
+describe('the isPlainObject method', function() {
+  /**
+   * Ensure that plain.hasOwn Determines if the value has a
+   * non-inherited property with the given key.
+   * @param {*} value The value to check.
+   * @param {string} key The property name.
+   * @param {boolean} expected If the value has a property named by key.
+   */
+  function assertHasOwn(value, key, expected) {
+    expect(hasOwn(value, key)).toBe(expected);
+  }
+
+  it('Assert that hasOwn recognizes simple type to not have properties', () => {
+    assertHasOwn(23, 'valueOf', false);
+    assertHasOwn(NaN, 'valueOf', false);
+    assertHasOwn(true, 'valueOf', false);
+    assertHasOwn(false, 'valueOf', false);
+    assertHasOwn(null, 'valueOf', false);
+    assertHasOwn(undefined, 'valueOf', false);
+  });
+
+  it('Assert that hasOwn recognizes string properties', () => {
+    assertHasOwn('string', 'length', true);
+    assertHasOwn('string', 'size', false);
+
+    expect(!!'string'['split']).toBe(true);
+    assertHasOwn('string', 'split', false);
+  });
+
+  it('Assert that hasOwn recognizes array properties', () => {
+    assertHasOwn([1, 2], '0', true);
+    assertHasOwn([1, 2], '1', true);
+    assertHasOwn([1, 2], '2', false);
+    assertHasOwn([1, 2], '3', false);
+
+    expect(!!([1, 2])['join']).toBe(true);
+    assertHasOwn([1, 2], 'join', false);
+  });
+
+  it('Assert that hasOwn recognizes Object properties', () => {
+    assertHasOwn({a: 1}, '0', false);
+    assertHasOwn({a: 1}, '1', false);
+    assertHasOwn({a: 1}, 'a', true);
+    assertHasOwn({a: 1}, 'valueOf', false);
+    assertHasOwn({a: 1}, 'constructor', false);
+  });
+
+  it('Assert that hasOwn recognizes function properties', () => {
+    const fn = function() {};
+    assertHasOwn(fn, 'caller', true);
+    assertHasOwn(fn, 'arguments', true);
+    assertHasOwn(fn, 'constructor', false);
+    assertHasOwn(fn, 'valueOf', false);
+  });
+});
