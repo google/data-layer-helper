@@ -3,15 +3,16 @@ goog.setTestOnly();
 
 const {DataLayerHelper, buildAbstractModelInterface_} = goog.require('helper');
 
-describe('The processStates function', function() {
+describe('The processStates function', () => {
   /**
    * Asserts that calling processStates_ with the given arguments will result
    * in the expected model state and expected calls to the listener.
    *
-   * @param {Array<Object>} states The states argument for the call to
+   * @param {!Array<Object>} states The states argument for the call to
    *     processStates_.
-   * @param {Object} expectedModel The expected model state after the call.
-   * @param {Array<Array<*>>} expectedListenerCalls The expected calls made
+   * @param {!Object<*, *>} expectedModel The expected model
+   *     state after the call.
+   * @param {!Array<Array<*>>} expectedListenerCalls The expected calls made
    *     to the helper's listener. Should be an array of arrays where each sub-
    *     array represents the arguments passed to the listener during a call.
    */
@@ -46,7 +47,7 @@ describe('The processStates function', function() {
     doAssert(false);
   }
 
-  describe('The behavior of process states', function() {
+  describe('The behavior of process states', () => {
     it('does nothing with no states or model', function() {
       assertProcessStates([], {}, []);
     });
@@ -66,7 +67,7 @@ describe('The processStates function', function() {
     });
   });
 
-  describe('The behavior with custom setter methods', function() {
+  describe('The behavior with custom setter methods', () => {
     it('makes an overridding setter call', function() {
       const customMethod = function() {
         this.set('a', 1);
@@ -144,7 +145,7 @@ describe('The processStates function', function() {
         });
   });
 
-  describe('The behavior of custom functions on arrays ', function() {
+  describe('The behavior of custom functions on arrays ', () => {
     let products;
     beforeEach(function() {
       products = [
@@ -208,7 +209,7 @@ describe('The processStates function', function() {
   });
 
   describe('The behavior with custom methods that throw errors',
-      function() {
+      () => {
         it('Does not crash when an error is thrown ', function() {
           const errorFunction = () => {
             throw Error('Scary Error');
