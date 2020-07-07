@@ -5,8 +5,8 @@ const {hasOwn} = goog.require('plain');
 
 describe('the hasOwn method', function() {
   /**
-   * Ensure that plain.hasOwn Determines if the value has a
-   * non-inherited property with the given key.
+   * Helper function used to insure that plain.hasOwn determines if
+   * the value has a non-inherited property with the given key.
    * @param {*} value The value to check.
    * @param {string} key The property name.
    * @param {boolean} expected If the value has a property named by key.
