@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {hasOwn} = goog.require('plain');
 
-describe('the isPlainObject method', function() {
+describe('the hasOwn method', function() {
   /**
    * Ensure that plain.hasOwn Determines if the value has a
    * non-inherited property with the given key.
@@ -15,7 +15,7 @@ describe('the isPlainObject method', function() {
     expect(hasOwn(value, key)).toBe(expected);
   }
 
-  it('Assert that hasOwn recognizes simple type to not have properties', () => {
+  it('recognizes simple type to not have properties', () => {
     assertHasOwn(23, 'valueOf', false);
     assertHasOwn(NaN, 'valueOf', false);
     assertHasOwn(true, 'valueOf', false);
@@ -24,7 +24,7 @@ describe('the isPlainObject method', function() {
     assertHasOwn(undefined, 'valueOf', false);
   });
 
-  it('Assert that hasOwn recognizes string properties', () => {
+  it('recognizes string properties', () => {
     assertHasOwn('string', 'length', true);
     assertHasOwn('string', 'size', false);
 
@@ -32,7 +32,7 @@ describe('the isPlainObject method', function() {
     assertHasOwn('string', 'split', false);
   });
 
-  it('Assert that hasOwn recognizes array properties', () => {
+  it('recognizes array properties', () => {
     assertHasOwn([1, 2], '0', true);
     assertHasOwn([1, 2], '1', true);
     assertHasOwn([1, 2], '2', false);
@@ -42,7 +42,7 @@ describe('the isPlainObject method', function() {
     assertHasOwn([1, 2], 'join', false);
   });
 
-  it('Assert that hasOwn recognizes Object properties', () => {
+  it('recognizes Object properties', () => {
     assertHasOwn({a: 1}, '0', false);
     assertHasOwn({a: 1}, '1', false);
     assertHasOwn({a: 1}, 'a', true);
@@ -51,7 +51,7 @@ describe('the isPlainObject method', function() {
   });
 
   it('Assert that hasOwn recognizes function properties', () => {
-    const fn = function() {};
+    const fn = () => {};
     assertHasOwn(fn, 'caller', true);
     assertHasOwn(fn, 'arguments', true);
     assertHasOwn(fn, 'constructor', false);
