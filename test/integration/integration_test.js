@@ -8,22 +8,22 @@ describe('The data layer helper library', function() {
     expect(window['explandKeyValue_']).toBe(undefined);
   });
 
-  describe('The DataLayerHelper API', function() {
+  describe('The DataLayerHelper API', () => {
     let helper;
     beforeEach(function() {
       helper = new DataLayerHelper([]);
     });
 
-    it('exposes DataLayerHelper constructor', function() {
+    it('exposes DataLayerHelper constructor', () => {
       expect(typeof DataLayerHelper).toBe('function');
     });
 
-    it('has two functions, get and flatten', function() {
+    it('has two functions, get and flatten', () => {
       expect(typeof helper.get).toBe('function');
       expect(typeof helper.flatten).toBe('function');
     });
 
-    it('does not expose any private helper functions', function() {
+    it('does not expose any private helper functions', () => {
       expect(helper.processStates_).toBe(undefined);
       expect(helper.expandKeyValue_).toBe(undefined);
       expect(helper.isArray_).toBe(undefined);
@@ -31,7 +31,7 @@ describe('The data layer helper library', function() {
     });
   });
 
-  describe('The functionality of the helper', function() {
+  describe('The functionality of the helper', () => {
     let callbacks;
     let dataLayer;
     let helper;
@@ -73,21 +73,21 @@ describe('The data layer helper library', function() {
       callbacks.push([].slice.call(arguments, 0));
     }
 
-    beforeEach(function() {
+    beforeEach(() => {
       callbacks = [];
       dataLayer = [];
       helper = new DataLayerHelper(dataLayer, callbackListener);
     });
 
-    describe('The result of calling built in methods', function() {
-      it(`returns undefined for data that hasn't been pushed`, function() {
+    describe('The result of calling built in methods', () => {
+      it(`returns undefined for data that hasn't been pushed`, () => {
         expect(callbacks.length).toBe(0);
         expect(helper.get('one')).toBe(undefined);
         expect(helper.get('two')).toBe(undefined);
       });
 
       it('can set two objects in the abstract state in one data layer push',
-          function() {
+          () => {
             dataLayer.push({one: 1, two: 2});
 
             assertCallback([{one: 1, two: 2}, {one: 1, two: 2}], 1);
@@ -97,7 +97,7 @@ describe('The data layer helper library', function() {
           });
 
       it('can override an object in the abstract state after data layer push',
-          function() {
+          () => {
             dataLayer.push({one: 1, two: 2}, {two: 3});
 
             assertCallback([{one: 1, two: 3}, {two: 3}], 2);
@@ -106,7 +106,7 @@ describe('The data layer helper library', function() {
             expect(helper.get('two')).toBe(3);
           });
 
-      it('can overwrite data twice in a row', function() {
+      it('can overwrite data twice in a row', () => {
         dataLayer.push({one: 1, two: 2}, {two: 3}, {two: 2});
 
         assertCallback([{one: 1, two: 2}, {two: 2}], 3);
@@ -115,7 +115,7 @@ describe('The data layer helper library', function() {
         expect(helper.get('two')).toBe(2);
       });
 
-      it('can write to deeply nested objects', function() {
+      it('can write to deeply nested objects', () => {
         dataLayer.push({one: 1, two: 2}, {two: 3}, {two: 2});
         dataLayer.push({one: {three: 3}});
 
@@ -125,7 +125,7 @@ describe('The data layer helper library', function() {
         expect(helper.get('two')).toBe(2);
       });
 
-      it('can append to deeply nested objects', function() {
+      it('can append to deeply nested objects', () => {
         dataLayer.push({one: 1, two: 2}, {two: 3}, {two: 2});
         dataLayer.push({one: {three: 3}}, {one: {four: 4}});
 
@@ -138,7 +138,7 @@ describe('The data layer helper library', function() {
         expect(helper.get('two')).toBe(2);
       });
 
-      it('can flatten the history to a single object', function() {
+      it('can flatten the history to a single object', () => {
         dataLayer.push({one: 1, two: 2}, {two: 3}, {two: 2});
         dataLayer.push({one: {three: 3}}, {one: {four: 4}});
 
@@ -173,9 +173,9 @@ describe('The data layer helper library', function() {
       });
     });
 
-    describe('The result of calling custom methods', function() {
+    describe('The result of calling custom methods', () => {
       it('calls custom methods pushed to the dataLayer that ' +
-        'may change state', function() {
+        'may change state', () => {
         dataLayer.push(
             {a: 'originalValue'},
             () => {
@@ -186,8 +186,7 @@ describe('The data layer helper library', function() {
       });
 
       it('Allows for recursive type methods that ' +
-        'push themselves to the dataLayer', function() {
-        const dataLayer = dataLayer;
+        'push themselves to the dataLayer', () => {
         dataLayer.push(
             {numCustomMethodCalls: 0},
             function() {
