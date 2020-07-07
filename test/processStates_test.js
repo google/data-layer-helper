@@ -48,27 +48,27 @@ describe('The processStates function', () => {
   }
 
   describe('The behavior of process states', () => {
-    it('does nothing with no states or model', function() {
+    it('does nothing with no states or model', () => {
       assertProcessStates([], {}, []);
     });
 
-    it('makes a call when a single state needs to be processed', function() {
+    it('makes a call when a single state needs to be processed', () => {
       assertProcessStates([{a: 1}], {a: 1}, [[{a: 1}, {a: 1}]]);
     });
 
-    it('makes two calls when two states need to be processed', function() {
+    it('makes two calls when two states need to be processed', () => {
       assertProcessStates([{a: 1}, {a: 2}], {a: 2},
           [[{a: 1}, {a: 1}], [{a: 2}, {a: 2}]]);
     });
 
-    it('makes calls with nested state arguments', function() {
+    it('makes calls with nested state arguments', () => {
       assertProcessStates([{'a.b': 1}], {a: {b: 1}},
           [[{a: {b: 1}}, {'a.b': 1}]]);
     });
   });
 
   describe('The behavior with custom setter methods', () => {
-    it('makes an overridding setter call', function() {
+    it('makes an overridding setter call', () => {
       const customMethod = function() {
         this.set('a', 1);
       };
@@ -78,7 +78,7 @@ describe('The processStates function', () => {
           [[{a: 0}, {a: 0}], [{a: 1}, customMethod]]);
     });
 
-    it('makes a setter call on empty state', function() {
+    it('makes a setter call on empty state', () => {
       const customMethod = function() {
         this.set('b', 'one');
       };
@@ -88,7 +88,7 @@ describe('The processStates function', () => {
           [[{b: 'one'}, customMethod]]);
     });
 
-    it('makes a setter call on a complex nested object', function() {
+    it('makes a setter call on a complex nested object', () => {
       const customMethod = function() {
         this.set('c.d', [3]);
       };
@@ -98,7 +98,7 @@ describe('The processStates function', () => {
           [[{c: {d: [3]}}, customMethod]]);
     });
 
-    it('maintains state when calling custom methods', function() {
+    it('maintains state when calling custom methods', () => {
       const customMethod = function() {
         const a = this.get('a');
 
@@ -113,7 +113,7 @@ describe('The processStates function', () => {
         ]);
     });
 
-    it('maintains nested state when calling custom methods', function() {
+    it('maintains nested state when calling custom methods', () => {
       const customMethod = function() {
         const b = this.get('a.b');
 
@@ -129,7 +129,7 @@ describe('The processStates function', () => {
     });
 
     it('maintains complex, deeply nested state when calling custom methods',
-        function() {
+        () => {
           const customMethod = function() {
             const a = this.get('a');
 
@@ -147,7 +147,7 @@ describe('The processStates function', () => {
 
   describe('The behavior of custom functions on arrays ', () => {
     let products;
-    beforeEach(function() {
+    beforeEach(() => {
       products = [
         {price: 10},
         {price: 20},
@@ -155,7 +155,7 @@ describe('The processStates function', () => {
       ];
     });
 
-    it('maintains the length of an array', function() {
+    it('maintains the length of an array', () => {
       const customMethod = function() {
         const products = this.get('products');
         this.set('numProducts', products.length);
@@ -168,7 +168,7 @@ describe('The processStates function', () => {
         ]);
     });
 
-    it('allows for array modification with push and pop', function() {
+    it('allows for array modification with push and pop', () => {
       const expectedProducts = [
         {price: 10},
         {price: 20},
@@ -189,7 +189,7 @@ describe('The processStates function', () => {
         ]);
     });
 
-    it('Allows elementwise array access in custom functions', function() {
+    it('Allows elementwise array access in custom functions', () => {
       const customMethod = function() {
         const products = this.get('products');
         let total = 0;
@@ -210,42 +210,40 @@ describe('The processStates function', () => {
 
   describe('The behavior with custom methods that throw errors',
       () => {
-        it('Does not crash when an error is thrown ', function() {
+        it('Does not crash when an error is thrown ', () => {
           const errorFunction = () => {
             throw Error('Scary Error');
           };
           assertProcessStates([errorFunction], {}, [[{}, errorFunction]]);
         });
 
-        it('executes setter code before an error is thrown',
-            function() {
-              const errorFunction = function() {
-                this.set('a', 1);
-                throw Error('Scary Error');
-              };
-              assertProcessStates(
+        it('executes setter code before an error is thrown', () => {
+          const errorFunction = function() {
+            this.set('a', 1);
+            throw Error('Scary Error');
+          };
+          assertProcessStates(
                   [errorFunction],
                   {a: 1},
                   [[{a: 1}, errorFunction]]);
-            });
+        });
 
-        it('executes modifying code before an error is thrown',
-            function() {
-              const errorFunction = function() {
-                this.set('a', 3);
-                throw Error('Scary Error');
-              };
-              assertProcessStates(
+        it('executes modifying code before an error is thrown', () => {
+          const errorFunction = function() {
+            this.set('a', 3);
+            throw Error('Scary Error');
+          };
+          assertProcessStates(
                   [{a: 1, b: 2}, errorFunction],
                   {a: 3, b: 2},
-                [
+            [
                     [{a: 1, b: 2}, {a: 1, b: 2}],
                     [{a: 3, b: 2}, errorFunction],
-                ]);
-            });
+            ]);
+        });
 
         it('does not affect messages further down' +
-            ' the queue when errors are thrown', function() {
+            ' the queue when errors are thrown', () => {
           const errorFunction = function() {
             this.set('a', 1);
             throw Error('Scary Error');
