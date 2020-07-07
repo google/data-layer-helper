@@ -1397,7 +1397,7 @@ grunt-cli@~1.2.0:
     nopt "~3.0.6"
     resolve "~1.1.0"
 
-grunt-closure-tools@~1.0.0:
+grunt-closure-tools@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/grunt-closure-tools/-/grunt-closure-tools-1.0.0.tgz#fa976dcbc26b652620ab5a58918b199f16e9c99d"
   integrity sha1-+pdty8JrZSYgq1pYkYsZnxbpyZ0=
@@ -1413,13 +1413,6 @@ grunt-contrib-qunit@~4.0.0:
     eventemitter2 "^6.4.2"
     p-each-series "^2.1.0"
     puppeteer "^4.0.0"
-
-grunt-karma@~4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/grunt-karma/-/grunt-karma-4.0.0.tgz#faaeaff37ee71ebd75313da4cec1268500d51190"
-  integrity sha512-L3YpIAW6NB5tQ3cb6VoJCCCWfIJ0nqeyxs/SF6N385sMSadZ6RjBllP2kOUE2plkT8T8DR3bGVqzgH+vUDTsuQ==
-  dependencies:
-    lodash "^4.17.10"
 
 grunt-known-options@~1.1.0:
   version "1.1.1"
@@ -1939,7 +1932,7 @@ lodash.ismatchwith@~4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.ismatchwith/-/lodash.ismatchwith-4.4.0.tgz#3d1f55f0ca004473ee211b568e5fe220f081e1a9"
   integrity sha1-PR9V8MoARHPuIRtWjl/iIPCB4ak=
 
-lodash@^4.0.0, lodash@^4.17.10, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.3.0, lodash@~4.17.10, lodash@~4.17.5:
+lodash@^4.0.0, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.3.0, lodash@~4.17.10, lodash@~4.17.5:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
