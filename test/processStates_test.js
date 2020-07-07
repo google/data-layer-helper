@@ -10,7 +10,7 @@ describe('The processStates function', () => {
    *
    * @param {!Array<Object>} states The states argument for the call to
    *     processStates_.
-   * @param {!Object<*>} expectedModel The expected model
+   * @param {!Object<*, *>} expectedModel The expected model
    *     state after the call.
    * @param {!Array<Array<*>>} expectedListenerCalls The expected calls made
    *     to the helper's listener. Should be an array of arrays where each sub-
