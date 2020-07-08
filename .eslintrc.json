@@ -18,6 +18,6 @@
     "closure"
   ],
   "rules": {
-    "prefer-rest-params": "off"
+    "prefer-rest-params": "off" // We don't want this, adds a polyfill
   }
 }
