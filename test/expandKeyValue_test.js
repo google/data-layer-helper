@@ -9,8 +9,8 @@ describe('The helper.expandKeyValue_ function', function() {
    * and comparing the return value to an expected return value.
    * @param {string} key The key's path, where dots are the path separators.
    * @param {*} value The value to set on the given key path.
-   * @param {Object} expected An object representing the given key/value which
-   *     can be merged onto the dataLayer's model.
+   * @param {!Object<*>} expected An object representing the given key/value
+   *     which can be merged onto the dataLayer's model.
    * @param {string=} context More information about the test being ran.
    */
   function assertExpand(key, value, expected, context = '') {
