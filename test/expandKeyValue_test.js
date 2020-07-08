@@ -66,7 +66,7 @@ describe(`The 'expandKeyValue' function of helper`, () => {
   });
 
   it('does not interpret dot separated keys in value objects ' +
-      'as object nesting', function() {
+      'as object nesting', () => {
     assertExpand('a', {'b.c': 1}, {a: {'b.c': 1}});
     assertExpand('a.b', {'b.c': 1}, {a: {b: {'b.c': 1}}});
   });
