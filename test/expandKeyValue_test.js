@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {expandKeyValue_} = goog.require('helper');
 
-describe('The helper.expandKeyValue_ function', function() {
+describe(`The 'expandKeyValue' function of helper`, () => {
   /**
    * Tests the expandKeyValue function by passing in a key value pair
    * and comparing the return value to an expected return value.
@@ -19,8 +19,8 @@ describe('The helper.expandKeyValue_ function', function() {
         .toEqual(expected);
   }
 
-  it('successfully converts key value pairs ' +
-      'into objects when the key string is non dot-separated', function() {
+  it('converts key value pairs ' +
+      'into objects when the key string is non dot-separated', () => {
     assertExpand('a', 1, {a: 1});
     assertExpand('a', 0, {a: 0});
     assertExpand('a', -1, {a: -1});
@@ -33,8 +33,8 @@ describe('The helper.expandKeyValue_ function', function() {
     assertExpand('a', {b: {c: 3, d: 4}}, {a: {b: {c: 3, d: 4}}});
   });
 
-  it('successfully converts key value pairs into nested objects ' +
-      'when the key string is dot-separated', function() {
+  it('converts key value pairs into nested objects ' +
+      'when the key string is dot-separated', () => {
     assertExpand('a.b', 2, {a: {b: 2}});
     assertExpand('a.b', 0, {a: {b: 0}});
     assertExpand('a.b', -2, {a: {b: -2}});
@@ -49,7 +49,7 @@ describe('The helper.expandKeyValue_ function', function() {
     assertExpand('a.b.c.d.e.f', 6, {a: {b: {c: {d: {e: {f: 6}}}}}});
   });
 
-  it('correctly handles empty strings', function() {
+  it('handles empty strings', () => {
     assertExpand(
         '', 1, {'': 1},
         'preserves explicit empty strings for keys'
