@@ -236,7 +236,7 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  *
  * @param {!Array<*>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
- * @param {!Object<*>|!Array<*>} model The current dataLayer model.
+ * @param {!Object<*>} model The current dataLayer model.
  * @private
  */
 function processCommand_(command, model) {
@@ -264,7 +264,7 @@ function processCommand_(command, model) {
  *
  * @param {!Object<*>} args The arguments object containing the command
  *     to execute and optional arguments for the processor.
- * @param {!Object<*>|!Array<*>} model The current dataLayer model.
+ * @param {!Object<*>} model The current dataLayer model.
  * @private
  */
 function processArguments_(args, model) {
