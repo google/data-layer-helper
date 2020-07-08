@@ -1,6 +1,3 @@
-goog.module('datalayerhelper.helper.testing.utils');
-goog.setTestOnly();
-
 /**
  * Checks that each of the values of two array-like objects are deep equal.
  * This is needed because jasmine's toEqual compares the functional
@@ -17,7 +14,3 @@ function expectEqualContents(arr1, arr2) {
     expect(arr1[i]).toEqual(arr2[i]);
   }
 }
-
-exports = {
-  expectEqualContents,
-};
