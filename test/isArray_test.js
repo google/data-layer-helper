@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {isArray_} = goog.require('helper');
 
-describe('The helper.isArray_ function', function() {
+describe('The helper.isArray_ function', () => {
   /**
    * Ensure that plain.IsPlainObject recognizes value
    * to be a array iff expected is true.
@@ -14,7 +14,7 @@ describe('The helper.isArray_ function', function() {
     expect(isArray_(value)).toBe(expected);
   }
 
-  it(`identifies things that aren't arrays as not arrays`, function() {
+  it(`identifies things that aren't arrays as not arrays`, () => {
     assertIsArray(23, false);
     assertIsArray(NaN, false);
     assertIsArray(true, false);
@@ -29,7 +29,7 @@ describe('The helper.isArray_ function', function() {
     assertIsArray(Array, false);
   });
 
-  it(`identifies things that are arrays as arrays`, function() {
+  it(`identifies things that are arrays as arrays`, () => {
     assertIsArray([], true);
     assertIsArray([false], true);
     assertIsArray(Array(), true);
@@ -38,7 +38,7 @@ describe('The helper.isArray_ function', function() {
     assertIsArray(Object(Array()), true);
   });
 
-  it('identifies arrays which were created in a different window.', function() {
+  it('identifies arrays which were created in a different window.', () => {
     const iframe = document.createElement('iframe');
     iframe.height = '0';
     iframe.width = '0';

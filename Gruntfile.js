@@ -51,16 +51,29 @@ module.exports = function(grunt) {
       },
     },
     'qunit': {
-      files: ['test/unit.html', 'test/integration.html'],
+      files: ['test/unit.html'],
+    },
+    'karma': {
+      options: {
+        singleRun: true,
+      },
+      unit: {
+        configFile: 'karma.conf.js',
+      },
+      integration: {
+        configFile: 'test/integration/karma.conf.js',
+      },
     },
   });
 
   grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-closure-tools');
 
   grunt.registerTask('default', [
     'closureDepsWriter',
     'closure-compiler',
+    'karma',
     'qunit',
   ]);
 };
