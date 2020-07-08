@@ -1,11 +1,11 @@
 describe('The data layer helper library', function() {
   it('does not pollute the global scope', function() {
-    expect(window['dataLayer']).toBe(undefined);
-    expect(window['goog']).toBe(undefined);
-    expect(window['helper']).toBe(undefined);
-    expect(window['plain']).toBe(undefined);
-    expect(window['isPlainObject']).toBe(undefined);
-    expect(window['explandKeyValue_']).toBe(undefined);
+    expect(window['dataLayer']).toBeUndefined();
+    expect(window['goog']).toBeUndefined();
+    expect(window['helper']).toBeUndefined();
+    expect(window['plain']).toBeUndefined();
+    expect(window['isPlainObject']).toBeUndefined();
+    expect(window['explandKeyValue_']).toBeUndefined();
   });
 
   describe('The DataLayerHelper API', () => {
@@ -24,17 +24,17 @@ describe('The data layer helper library', function() {
     });
 
     it('does not expose any private helper functions', () => {
-      expect(helper.processStates_).toBe(undefined);
-      expect(helper.expandKeyValue_).toBe(undefined);
-      expect(helper.isArray_).toBe(undefined);
-      expect(helper.merge_).toBe(undefined);
+      expect(helper.processStates_).toBeUndefined();
+      expect(helper.expandKeyValue_).toBeUndefined();
+      expect(helper.isArray_).toBeUndefined();
+      expect(helper.merge_).toBeUndefined();
     });
   });
 
   describe('The functionality of the helper', () => {
-    let callbacks;
     let dataLayer;
     let helper;
+    let callbackListener;
 
     /**
      * Assert that the last callback is what we expect and the number of
@@ -44,8 +44,8 @@ describe('The data layer helper library', function() {
      * so far.
      */
     function assertCallback(expected, numberOfCalls) {
-      expect(callbacks.length).toBe(numberOfCalls);
-      expect(callbacks[callbacks.length - 1]).toEqual(expected);
+      expect(callbackListener.calls.length).toBe(numberOfCalls);
+      expect(callbackListener.calls.mostRecent()).toEqual(expected);
     }
 
     /**
@@ -65,23 +65,15 @@ describe('The data layer helper library', function() {
       }
     }
 
-    /**
-     * Automatically update the callbacks array with a description
-     * of calls made to the data layer.
-     */
-    function callbackListener() {
-      callbacks.push([].slice.call(arguments, 0));
-    }
-
     beforeEach(() => {
-      callbacks = [];
       dataLayer = [];
+      callbackListener = jasmine.createSpy();
       helper = new DataLayerHelper(dataLayer, callbackListener);
     });
 
     describe('The result of calling built in methods', () => {
       it(`returns undefined for data that hasn't been pushed`, () => {
-        expect(callbacks.length).toBe(0);
+        expect(callbackListener).not.toHaveBeenCalled();
         expect(helper.get('one')).toBe(undefined);
         expect(helper.get('two')).toBe(undefined);
       });

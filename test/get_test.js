@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {DataLayerHelper} = goog.require('helper');
 
-describe('The helper.get function', function() {
+describe('The helper.get function', () => {
   const h = new DataLayerHelper([{
     a: 1,
     b: {
@@ -16,7 +16,7 @@ describe('The helper.get function', function() {
   }]);
 
   it('returns the value currently assigned ' +
-      'to the given key in the helper internal model', function() {
+      'to the given key in the helper internal model', () => {
     expect(h.get('a')).toBe(1);
     expect(h.get('b')).toEqual({c: {d: 4}, e: 5, f: null});
     expect(h.get('b.c')).toEqual({d: 4});
@@ -25,7 +25,7 @@ describe('The helper.get function', function() {
     expect(h.get('b.f')).toBe(null);
   });
 
-  it('returns undefined when key does not exist in model', function() {
+  it('returns undefined when key does not exist in model', () => {
     expect(h.get('blah')).toBe(undefined);
     expect(h.get('c')).toBe(undefined);
     expect(h.get('d')).toBe(undefined);

@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {isPlainObject} = goog.require('plain');
 
-describe('the isPlainObject method', function() {
+describe('the isPlainObject method', () => {
   /**
    * Ensure that plain.IsPlainObject recognizes value
    * to be a plain object iff expected is true.
@@ -15,21 +15,21 @@ describe('the isPlainObject method', function() {
   }
 
   it('identifies objects made by the constructor and dicts ' +
-      'as plain objects', function() {
+      'as plain objects', () => {
     assertIsPlainObject({}, true);
     assertIsPlainObject({a: 1}, true);
     assertIsPlainObject(Object(), true);
     assertIsPlainObject(new Object(), true);
   });
 
-  it('identifies bools, null, and undefined as not plain objects', function() {
+  it('identifies bools, null, and undefined as not plain objects', () => {
     assertIsPlainObject(null, false);
     assertIsPlainObject(undefined, false);
     assertIsPlainObject(true, false);
     assertIsPlainObject(false, false);
   });
 
-  it('identifies numbers as not plain objects', function() {
+  it('identifies numbers as not plain objects', () => {
     assertIsPlainObject(0, false);
     assertIsPlainObject(23, false);
     assertIsPlainObject(-23, false);
@@ -38,18 +38,18 @@ describe('the isPlainObject method', function() {
     assertIsPlainObject(NaN, false);
   });
 
-  it('identifies strings as not plain objects', function() {
+  it('identifies strings as not plain objects', () => {
     assertIsPlainObject('', false);
     assertIsPlainObject('number', false);
   });
 
-  it('identifies functions as not plain objects', function() {
+  it('identifies functions as not plain objects', () => {
     assertIsPlainObject(assertIsPlainObject, false);
     assertIsPlainObject(function() {}, false);
     assertIsPlainObject(() => {}, false);
   });
 
-  it('identifies arrays as not plain objects', function() {
+  it('identifies arrays as not plain objects', () => {
     assertIsPlainObject([], false);
     assertIsPlainObject(['number'], false);
     assertIsPlainObject(Array(), false);
@@ -60,7 +60,7 @@ describe('the isPlainObject method', function() {
     assertIsPlainObject(Object(Array()), false);
   });
 
-  it('identifies other things as not plain objects', function() {
+  it('identifies other things as not plain objects', () => {
     assertIsPlainObject(Date(), false);
     assertIsPlainObject(new Date(), false);
     assertIsPlainObject(/./, false);
@@ -74,7 +74,7 @@ describe('the isPlainObject method', function() {
     assertIsPlainObject(new Foo(), false);
   });
 
-  it('does not misidentify inherited objects', function() {
+  it('does not misidentify inherited objects', () => {
     if (!Object.create) {
       Object.create = function(o) {
         class F extends o {}
