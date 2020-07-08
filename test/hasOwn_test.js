@@ -49,12 +49,4 @@ describe('the hasOwn method', function() {
     assertHasOwn({a: 1}, 'valueOf', false);
     assertHasOwn({a: 1}, 'constructor', false);
   });
-
-  it('recognizes function properties', () => {
-    const fn = () => {};
-    assertHasOwn(fn, 'caller', true);
-    assertHasOwn(fn, 'arguments', true);
-    assertHasOwn(fn, 'constructor', false);
-    assertHasOwn(fn, 'valueOf', false);
-  });
 });
