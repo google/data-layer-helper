@@ -153,7 +153,7 @@ DataLayerHelper.prototype['get'] = function(key) {
 DataLayerHelper.prototype['flatten'] = function() {
   this.dataLayer_.splice(0, this.dataLayer_.length);
   this.dataLayer_[0] = {};
-  merge_(this.model_, this.dataLayer_[0]);
+  merge_(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
 };
 
 
@@ -180,9 +180,9 @@ DataLayerHelper.prototype.processStates_ =
       while (this.executingListener_ === false && this.unprocessed_.length > 0) {
         const update = this.unprocessed_.shift();
         if (isArray_(update)) {
-          processCommand_(update, this.model_);
+          processCommand_(/** @type {!Array<*>} */ (update), this.model_);
         } else if (isArguments_(update)) {
-          processArguments_(update, this.model_);
+          processArguments_(/** @type {!Object<*>} */ (update), this.model_);
         } else if (typeof update == 'function') {
           try {
             update.call(this.abstractModelInterface_);
@@ -234,7 +234,7 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  * If the method is a valid function of the value, the method will be applies
  * with any arguments passed in.
  *
- * @param {*} command The array containing the key with the
+ * @param {!Array<*>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
  * @param {!Object<*>|!Array<*>} model The current dataLayer model.
  * @private
@@ -262,7 +262,7 @@ function processCommand_(command, model) {
  * If a processor for the command has been registered, the processor function
  * will be invoked with any arguments passed in.
  *
- * @param {*} args The arguments object containing the command
+ * @param {!Object<*>} args The arguments object containing the command
  *     to execute and optional arguments for the processor.
  * @param {!Object<*>|!Array<*>} model The current dataLayer model.
  * @private
@@ -344,8 +344,8 @@ function isString_(value) {
  * objects get cloned and which get copied. More work is needed to flesh
  * out the details here.
  *
- * @param {*} from The object or array to merge from.
- * @param {*} to The object or array to merge into.
+ * @param {!Array<*>|!Object<*>} from The object or array to merge from.
+ * @param {!Array<*>|!Object<*>} to The object or array to merge into.
  * @private
  */
 function merge_(from, to) {
