@@ -3,12 +3,12 @@ goog.setTestOnly();
 
 const {DataLayerHelper} = goog.require('helper');
 
-describe('The registerProcessor method', () => {
+describe('The registerProcessor method of helper', () => {
   let dataLayer;
   let dlh;
   let commandAPI;
   let spy;
-  beforeEach(function() {
+  beforeEach(() => {
     dataLayer = [];
     commandAPI = function() {
       dataLayer.push(arguments);
@@ -17,25 +17,16 @@ describe('The registerProcessor method', () => {
     spy = jasmine.createSpy('spy');
   });
 
-  describe('The function registration process', function() {
+  describe('the function registration process', () => {
     it('allows registration of functions with arbitrary names', () => {
       dlh.registerProcessor('!This funct%n @m@zing~0.0', spy);
       commandAPI('!This funct%n @m@zing~0.0');
 
       expect(spy).toHaveBeenCalledWith();
     });
-    /* TODO: no set command yet
-    it('allows registration of functions with names that are in use',
-        () => {
-          dlh.registerProcessor('set', spy);
-          commandAPI('set', 'one', 1);
-
-          expect(spy).toHaveBeenCalledWith();
-          expect(dlh.get('one')).toBe(1);
-        });*/
   });
 
-  describe('Order of calling registered functions', () => {
+  describe('order of calling registered functions', () => {
     it('calls registered functions only when the commandAPI ' +
         'fires the appropriate event', () => {
       dlh.registerProcessor('process', () => {
@@ -85,17 +76,6 @@ describe('The registerProcessor method', () => {
       expect(spy.calls.allArgs()).toEqual([['a'], ['b'], ['a']]);
     });
 
-    /* TODO: set command not defined yet.
-    it('considers built in functions to be registered first',
-        () => {
-          dlh.registerProcessor('set', (key) => {
-            return {key: 3};
-          });
-          commandAPI('set', 'two', 2);
-
-          expect(dlh.get('two')).toBe(3);
-        });*/
-
     it('does not update the model until all processors have run', () => {
       dataLayer.push({'5': 10});
       dlh.registerProcessor('operate', function() {
@@ -114,7 +94,7 @@ describe('The registerProcessor method', () => {
     });
   });
 
-  describe('The parameters of a registered command', () => {
+  describe('the parameters of a registered command', () => {
     it('can access the model through the this keyword', () => {
       dataLayer.push({'a': {'b': 4, 'c': 'bad'}}, {'x': []});
       dlh.registerProcessor('peek', function() {
@@ -144,7 +124,7 @@ describe('The registerProcessor method', () => {
     });
   });
 
-  describe(`The registered command's interface with the model`,
+  describe(`the registered command's interface with the model`,
       () => {
         beforeEach(() => {
           dataLayer.push({'a': 1, 'b': {'a': [1]}});
@@ -221,7 +201,7 @@ describe('The registerProcessor method', () => {
         });
       });
 
-  describe(`The registered command's connection to a command API`, () => {
+  describe(`the registered command's connection to a command API`, () => {
     it('can call the command API', () => {
       dlh.registerProcessor('method', () => {
         spy('a');
