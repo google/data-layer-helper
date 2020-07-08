@@ -9,3 +9,4 @@ addons:
 dist: xenial
 services:
   - xvfb
+os: windows
