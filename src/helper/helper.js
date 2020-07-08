@@ -174,36 +174,35 @@ DataLayerHelper.prototype['flatten'] = function() {
 DataLayerHelper.prototype.processStates_ =
     function(states, optSkipListener = false) {
   this.unprocessed_.push.apply(this.unprocessed_, states);
-  // Checking executingListener here protects against multiple levels of
-  // loops trying to process the same queue. This can happen if the listener
-  // itself is causing new states to be pushed onto the dataLayer.
-  while (this.executingListener_ === false && this.unprocessed_.length > 0) {
-    const update = this.unprocessed_.shift();
-    if (isArray_(update)) {
-      processCommand_(update, this.model_);
-    } else if (isArguments_(update)) {
-      processArguments_(update, this.model_);
-    } else if (typeof update == 'function') {
-      var that = this;
-      try {
-        update.call(this.abstractModelInterface_);
-      } catch (e) {
-        // Catch any exceptions to we don't drop subsequent updates.
-        // TODO: Add some sort of logging when this happens.
+      // Checking executingListener here protects against multiple levels of
+      // loops trying to process the same queue. This can happen if the listener
+      // itself is causing new states to be pushed onto the dataLayer.
+      while (this.executingListener_ === false && this.unprocessed_.length > 0) {
+        const update = this.unprocessed_.shift();
+        if (isArray_(update)) {
+          processCommand_(update, this.model_);
+        } else if (isArguments_(update)) {
+          processArguments_(update, this.model_);
+        } else if (typeof update == 'function') {
+          try {
+            update.call(this.abstractModelInterface_);
+          } catch (e) {
+            // Catch any exceptions to we don't drop subsequent updates.
+            // TODO: Add some sort of logging when this happens.
+          }
+        } else if (isPlainObject(update)) {
+          for (const key in update) {
+            merge_(expandKeyValue_(key, update[key]), this.model_);
+          }
+        } else {
+          continue;
+        }
+        if (!optSkipListener) {
+          this.executingListener_ = true;
+          this.listener_(this.model_, update);
+          this.executingListener_ = false;
+        }
       }
-    } else if (isPlainObject(update)) {
-      for (var key in update) {
-        merge_(expandKeyValue_(key, update[key]), this.model_);
-      }
-    } else {
-      continue;
-    }
-    if (!optSkipListener) {
-      this.executingListener_ = true;
-      this.listener_(this.model_, update);
-      this.executingListener_ = false;
-    }
-  }
 };
 
 
