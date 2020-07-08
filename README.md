@@ -170,10 +170,10 @@ Existing Value     | New Value                     | Result of Overwrite
 [1, {two: 3}]      | [undefined, {two: 4, six: 8}] | [undefined, {two: 4, six: 8}] 
 [1, {two: 3}]      | [(empty), {two: 4, six: 8}]   | [1, {two: 4, six: 8}]
 
-Notice that a slot in an new value array that has been explicitly set to undefined will
-overwrite the corresponding slot in the existing array. If a slot has not been set to any
-value and is therefore empty, then it will not overwrite the corresponding slot of the 
-existing array, even though indexing to either of such slots will evaluate to "undefined".
+Notice that an index in an new value array that has been explicitly set to undefined will
+overwrite the corresponding index in the existing array, however an index that has not been
+set to any value (i.e. empty values in a sparse array) will not overwrite the corresponding
+index in the existing array, even though value at both indexes evaluates to undefined.
 
 ### Meta Commands
 Using the above methods alone, some operations on the abstract model are somewhat cumbersome.
