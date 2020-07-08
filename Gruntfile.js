@@ -73,8 +73,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', [
     'closureDepsWriter',
-//    'closure-compiler',
+    'closure-compiler',
     'karma:unit',
-//    'karma:integration',
+    'karma:integration',
   ]);
 };
