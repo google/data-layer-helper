@@ -64,14 +64,6 @@ module.exports = function(grunt) {
       integration: {
         configFile: 'test/integration/karma.conf.js',
       },
-      unitMultiBrowser: {
-        browsers: ['Chrome', 'Firefox'],
-        configFile: 'karma.conf.js',
-      },
-      integrationMultiBrowser: {
-        browsers: ['Chrome', 'Firefox', 'IE'],
-        configFile: 'test/integration/karma.conf.js',
-      },
     },
   });
 
@@ -85,10 +77,5 @@ module.exports = function(grunt) {
     'karma:unit',
     'karma:integration',
     'qunit',
-  ]);
-
-  grunt.registerTask('test', [
-    'karma:integrationMultiBrowser',
-    'karma:unitMultiBrowser',
   ]);
 };

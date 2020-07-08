@@ -1,0 +1,63 @@
+Arguments: 
+  /home/wolfblue/.config/nvm/versions/node/v14.3.0/bin/node /usr/share/yarn/bin/yarn.js install
+
+PATH: 
+  /home/wolfblue/data-layer-helper/node_modules/.bin:/home/wolfblue/.local/bin:/home/wolfblue/Downloads/google-cloud-sdk/bin:/home/wolfblue/.config/nvm/versions/node/v14.3.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/wolfblue/.local/bin:/home/wolfblue/.local/bin
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  14.3.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  SyntaxError: /home/wolfblue/data-layer-helper/package.json: Unexpected token } in JSON at position 938
+      at JSON.parse (<anonymous>)
+      at /usr/share/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/share/yarn/lib/cli.js:310:30)
+      at /usr/share/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "data-layer-helper",
+    "version": "0.1.0",
+    "scripts": {
+      "test": "grunt test"
+    },
+    "devDependencies": {
+      "eslint": "~7.3.1",
+      "eslint-config-closure-es6": "~0.1.1",
+      "eslint-config-google": "~0.14.0",
+      "eslint-plugin-jasmine": "~4.1.1",
+      "grunt": "~1.0.4",
+      "grunt-closure-tools": "~1.0.0",
+      "grunt-contrib-qunit": "~4.0.0",
+      "grunt-karma": "~4.0.0",
+      "jasmine": "~3.5.0",
+      "jasmine-core": "~3.5.0",
+      "karma": "~5.1.0",
+      "karma-chrome-launcher": "~3.1.0",
+      "karma-closure": "~0.1.3",
+      "karma-detect-browsers": "~2.3.3",
+      "karma-firefox-launcher": "~1.3.0",
+      "karma-googmodule-preprocessor": "~1.0.1",
+      "karma-ie-launcher": "~1.0.0",
+      "karma-jasmine": "~3.3.1",
+      "karma-jasmine-html-reporter": "~1.5.4",
+      "karma-spec-reporter": "~0.0.32"
+    },
+    "dependencies": {
+      "google-closure-compiler": "~20200614.0.0",
+      "google-closure-library": "~20200614.0.0",
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

@@ -9,4 +9,8 @@ addons:
 dist: xenial
 services:
   - xvfb
-os: windows
+os:
+  - windows
+  - linux
+  - osx
+script: xvfb-run grunt

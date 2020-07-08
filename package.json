@@ -1,9 +1,6 @@
 {
   "name": "data-layer-helper",
   "version": "0.1.0",
-  "scripts": {
-    "test": "grunt test"
-  },
   "devDependencies": {
     "eslint": "~7.3.1",
     "eslint-config-closure-es6": "~0.1.1",
@@ -18,6 +15,8 @@
     "karma": "~5.1.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-closure": "~0.1.3",
+    "karma-detect-browsers": "~2.3.3",
+    "karma-safari-launcher": "~1.0.0",
     "karma-firefox-launcher": "~1.3.0",
     "karma-googmodule-preprocessor": "~1.0.1",
     "karma-ie-launcher": "~1.0.0",
