@@ -1,16 +1,16 @@
-describe('The data layer helper library', () => {
-  it('does not pollute the global scope', () => {
-    expect(window['dataLayer']).toBeUndefined();
-    expect(window['goog']).toBeUndefined();
-    expect(window['helper']).toBeUndefined();
-    expect(window['plain']).toBeUndefined();
-    expect(window['isPlainObject']).toBeUndefined();
-    expect(window['explandKeyValue_']).toBeUndefined();
+describe('The data layer helper library', function() {
+  it('does not pollute the global scope', function() {
+    expect(window['dataLayer']).toBe(undefined);
+    expect(window['goog']).toBe(undefined);
+    expect(window['helper']).toBe(undefined);
+    expect(window['plain']).toBe(undefined);
+    expect(window['isPlainObject']).toBe(undefined);
+    expect(window['explandKeyValue_']).toBe(undefined);
   });
 
-  describe('the DataLayerHelper API', () => {
+  describe('The DataLayerHelper API', () => {
     let helper;
-    beforeEach(() => {
+    beforeEach(function() {
       helper = new DataLayerHelper([]);
     });
 
@@ -24,17 +24,17 @@ describe('The data layer helper library', () => {
     });
 
     it('does not expose any private helper functions', () => {
-      expect(helper.processStates_).toBeUndefined();
-      expect(helper.expandKeyValue_).toBeUndefined();
-      expect(helper.isArray_).toBeUndefined();
-      expect(helper.merge_).toBeUndefined();
+      expect(helper.processStates_).toBe(undefined);
+      expect(helper.expandKeyValue_).toBe(undefined);
+      expect(helper.isArray_).toBe(undefined);
+      expect(helper.merge_).toBe(undefined);
     });
   });
 
-  describe('the functionality of the helper', () => {
+  describe('The functionality of the helper', () => {
+    let callbacks;
     let dataLayer;
     let helper;
-    let callbackListener;
 
     /**
      * Assert that the last callback is what we expect and the number of
@@ -44,8 +44,8 @@ describe('The data layer helper library', () => {
      * so far.
      */
     function assertCallback(expected, numberOfCalls) {
-      expect(callbackListener.calls.length).toBe(numberOfCalls);
-      expect(callbackListener.calls.mostRecent()).toEqual(expected);
+      expect(callbacks.length).toBe(numberOfCalls);
+      expect(callbacks[callbacks.length - 1]).toEqual(expected);
     }
 
     /**
@@ -65,15 +65,23 @@ describe('The data layer helper library', () => {
       }
     }
 
+    /**
+     * Automatically update the callbacks array with a description
+     * of calls made to the data layer.
+     */
+    function callbackListener() {
+      callbacks.push([].slice.call(arguments, 0));
+    }
+
     beforeEach(() => {
+      callbacks = [];
       dataLayer = [];
-      callbackListener = jasmine.createSpy();
       helper = new DataLayerHelper(dataLayer, callbackListener);
     });
 
-    describe('the result of calling built in methods', () => {
+    describe('The result of calling built in methods', () => {
       it(`returns undefined for data that hasn't been pushed`, () => {
-        expect(callbackListener).not.toHaveBeenCalled();
+        expect(callbacks.length).toBe(0);
         expect(helper.get('one')).toBe(undefined);
         expect(helper.get('two')).toBe(undefined);
       });
@@ -150,7 +158,7 @@ describe('The data layer helper library', () => {
         expect(helper.get('two')).toBe(2);
       });
 
-      it('works normally after flatten', () => {
+      it('works normally after flatten', function() {
         dataLayer.push({one: 1, two: 2}, {two: 3}, {two: 2});
         dataLayer.push({one: {three: 3}}, {one: {four: 4}});
         helper.flatten();
@@ -165,7 +173,7 @@ describe('The data layer helper library', () => {
       });
     });
 
-    describe('the result of calling custom methods', () => {
+    describe('The result of calling custom methods', () => {
       it('calls custom methods pushed to the dataLayer that ' +
         'may change state', () => {
         dataLayer.push(
@@ -177,7 +185,7 @@ describe('The data layer helper library', () => {
         expect(helper.get('a')).toBe('newValue');
       });
 
-      it('allows for recursive type methods that ' +
+      it('Allows for recursive type methods that ' +
         'push themselves to the dataLayer', () => {
         dataLayer.push(
             {numCustomMethodCalls: 0},
