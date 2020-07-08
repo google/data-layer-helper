@@ -8,9 +8,9 @@ describe('The registerProcessor method', () => {
   let dlh;
   let commandAPI;
   let spy;
-  beforeEach(() => {
+  beforeEach(function() {
     dataLayer = [];
-    commandAPI = () => {
+    commandAPI = function() {
       dataLayer.push(arguments);
     };
     dlh = new DataLayerHelper(dataLayer);
@@ -36,7 +36,7 @@ describe('The registerProcessor method', () => {
   });
 
   describe('Order of calling registered functions', () => {
-    it('calls registered functions only when the commandAPI' +
+    it('calls registered functions only when the commandAPI ' +
         'fires the appropriate event', () => {
       dlh.registerProcessor('process', () => {
         spy('a');
@@ -98,12 +98,12 @@ describe('The registerProcessor method', () => {
 
     it('does not update the model until all processors have run', () => {
       dataLayer.push({'5': 10});
-      dlh.registerProcessor('operate', () => {
+      dlh.registerProcessor('operate', function() {
         expect(this.get('5')).toBe(10);
         expect(dlh.get('5')).toBe(10);
         return {5: 20};
       });
-      dlh.registerProcessor('operate', () => {
+      dlh.registerProcessor('operate', function() {
         expect(this.get('5')).toBe(10);
         expect(dlh.get('5')).toBe(10);
         return {5: 30};
