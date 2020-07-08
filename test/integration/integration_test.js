@@ -1,5 +1,5 @@
-describe('The data layer helper library', function() {
-  it('does not pollute the global scope', function() {
+describe('The data layer helper library', () => {
+  it('does not pollute the global scope', () => {
     expect(window['dataLayer']).toBeUndefined();
     expect(window['goog']).toBeUndefined();
     expect(window['helper']).toBeUndefined();
@@ -8,9 +8,9 @@ describe('The data layer helper library', function() {
     expect(window['explandKeyValue_']).toBeUndefined();
   });
 
-  describe('The DataLayerHelper API', () => {
+  describe('the DataLayerHelper API', () => {
     let helper;
-    beforeEach(function() {
+    beforeEach(() => {
       helper = new DataLayerHelper([]);
     });
 
@@ -31,7 +31,7 @@ describe('The data layer helper library', function() {
     });
   });
 
-  describe('The functionality of the helper', () => {
+  describe('the functionality of the helper', () => {
     let dataLayer;
     let helper;
     let callbackListener;
@@ -71,7 +71,7 @@ describe('The data layer helper library', function() {
       helper = new DataLayerHelper(dataLayer, callbackListener);
     });
 
-    describe('The result of calling built in methods', () => {
+    describe('the result of calling built in methods', () => {
       it(`returns undefined for data that hasn't been pushed`, () => {
         expect(callbackListener).not.toHaveBeenCalled();
         expect(helper.get('one')).toBe(undefined);
@@ -150,7 +150,7 @@ describe('The data layer helper library', function() {
         expect(helper.get('two')).toBe(2);
       });
 
-      it('works normally after flatten', function() {
+      it('works normally after flatten', () => {
         dataLayer.push({one: 1, two: 2}, {two: 3}, {two: 2});
         dataLayer.push({one: {three: 3}}, {one: {four: 4}});
         helper.flatten();
@@ -165,7 +165,7 @@ describe('The data layer helper library', function() {
       });
     });
 
-    describe('The result of calling custom methods', () => {
+    describe('the result of calling custom methods', () => {
       it('calls custom methods pushed to the dataLayer that ' +
         'may change state', () => {
         dataLayer.push(
@@ -177,7 +177,7 @@ describe('The data layer helper library', function() {
         expect(helper.get('a')).toBe('newValue');
       });
 
-      it('Allows for recursive type methods that ' +
+      it('allows for recursive type methods that ' +
         'push themselves to the dataLayer', () => {
         dataLayer.push(
             {numCustomMethodCalls: 0},

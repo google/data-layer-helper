@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {processCommand_} = goog.require('helper');
 
-describe(`The 'processCommand_' function`, () => {
+describe(`The 'processCommand_' function of helper`, () => {
   /**
    * A helper method to assert that a command passed to the processCommand
    * method produces the desired result.

@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {DataLayerHelper} = goog.require('helper');
 
-describe('The helper.get function', () => {
+describe(`The 'get' function of helper`, () => {
   const h = new DataLayerHelper([{
     a: 1,
     b: {

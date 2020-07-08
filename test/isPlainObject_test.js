@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {isPlainObject} = goog.require('plain');
 
-describe('the isPlainObject method', () => {
+describe(`The 'isPlainObject' method of plain`, () => {
   /**
    * Ensure that plain.IsPlainObject recognizes value
    * to be a plain object iff expected is true.

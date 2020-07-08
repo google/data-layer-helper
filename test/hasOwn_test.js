@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {hasOwn} = goog.require('plain');
 
-describe('the hasOwn method', function() {
+describe(`The 'hasOwn' method of plain`, function() {
   /**
    * Helper function used to ensure that plain.hasOwn determines if
    * the value has a non-inherited property with the given key.
