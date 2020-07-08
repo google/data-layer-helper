@@ -1,6 +1,9 @@
 {
   "name": "data-layer-helper",
   "version": "0.1.0",
+  "scripts": {
+    "test": "grunt test"
+  },
   "devDependencies": {
     "eslint": "~7.3.1",
     "eslint-config-closure-es6": "~0.1.1",
