@@ -107,13 +107,18 @@ describe('The set command', function() {
 
           expect(dlh.abstractModelInterface_).toEqual(targetModel);
 
-          commandAPI('set', {'array': [undefined, undefined, undefined, 4, 5, 6]});
+          const testArray = [];
+          testArray[3] = 4;
+          testArray[4] = 5;
+          testArray[5] = 6;
+          commandAPI('set', {'array': testArray});
           targetModel['array'] = [1, 2, 3, 4, 5, 6];
 
           expect(dlh.abstractModelInterface_).toEqual(targetModel);
 
-          commandAPI('set', {"array": [undefined, undefined, undefined, undefined, undefined, undefined, 1]});
-          targetModel['array'] = [1, 2, 3, 4, 5, 6, 1];
+          const testArray2 = [undefined, undefined, undefined];
+          commandAPI('set', {'array': testArray2});
+          targetModel['array'] = [undefined, undefined, undefined, 4, 5, 6];
 
           expect(dlh.abstractModelInterface_).toEqual(targetModel);
         }
