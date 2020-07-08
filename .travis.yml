@@ -6,8 +6,10 @@ before_script:
 addons:
   firefox: latest
   chrome: stable
+dist: xenial
+services:
+  - xvfb
 os:
-  - windows
   - linux
   - osx
 script: grunt
