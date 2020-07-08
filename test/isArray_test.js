@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {isArray_} = goog.require('helper');
 
-describe('The helper.isArray_ function', () => {
+describe(`The 'isArray_' function of helper`, () => {
   /**
    * Ensure that plain.IsPlainObject recognizes value
    * to be a array iff expected is true.
