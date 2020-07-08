@@ -407,14 +407,9 @@ helper.merge_ = function(from, to) {
       } else if (plain.isPlainObject(fromProperty)) {
         if (!plain.isPlainObject(to[property])) to[property] = {};
         helper.merge_(fromProperty, to[property]);
-      } else if (plain.hasOwn(to, property)) {
-        if (fromProperty !== undefined) {
-          to[property] = fromProperty;
-        }
       } else {
         to[property] = fromProperty;
       }
     }
   }
 };
-
