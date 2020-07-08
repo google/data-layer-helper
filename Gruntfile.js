@@ -56,6 +56,7 @@ module.exports = function(grunt) {
     'karma': {
       options: {
         singleRun: true,
+        flags: ['--no-sandbox'],
       },
       unit: {
         configFile: 'karma.conf.js',
