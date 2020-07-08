@@ -9,8 +9,10 @@ This library provides the ability to process messages passed onto a dataLayer qu
     - [Meta Commands](#meta-commands)
     - [Native Methods](#native-methods)
     - [Custom Methods](#custom-methods)
+        -[The Abstract Data Model Interface](#the-abstract-data-model-interface)
 - [Listening for Messages](#listening-for-messages)
     - [Processing the Past](#processing-the-past)
+    - [Registering Processors](#registering-processors)
 - [Summary](#summary)
 - [Build and Test](#build-and-test)
 - [License](#license)
@@ -298,11 +300,14 @@ values in the abstract data model.
 So far, we've seen that objects (messages) can be pushed onto the dataLayer, as well as arrays 
 (command arrays). Pushing a function onto the dataLayer will also allow you to update the abstract 
 data model, but with custom code. This technique has the added benefit of being able to handle 
-return values of any native method calls made from within the function.
+return values of any native method calls made from within the function. When a function is processed, it will be executed in the context of the abstract data model. The 
+value of "this" will be the abstract data model interface. T
+#### The Abstract Data Model Interface
+To safely access the abstract data model from within a custom method, an
+API with a getter and setter is provided. get(key) will get a key of the model,
+and set(key, value) will create or overwrite the given key with the new value.
 
-When a function is processed, it will be executed in the context of the abstract data model. The 
-value of "this" will be an interface that represents the current abstract data model. This 
-interfact will provide two APIs: get(key) and set(key, value). The following examples demonstrate 
+he following examples demonstrate 
 how these APIs can be used to update values in the abstract data model.
 
 <table>
@@ -406,6 +411,41 @@ var helper = new DataLayerHelper(dataLayer, listener, true);
 Using this option means that your listener callback will be called once for every message that
 has ever been pushed onto the given dataLayer. And on each call to the callback, the model
 will represent the abstract model at the time of the message.
+
+
+### Registering Processors
+If you are using a command API to bring messages to the data layer, you may want to run
+different processors to respond to different commands pushed to the data layer instead of just
+having one global listener for all commands. You can register a function to run whenever commands
+with a specific name are pushed to the command API. The function can take any number of arbitrary
+arguments, and within the function, the value of this will be [the abstract data model interface](#the-abstract-data-model-interface)
+The return value of the function will be merged into the model following the rules
+in [recursively merging values](#recursively-merging-values).
+
+```js
+const dataLayer = [];
+const dlh = new DataLayerHelper(dataLayer);
+function commandAPI() {
+  dataLayer.push(arguments);
+}
+
+dlh.registerProcessor('add', function(keyToUpdate, number1, number2){
+  // the return value will be merged into the model
+  return {keyToUpdate: number1 + number2};
+});
+
+// Important: to access the model using this, registered processors must not be arrow functions
+dlh.registerProcessor('copyAToB', function(){
+  const aVal = this.get('a');
+  // We could also do this.set('b', aVal), but changing the model inside of a
+  // registered processor is generally discouraged.
+  return {'b': aVal}
+})
+
+// The above functions will not be called until we run them.
+commandAPI('add', 'a', 1, 2)
+commandAPI('copyAToB')
+```
 
 ## Summary
 We've seen above that the dataLayer provides a simple API for page authors. They simply define
