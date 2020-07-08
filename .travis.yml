@@ -13,4 +13,4 @@ os:
   - windows
   - linux
   - osx
-script: xvfb-run grunt
+script: grunt
