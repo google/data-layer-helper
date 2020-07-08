@@ -3,115 +3,92 @@ goog.setTestOnly();
 
 const {DataLayerHelper} = goog.require('helper');
 
-describe('The registerProcessor method', function() {
+describe('The registerProcessor method', () => {
   let dataLayer;
   let dlh;
   let commandAPI;
-  beforeEach(function() {
+  let spy;
+  beforeEach(() => {
     dataLayer = [];
-    commandAPI = function() {
+    commandAPI = () => {
       dataLayer.push(arguments);
     };
     dlh = new DataLayerHelper(dataLayer);
+    spy = jasmine.createSpy('spy');
   });
 
   describe('The function registration process', function() {
-    it('allows registration of functions with arbitrary names', function() {
-      let called = false;
-      dlh.registerProcessor('!This funct%n @m@zing~0.0', function() {
-        called = true;
-      });
+    it('allows registration of functions with arbitrary names', () => {
+      dlh.registerProcessor('!This funct%n @m@zing~0.0', spy);
       commandAPI('!This funct%n @m@zing~0.0');
 
-      expect(called).toBe(true);
+      expect(spy).toHaveBeenCalledWith();
     });
-
     /* TODO: no set command yet
     it('allows registration of functions with names that are in use',
-        function() {
-          let called = false;
-          dlh.registerProcessor('set', () => {
-            called = true;
-          });
+        () => {
+          dlh.registerProcessor('set', spy);
           commandAPI('set', 'one', 1);
 
+          expect(spy).toHaveBeenCalledWith();
           expect(dlh.get('one')).toBe(1);
-          expect(called).toBe(true);
         });*/
   });
 
-  describe('Order of calling registered functions', function() {
+  describe('Order of calling registered functions', () => {
     it('calls registered functions only when the commandAPI' +
-        'fires the appropriate event', function() {
-      let x = 0;
-      dlh.registerProcessor('process', function() {
-        x = 1;
-        dlh.registerProcessor('process', function() {
-          x = 2;
+        'fires the appropriate event', () => {
+      dlh.registerProcessor('process', () => {
+        spy('a');
+        dlh.registerProcessor('process', () => {
+          spy('b');
         });
       });
       commandAPI('process');
 
-      expect(x).toBe(1);
+      expect(spy.calls.allArgs()).toEqual([['a']]);
     });
 
     it('calls registered functions in the order they were registered',
-        function() {
-          let x = 0;
-          dlh.registerProcessor('myMostFantasticFunction', function() {
-            expect(x).toBe(0);
-            x = 1;
-          });
-          dlh.registerProcessor('myMostFantasticFunction', function() {
-            expect(x).toBe(1);
-            x = 2;
-          });
-          dlh.registerProcessor('myMostFantasticFunction', function() {
-            expect(x).toBe(2);
-            x = 3;
-          });
+        () => {
+          dlh.registerProcessor('myMostFantasticFunction', () => spy('a'));
+          dlh.registerProcessor('myMostFantasticFunction', () => spy('b'));
+          dlh.registerProcessor('myMostFantasticFunction', () => spy('c'));
           commandAPI('myMostFantasticFunction');
 
-          expect(x).toBe(3);
+          expect(spy.calls.allArgs()).toEqual([['a'], ['b'], ['c']]);
         });
 
 
-    it('is called before the default listener', function() {
-      let a = 0;
-      const f1 = function() {
-        a = 1;
-      };
-      const f2 = function() {
-        a = 2;
-      };
-      dlh = new DataLayerHelper(dataLayer, f2);
-      dlh.registerProcessor('method', f1);
+    it('is called before the default listener', () => {
+      dlh = new DataLayerHelper(dataLayer, () => spy('a'));
+      dlh.registerProcessor('method', () => spy('b'));
       commandAPI('method');
 
-      expect(a).toBe(2);
+      expect(spy.calls.allArgs()).toEqual([['b'], ['a']]);
     });
 
-    it('can be invoked by the default listener', function() {
-      let a = 0;
-      const f1 = function() {
-        if (!a) {
+    it('can be invoked by the default listener', () => {
+      const f1 = () => {
+        spy('a');
+        if (spy.calls.count() === 1) {
           commandAPI('method');
         }
       };
-      const f2 = function() {
-        a += 5;
+      const f2 = () => {
+        spy('b');
       };
       dlh = new DataLayerHelper(dataLayer, f1);
       dlh.registerProcessor('method', f2);
       commandAPI('Crazy command');
 
-      expect(a).toBe(5);
+      expect(spy.calls.allArgs()).toEqual([['a'], ['b'], ['a']]);
     });
 
     /* TODO: set command not defined yet.
     it('considers built in functions to be registered first',
-        function() {
-          dlh.registerProcessor('set', function(key) {
+        () => {
+          dlh.registerProcessor('set', (key) => {
             return {key: 3};
           });
           commandAPI('set', 'two', 2);
@@ -119,14 +96,14 @@ describe('The registerProcessor method', function() {
           expect(dlh.get('two')).toBe(3);
         });*/
 
-    it('does not update the model until all processors have run', function() {
+    it('does not update the model until all processors have run', () => {
       dataLayer.push({'5': 10});
-      dlh.registerProcessor('operate', function() {
+      dlh.registerProcessor('operate', () => {
         expect(this.get('5')).toBe(10);
         expect(dlh.get('5')).toBe(10);
         return {5: 20};
       });
-      dlh.registerProcessor('operate', function() {
+      dlh.registerProcessor('operate', () => {
         expect(this.get('5')).toBe(10);
         expect(dlh.get('5')).toBe(10);
         return {5: 30};
@@ -137,8 +114,8 @@ describe('The registerProcessor method', function() {
     });
   });
 
-  describe('The parameters of a registered command', function() {
-    it('can access the model through the this keyword', function() {
+  describe('The parameters of a registered command', () => {
+    it('can access the model through the this keyword', () => {
       dataLayer.push({'a': {'b': 4, 'c': 'bad'}}, {'x': []});
       dlh.registerProcessor('peek', function() {
         expect(this.get('a')).toEqual({'b': 4, 'c': 'bad'});
@@ -148,16 +125,16 @@ describe('The registerProcessor method', function() {
     });
 
     it('takes any number of additional arguments passed to the command API',
-        function() {
+        () => {
           dlh.registerProcessor('alphabet',
-              function(a, b, c, d, e, f, g, h) {
+              (a, b, c, d, e, f, g, h) => {
                 expect(a + b + c + d + e + f + g + h).toBe('abcdefgh');
               });
           commandAPI('alphabet', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
         });
 
-    it('can accept parameters of any type', function() {
-      dlh.registerProcessor('method', function({array, date}, ...rest) {
+    it('can accept parameters of any type', () => {
+      dlh.registerProcessor('method', ({array, date}, ...rest) => {
         expect(array).toEqual([1, 6, 28]);
         expect(date).toEqual(new Date(2000, 0));
         expect(rest).toEqual([1, 'rats', 2006]);
@@ -168,13 +145,13 @@ describe('The registerProcessor method', function() {
   });
 
   describe(`The registered command's interface with the model`,
-      function() {
-        beforeEach(function() {
+      () => {
+        beforeEach(() => {
           dataLayer.push({'a': 1, 'b': {'a': [1]}});
         });
 
-        it('can create a new field in the model', function() {
-          dlh.registerProcessor('method', function(eventName, params) {
+        it('can create a new field in the model', () => {
+          dlh.registerProcessor('method', (eventName, params) => {
             return {
               'last_event': `${eventName} ${params['target']}`,
             };
@@ -184,7 +161,7 @@ describe('The registerProcessor method', function() {
           expect(dlh.get('last_event')).toBe('click button');
         });
 
-        it('can overwrite nested fields of the model', function() {
+        it('can overwrite nested fields of the model', () => {
           dlh.registerProcessor('event', () => {
             return {
               'b': {'a': [3]},
@@ -195,7 +172,7 @@ describe('The registerProcessor method', function() {
           expect(dlh.get('b.a')).toEqual([3]);
         });
 
-        it('can add new nested fields of the model', function() {
+        it('can add new nested fields of the model', () => {
           dlh.registerProcessor('event', () => {
             return {
               'b': {'b': 2},
@@ -206,7 +183,7 @@ describe('The registerProcessor method', function() {
           expect(dlh.get('b')).toEqual({'a': [1], 'b': 2});
         });
 
-        it('can update nested fields of the model', function() {
+        it('can update nested fields of the model', () => {
           dlh.registerProcessor('event', function() {
             const array = this.get('b.a');
             array.push(2);
@@ -219,9 +196,9 @@ describe('The registerProcessor method', function() {
           expect(dlh.get('b')).toEqual({'a': [1, 2]});
         });
 
-        it('sets the model according to the return value', function() {
+        it('sets the model according to the return value', () => {
           dataLayer.push({'a': {'b': 4, 'c': 'bad'}});
-          dlh.registerProcessor('make good', function() {
+          dlh.registerProcessor('make good', () => {
             return {'a': {'c': 'good'}};
           });
           commandAPI('make good');
@@ -229,7 +206,7 @@ describe('The registerProcessor method', function() {
           expect(dlh.get('a')).toEqual({'b': 4, 'c': 'good'});
         });
 
-        it('can access the abstract model interface through this', function() {
+        it('can access the abstract model interface through this', () => {
           dlh.registerProcessor('event', function() {
             const init = this.get('b.a');
             this.set('b.a', 'new');
@@ -244,32 +221,30 @@ describe('The registerProcessor method', function() {
         });
       });
 
-  describe(`The registered command's connection to a command API`, function() {
-    it('can call the command API', function() {
-      let a = 1;
-      dlh.registerProcessor('method', function() {
-        a += 2;
+  describe(`The registered command's connection to a command API`, () => {
+    it('can call the command API', () => {
+      dlh.registerProcessor('method', () => {
+        spy('a');
         commandAPI('method2');
       });
-      dlh.registerProcessor('method2', function() {
-        a += 4;
+      dlh.registerProcessor('method2', () => {
+        spy('b');
       });
       commandAPI('method');
 
-      expect(a).toBe(7);
+      expect(spy.calls.allArgs()).toEqual([['a'], ['b']]);
     });
 
-    it('can call itself with command API', function() {
-      let a = 0;
-      dlh.registerProcessor('method', function() {
-        if (a < 10) {
-          a++;
+    it('can call itself with command API', () => {
+      dlh.registerProcessor('method', () => {
+        if (spy.calls.count() < 5) {
+          spy('a');
           commandAPI('method');
         }
       });
       commandAPI('method');
 
-      expect(a).toBe(10);
+      expect(spy.calls.allArgs()).toEqual([['a'], ['a'], ['a'], ['a'], ['a']]);
     });
   });
 });
