@@ -5,8 +5,8 @@
  * Since the push function is an anonymous function that gets
  * recreated every time, we can't create an object that
  * is deep equal to any dataLayer.
- * @param {!Array<Object>} arr1 The first array-like object
- * @param {!Array<Object>} arr2 The second array-like object
+ * @param {!Array<*>} arr1 The first array-like object
+ * @param {!Array<*>} arr2 The second array-like object
  */
 function expectEqualContents(arr1, arr2) {
   expect(arr1.length).toBe(arr2.length);
