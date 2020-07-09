@@ -5,17 +5,17 @@ const {isArray_} = goog.require('helper');
 
 describe('The `isArray_` function of helper', () => {
   /**
-   * Ensure that plain.IsPlainObject recognizes value
+   * Ensure that the isArray_ function recognizes value
    * to be a array.
-   * @param {*} value The value to check
+   * @param {*} value The value to check.
    */
   function assertIsArray(value) {
     expect(isArray_(value)).toBe(true);
   }
 
   /**
-   * Ensure that plain.IsPlainObject doesn't recognize
-   * the value to be an array.
+   * Ensure that the isArray_ function does not
+   * recognize the value to be an array.
    * @param {*} value The value to check.
    */
   function assertIsNotArray(value) {
