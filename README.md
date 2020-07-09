@@ -9,7 +9,7 @@ This library provides the ability to process messages passed onto a dataLayer qu
     - [Meta Commands](#meta-commands)
     - [Native Methods](#native-methods)
     - [Custom Methods](#custom-methods)
-        -[The Abstract Data Model Interface](#the-abstract-data-model-interface)
+        - [The Abstract Data Model Interface](#the-abstract-data-model-interface)
 - [Listening for Messages](#listening-for-messages)
     - [Processing the Past](#processing-the-past)
     - [Registering Processors](#registering-processors)
@@ -300,14 +300,14 @@ values in the abstract data model.
 So far, we've seen that objects (messages) can be pushed onto the dataLayer, as well as arrays 
 (command arrays). Pushing a function onto the dataLayer will also allow you to update the abstract 
 data model, but with custom code. This technique has the added benefit of being able to handle 
-return values of any native method calls made from within the function. When a function is processed, it will be executed in the context of the abstract data model. The 
-value of "this" will be the abstract data model interface. T
+return values of any native method calls made from within the function. When a function is processed, the 
+value of "this" will be the abstract data model interface, described below.
 #### The Abstract Data Model Interface
 To safely access the abstract data model from within a custom method, an
 API with a getter and setter is provided. get(key) will get a key of the model,
 and set(key, value) will create or overwrite the given key with the new value.
 
-he following examples demonstrate 
+The following examples demonstrate 
 how these APIs can be used to update values in the abstract data model.
 
 <table>
@@ -438,22 +438,33 @@ dlh.registerProcessor('add', function(number1, number2){
 });
 
 // Important: to access the model using this,
-// registered processors must not be arrow functions
-dlh.registerProcessor('copySumToAns', function(){
+// registered processors must not be arrow functions.
+dlh.registerProcessor('copy', function(){
   const sum = this.get('sum');
   // We could also do this.set('ans', sum), but changing
   // the model inside of a registered processor is discouraged.
   return {ans: sum};
 });
+
+
+// If multiple functions are registered with the same key, they
+// will be called in the order that they have been registered.
+// Updates from return values won't be merged into the model
+// until all functions have been called.
+dlh.registerProcessor('copy', function(){
+  const ans = this.get('ans');
+  return {finalAns: ans};
+});
 ```
 The above functions won't be called until we call the commandAPI with the first parameter equal to the first parameter of registerProcessor.
-If multiple functions are registered with the same first key, they will be called in the order that they have been registered.
 ```js
-// model is {}
+// Abstract data model is {}.
 commandAPI('add', 'a', 1, 2);
-// model is {sum: 3}
-commandAPI('copySumToAns');
-// model is {sum: 3, ans: 3}
+// Abstract data model is {sum: 3}.
+commandAPI('copy');
+// Abstract data model is {sum: 3, ans: 3, finalAns: undefined}.
+commandAPI('copy');
+// Abstract data model is {sum: 3, ans: 3, finalAns: 3}.
 ```
 
 ## Summary

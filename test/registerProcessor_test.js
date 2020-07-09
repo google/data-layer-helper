@@ -26,21 +26,34 @@ describe('The registerProcessor method of helper', () => {
         return {sum: number1 + number2};
       });
 
-      dlh.registerProcessor('copySumToAns', function() {
+      dlh.registerProcessor('copy', function() {
         const sum = this.get('sum');
         return {ans: sum};
       });
 
-      expect(dlh.get('sum')).toEqual(undefined);
-      expect(dlh.get('ans')).toEqual(undefined);
+      dlh.registerProcessor('copy', function() {
+        const ans = this.get('ans');
+        return {finalAns: ans};
+      });
+
+      expect(dlh.get('sum')).toBeUndefined();
+      expect(dlh.get('ans')).toBeUndefined();
+      expect(dlh.get('finalAns')).toBeUndefined();
       commandAPI('add', 1, 2);
 
-      expect(dlh.get('sum')).toEqual(3);
-      expect(dlh.get('ans')).toEqual(undefined);
-      commandAPI('copySumToAns');
+      expect(dlh.get('sum')).toBe(3);
+      expect(dlh.get('ans')).toBeUndefined();
+      expect(dlh.get('finalAns')).toBeUndefined();
+      commandAPI('copy');
 
-      expect(dlh.get('sum')).toEqual(3);
-      expect(dlh.get('ans')).toEqual(3);
+      expect(dlh.get('sum')).toBe(3);
+      expect(dlh.get('ans')).toBe(3);
+      expect(dlh.get('finalAns')).toBeUndefined();
+      commandAPI('copy');
+
+      expect(dlh.get('sum')).toBe(3);
+      expect(dlh.get('ans')).toBe(3);
+      expect(dlh.get('finalAns')).toBe(3);
     });
   });
 
