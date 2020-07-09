@@ -12,4 +12,4 @@ services:
 os:
   - linux
   - osx
-script: grunt
+script: grunt test

@@ -27,10 +27,7 @@ module.exports = function(config) {
       require('karma-jasmine-html-reporter'),
       require('karma-googmodule-preprocessor'),
     ],
-    detectBrowsers: {
-      enabled: true,
-      usePhantomJS: false,
-    },
+    browsers: ['Chrome'],
     reporters: ['spec', 'kjhtml'],
     port: 9876,
     colors: true,

@@ -56,12 +56,33 @@ module.exports = function(grunt) {
     'karma': {
       options: {
         singleRun: true,
-        flags: ['--no-sandbox'],
       },
       unit: {
         configFile: 'karma.conf.js',
       },
       integration: {
+        configFile: 'test/integration/karma.conf.js',
+      },
+      unitBrowsers: {
+        options: {
+          detectBrowsers: {
+            enabled: true,
+            // Don't try to load phantomJS, it may not exist.
+            usePhantomJS: false,
+          },
+          flags: ['--no-sandbox'],
+        },
+        configFile: 'karma.conf.js',
+      },
+      integrationBrowsers: {
+        options: {
+          detectBrowsers: {
+            enabled: true,
+            // Don't try to load phantomJS, it may not exist.
+            usePhantomJS: false,
+          },
+          flags: ['--no-sandbox'],
+        },
         configFile: 'test/integration/karma.conf.js',
       },
     },
@@ -76,5 +97,12 @@ module.exports = function(grunt) {
     'closure-compiler',
     'karma:unit',
     'karma:integration',
+  ]);
+
+  grunt.registerTask('test', [
+    'closureDepsWriter',
+    'closure-compiler',
+    'karma:unitBrowsers',
+    'karma:integrationBrowsers',
   ]);
 };
