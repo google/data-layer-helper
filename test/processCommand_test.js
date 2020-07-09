@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {processCommand_} = goog.require('helper');
 
-describe(`The 'processCommand_' function of helper`, () => {
+describe('The `processCommand_` function of helper', () => {
   /**
    * A helper method to assert that a command passed to the processCommand
    * method produces the desired result.
@@ -23,7 +23,8 @@ describe(`The 'processCommand_' function of helper`, () => {
   describe('The behavior with built in array commands', () => {
     describe('functionality with single level keys', () => {
       it('works with the push command', () => {
-        assertCommand(['a.push', 1], {a: [0]}, {a: [0, 1]});
+        assertCommand(/* command= */ ['a.push', 1],
+            /* startigModel= */ {a: [0]}, /* expectedModel= */ {a: [0, 1]});
         assertCommand(['a.push', [1]], {a: [0]}, {a: [0, [1]]});
         assertCommand(['a.push', {b: [1]}], {a: [0]}, {a: [0, {b: [1]}]});
         assertCommand(['a.push', 'cat'], {a: [0]}, {a: [0, 'cat']});

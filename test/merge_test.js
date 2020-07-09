@@ -8,7 +8,7 @@ goog.setTestOnly();
 
 const {isArray_, merge_} = goog.require('helper');
 
-describe(`The 'merge' function of helper`, () => {
+describe('The `merge` function of helper', () => {
   /**
    * Ensure that a call to the merge function returns the
    * correct result.
@@ -18,7 +18,7 @@ describe(`The 'merge' function of helper`, () => {
    */
   function assertMerge(from, to, expected) {
     const fromCopy = isArray_(from) ? [] : {};
-    // merge fromCopy and from
+    // Merge from into fromCopy.
     jQuery.extend(true, fromCopy, from);
     merge_(from, to);
 
@@ -26,8 +26,8 @@ describe(`The 'merge' function of helper`, () => {
     expect(to).toEqual(expected);
   }
 
-  it(`overwrites 'other' type objects when merging with an array`, () => {
-    assertMerge({a: []}, {}, {a: []});
+  it('overwrites `other` type objects when merging with an array', () => {
+    assertMerge(/* from= */ {a: []}, /* to= */ {}, /* expected= */ {a: []});
     assertMerge({a: []}, {a: 1}, {a: []});
     assertMerge({a: []}, {b: 2}, {a: [], b: 2});
     assertMerge({a: []}, {a: 1, b: 2}, {a: [], b: 2});
@@ -40,7 +40,7 @@ describe(`The 'merge' function of helper`, () => {
     assertMerge({a: [], b: []}, {a: 1, b: 2, c: 3}, {a: [], b: [], c: 3});
   });
 
-  it(`merges arrays with the same key together`, () => {
+  it('merges arrays with the same key together', () => {
     assertMerge({a: []}, {a: []}, {a: []});
     assertMerge({a: []}, {a: [1]}, {a: [1]});
     assertMerge({a: []}, {a: [undefined, 2]}, {a: [undefined, 2]});
@@ -51,7 +51,7 @@ describe(`The 'merge' function of helper`, () => {
     assertMerge({a: [1, 2, 3]}, {a: []}, {a: [1, 2, 3]});
   });
 
-  it(`overwrites other type objects when merging with a plain object`, () => {
+  it('overwrites `other` type objects when merging with a plain object', () => {
     assertMerge({a: {}}, {}, {a: {}});
     assertMerge({a: {}}, {a: 1}, {a: {}});
     assertMerge({a: {}}, {b: 2}, {a: {}, b: 2});
@@ -80,8 +80,8 @@ describe(`The 'merge' function of helper`, () => {
     assertMerge({a: {x: 1, y: 2, z: 3}}, {a: {}}, {a: {x: 1, y: 2, z: 3}});
   });
 
-  it(`creates a new property if an 'other' type object is inserted with` +
-      `a new key`, () => {
+  it('creates a new property if an `other` type object is inserted with' +
+      'a new key', () => {
     assertMerge({a: null}, {}, {a: null});
     assertMerge({a: true}, {}, {a: true});
     assertMerge({a: false}, {}, {a: false});
@@ -104,7 +104,7 @@ describe(`The 'merge' function of helper`, () => {
         {a: document.body.firstChild});
   });
 
-  it(`overwrites arrays if the object to merge in is an 'other' type object`,
+  it('overwrites arrays if the object to merge in is an `other` type object',
       () => {
         assertMerge({a: null}, {a: [1]}, {a: null});
         assertMerge({a: true}, {a: [1]}, {a: true});
@@ -128,8 +128,8 @@ describe(`The 'merge' function of helper`, () => {
             {a: document.body.firstChild});
       });
 
-  it(`overwrites plain objects if the object to merge in is an 'other' ` +
-      `type object`, () => {
+  it('overwrites plain objects if the object to merge in is an `other` ' +
+      'type object', () => {
     assertMerge({a: null}, {a: {x: 1}}, {a: null});
     assertMerge({a: true}, {a: {x: 1}}, {a: true});
     assertMerge({a: false}, {a: {x: 1}}, {a: false});
@@ -176,8 +176,8 @@ describe(`The 'merge' function of helper`, () => {
         {a: document.body.firstChild});
   });
 
-  it(`overwrites falsy other objects if the object to merge is an 'other'` +
-      `object`, () => {
+  it('overwrites falsy other objects if the object to merge is an `other`' +
+      'object', () => {
     assertMerge({a: null}, {a: false}, {a: null});
     assertMerge({a: true}, {a: 0}, {a: true});
     assertMerge({a: false}, {a: ''}, {a: false});

@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {hasOwn} = goog.require('plain');
 
-describe(`The 'hasOwn' method of plain`, function() {
+describe('The `hasOwn` method of plain',() => {
   /**
    * Helper function used to ensure that plain.hasOwn determines if
    * the value has a non-inherited property with the given key.
@@ -16,7 +16,7 @@ describe(`The 'hasOwn' method of plain`, function() {
   }
 
   it('recognizes simple type to not have properties', () => {
-    assertHasOwn(23, 'valueOf', false);
+    assertHasOwn(/* value= */ 23, /* key= */ 'valueOf', /* expected= */false);
     assertHasOwn(NaN, 'valueOf', false);
     assertHasOwn(true, 'valueOf', false);
     assertHasOwn(false, 'valueOf', false);

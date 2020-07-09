@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {isPlainObject} = goog.require('plain');
 
-describe(`The 'isPlainObject' method of plain`, () => {
+describe('The `isPlainObject` method of plain', () => {
   /**
    * Ensure that plain.IsPlainObject recognizes value
    * to be a plain object iff expected is true.
@@ -16,7 +16,7 @@ describe(`The 'isPlainObject' method of plain`, () => {
 
   it('identifies objects made by the constructor and dicts ' +
       'as plain objects', () => {
-    assertIsPlainObject({}, true);
+    assertIsPlainObject(/* value= */ {}, /* expected= */ true);
     assertIsPlainObject({a: 1}, true);
     assertIsPlainObject(Object(), true);
     assertIsPlainObject(new Object(), true);

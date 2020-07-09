@@ -3,8 +3,8 @@ goog.setTestOnly();
 
 const {DataLayerHelper} = goog.require('helper');
 
-describe(`The 'get' function of helper`, () => {
-  const h = new DataLayerHelper([{
+describe('The `get` function of helper', () => {
+  const h = new DataLayerHelper(/* dataLayer= */[{
     a: 1,
     b: {
       c: {
@@ -22,15 +22,15 @@ describe(`The 'get' function of helper`, () => {
     expect(h.get('b.c')).toEqual({d: 4});
     expect(h.get('b.c.d')).toBe(4);
     expect(h.get('b.e')).toBe(5);
-    expect(h.get('b.f')).toBe(null);
+    expect(h.get('b.f')).toBeNull();
   });
 
   it('returns undefined when key does not exist in model', () => {
-    expect(h.get('blah')).toBe(undefined);
-    expect(h.get('c')).toBe(undefined);
-    expect(h.get('d')).toBe(undefined);
-    expect(h.get('e')).toBe(undefined);
-    expect(h.get('b.blah')).toBe(undefined);
-    expect(h.get('b.blah.blah.blah')).toBe(undefined);
+    expect(h.get('blah')).toBeUndefined();
+    expect(h.get('c')).toBeUndefined();
+    expect(h.get('d')).toBeUndefined();
+    expect(h.get('e')).toBeUndefined();
+    expect(h.get('b.blah')).toBeUndefined();
+    expect(h.get('b.blah.blah.blah')).toBeUndefined();
   });
 });

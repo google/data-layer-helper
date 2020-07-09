@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {DataLayerHelper} = goog.require('helper');
 
-describe(`The 'processStates_' function of helper`, () => {
+describe('The `processStates_` function of helper', () => {
   /**
    * Asserts that calling processStates_ with the given arguments will result
    * in the expected model state and expected calls to the listener.
@@ -37,7 +37,7 @@ describe(`The 'processStates_' function of helper`, () => {
           .toEqual(skipListener ? [] : expectedListenerCalls);
 
       expect(helper.unprocessed_).toEqual([]);
-      expect(helper.executingListener_).toBe(false);
+      expect(helper.executingListener_).toBeFalse();
     };
 
     doAssert(true);
@@ -46,7 +46,8 @@ describe(`The 'processStates_' function of helper`, () => {
 
   describe('the behavior of process states', () => {
     it('does nothing with no states or model', () => {
-      assertProcessStates([], {}, []);
+      assertProcessStates(/* states= */[], /* expectedModel= */ {},
+          /* expectedListenerCalls= */ []);
     });
 
     it('makes a call when a single state needs to be processed', () => {

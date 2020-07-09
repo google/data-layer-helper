@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {type} = goog.require('plain');
 
-describe(`The 'type' function of plain`, () => {
+describe('The `type` function of plain', () => {
   /**
    * Assert that plain.type identifies something as a certain type.
    * @param {?Object} value The javascript object to identify.
