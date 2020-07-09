@@ -448,9 +448,10 @@ dlh.registerProcessor('copy', function(){
 
 
 // If multiple functions are registered with the same key, they
-// will be called in the order that they have been registered.
-// Updates from return values won't be merged into the model
-// until all functions have been called.
+// will be called in the order that they have been registered. Hence,
+// this function will be called second. However, it still will not
+// update finalAns on the first call, because updates from return values
+// won't be merged into the model until all functions have been called.
 dlh.registerProcessor('copy', function(){
   const ans = this.get('ans');
   return {finalAns: ans};
