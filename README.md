@@ -422,29 +422,38 @@ arguments, and within the function, the value of this will be [the abstract data
 The return value of the function will be merged into the model following the rules
 in [recursively merging values](#recursively-merging-values).
 
+First, set up a commandAPI
 ```js
 const dataLayer = [];
 const dlh = new DataLayerHelper(dataLayer);
 function commandAPI() {
   dataLayer.push(arguments);
 }
-
-dlh.registerProcessor('add', function(keyToUpdate, number1, number2){
+```
+Next, use the register processor function.
+```js
+dlh.registerProcessor('add', function(number1, number2){
   // the return value will be merged into the model
-  return {keyToUpdate: number1 + number2};
+  return {sum: number1 + number2};
 });
 
-// Important: to access the model using this, registered processors must not be arrow functions
-dlh.registerProcessor('copyAToB', function(){
-  const aVal = this.get('a');
-  // We could also do this.set('b', aVal), but changing the model inside of a
-  // registered processor is generally discouraged.
-  return {'b': aVal}
-})
-
-// The above functions will not be called until we run them.
-commandAPI('add', 'a', 1, 2)
-commandAPI('copyAToB')
+// Important: to access the model using this,
+// registered processors must not be arrow functions
+dlh.registerProcessor('copySumToAns', function(){
+  const sum = this.get('sum');
+  // We could also do this.set('ans', sum), but changing
+  // the model inside of a registered processor is discouraged.
+  return {ans: sum};
+});
+```
+The above functions won't be called until we call the commandAPI with the first parameter equal to the first parameter of registerProcessor.
+If multiple functions are registered with the same first key, they will be called in the order that they have been registered.
+```js
+// model is {}
+commandAPI('add', 'a', 1, 2);
+// model is {sum: 3}
+commandAPI('copySumToAns');
+// model is {sum: 3, ans: 3}
 ```
 
 ## Summary

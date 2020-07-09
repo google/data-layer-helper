@@ -17,6 +17,33 @@ describe('The registerProcessor method of helper', () => {
     spy = jasmine.createSpy('spy');
   });
 
+
+  describe('the examples in the README', () => {
+    it('is consistent with the documentation ' +
+        'of the register procesors subsection', () => {
+      dlh.registerProcessor('add', function(number1, number2) {
+        // the return value will be merged into the model
+        return {sum: number1 + number2};
+      });
+
+      dlh.registerProcessor('copySumToAns', function() {
+        const sum = this.get('sum');
+        return {ans: sum};
+      });
+
+      expect(dlh.get('sum')).toEqual(undefined);
+      expect(dlh.get('ans')).toEqual(undefined);
+      commandAPI('add', 1, 2);
+
+      expect(dlh.get('sum')).toEqual(3);
+      expect(dlh.get('ans')).toEqual(undefined);
+      commandAPI('copySumToAns');
+
+      expect(dlh.get('sum')).toEqual(3);
+      expect(dlh.get('ans')).toEqual(3);
+    });
+  });
+
   describe('the function registration process', () => {
     it('allows registration of functions with arbitrary names', () => {
       dlh.registerProcessor('!This funct%n @m@zing~0.0', spy);
