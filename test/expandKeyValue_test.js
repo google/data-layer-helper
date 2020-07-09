@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {expandKeyValue_} = goog.require('helper');
 
-describe(`The 'expandKeyValue' function of helper`, () => {
+describe('The `expandKeyValue` function of helper', () => {
   /**
    * Tests the expandKeyValue function by passing in a key value pair
    * and comparing the return value to an expected return value.
@@ -21,7 +21,7 @@ describe(`The 'expandKeyValue' function of helper`, () => {
 
   it('converts key value pairs ' +
       'into objects when the key string is non dot-separated', () => {
-    assertExpand('a', 1, {a: 1});
+    assertExpand(/* key= */ 'a', /* value= */ 1, /* expected= */ {a: 1});
     assertExpand('a', 0, {a: 0});
     assertExpand('a', -1, {a: -1});
     assertExpand('a', null, {a: null});
@@ -51,8 +51,8 @@ describe(`The 'expandKeyValue' function of helper`, () => {
 
   it('handles empty strings', () => {
     assertExpand(
-        '', 1, {'': 1},
-        'preserves explicit empty strings for keys'
+        /* key= */ '', /* value= */ 1, /* expected= */ {'': 1},
+        /* context= */ 'preserves explicit empty strings for keys'
     );
     assertExpand(
         'a', '', {a: ''},
