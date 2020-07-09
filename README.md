@@ -165,8 +165,15 @@ Existing Value     | New Value                     | Result of Overwrite
 {one: {two: 3}}    | {one: {four: 5}}              | {one: {two: 3, four: 5}}
 {one: {two: 3}}    | {two: 4}                      | {one: {two: 3}, two: 4}
 []                 | ['hello']                     | ['hello']
-[1]                | [undefined, 2]                | [1, 2]
-[1, {two: 3}]      | [undefined, {two: 4, six: 8}] | [1, {two: 4, six: 8}] 
+[1]                | [undefined, 2]                | [undefined, 2]
+[1]                | [(empty), 2]                  | [1, 2]
+[1, {two: 3}]      | [undefined, {two: 4, six: 8}] | [undefined, {two: 4, six: 8}]
+[1, {two: 3}]      | [(empty), {two: 4, six: 8}]   | [1, {two: 4, six: 8}]
+
+Notice that an index in a new value array that has been explicitly set to undefined will 
+overwrite the corresponding index in the existing array, however an index that has not been
+set to any value (i.e. empty values in a sparse array) will not overwrite the corresponding
+index in the existing array, even though value at both indexes evaluates to undefined.
 
 ### Meta Commands
 Using the above methods alone, some operations on the abstract model are somewhat cumbersome.
