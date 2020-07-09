@@ -1,42 +1,39 @@
 goog.module('datalayerhelper.helper.testing.processStates');
 goog.setTestOnly();
 
-const {DataLayerHelper, buildAbstractModelInterface_} = goog.require('helper');
+const {DataLayerHelper} = goog.require('helper');
 
-describe('The processStates function', () => {
+describe(`The 'processStates_' function of helper`, () => {
   /**
    * Asserts that calling processStates_ with the given arguments will result
    * in the expected model state and expected calls to the listener.
    *
-   * @param {!Array<Object>} states The states argument for the call to
+   * @param {!Array<!Object<*>>} states The states argument for the call to
    *     processStates_.
    * @param {!Object<*>} expectedModel The expected model
    *     state after the call.
-   * @param {!Array<Array<*>>} expectedListenerCalls The expected calls made
+   * @param {!Array<!Array<*>>} expectedListenerCalls The expected calls made
    *     to the helper's listener. Should be an array of arrays where each sub-
    *     array represents the arguments passed to the listener during a call.
    */
   function assertProcessStates(states, expectedModel, expectedListenerCalls) {
-    const MockHelper = function() {
-      this.model_ = {};
-      this.unprocessed_ = [];
-      this.executingListener_ = false;
-      this.listenerCalls_ = [];
-      this.listener_ = function() {
-        this.listenerCalls_.push(
+    const doAssert = (skipListener) => {
+      const listenerCalls = [];
+      // Spy on calls to the listener. We can't use a jasmine spy since
+      // values are mutable and jasmine spies only do shallow copies of
+      // the arguments. This function can't be an arrow function since it
+      // uses arguments.
+      const listener = function() {
+        listenerCalls.push(
+            // Push a deep copy of the arguments.
             jQuery.extend(true, [], [].slice.call(arguments, 0)));
       };
-      this.abstractModelInterface_ = buildAbstractModelInterface_(this);
-    };
-
-    const doAssert = (skipListener) => {
-      MockHelper.prototype = new DataLayerHelper([]);
-      const helper = new MockHelper();
-      DataLayerHelper.prototype.processStates_.call(helper, states,
-          skipListener);
+      const helper = new DataLayerHelper([], listener);
+      DataLayerHelper.prototype.processStates_
+          .call(helper, states, skipListener);
 
       expect(helper.model_).toEqual(expectedModel);
-      expect(helper.listenerCalls_)
+      expect(listenerCalls)
           .toEqual(skipListener ? [] : expectedListenerCalls);
 
       expect(helper.unprocessed_).toEqual([]);
@@ -47,7 +44,7 @@ describe('The processStates function', () => {
     doAssert(false);
   }
 
-  describe('The behavior of process states', () => {
+  describe('the behavior of process states', () => {
     it('does nothing with no states or model', () => {
       assertProcessStates([], {}, []);
     });
@@ -67,7 +64,7 @@ describe('The processStates function', () => {
     });
   });
 
-  describe('The behavior with custom setter methods', () => {
+  describe('the behavior with custom setter methods', () => {
     it('makes an overridding setter call', () => {
       const customMethod = function() {
         this.set('a', 1);
@@ -189,7 +186,7 @@ describe('The processStates function', () => {
         ]);
     });
 
-    it('Allows elementwise array access in custom functions', () => {
+    it('allows elementwise array access in custom functions', () => {
       const customMethod = function() {
         const products = this.get('products');
         let total = 0;
@@ -208,7 +205,7 @@ describe('The processStates function', () => {
     });
   });
 
-  describe('The behavior with custom methods that throw errors',
+  describe('the behavior with custom methods that throw errors',
       () => {
         it('Does not crash when an error is thrown ', () => {
           const errorFunction = () => {
