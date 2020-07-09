@@ -102,7 +102,6 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('test', [
-    'closureDepsWriter',
     'closure-compiler',
     'karma:unitBrowsers',
     'karma:integrationBrowsers',
