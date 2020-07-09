@@ -50,9 +50,6 @@ module.exports = function(grunt) {
         },
       },
     },
-    'qunit': {
-      files: ['test/unit.html'],
-    },
     'karma': {
       options: {
         singleRun: true,
@@ -63,17 +60,46 @@ module.exports = function(grunt) {
       integration: {
         configFile: 'test/integration/karma.conf.js',
       },
+      unitBrowsers: {
+        options: {
+          frameworks: ['jasmine', 'detectBrowsers'],
+          detectBrowsers: {
+            enabled: true,
+            // Don't try to load phantomJS, it may not exist.
+            usePhantomJS: false,
+          },
+          flags: ['--no-sandbox'],
+        },
+        configFile: 'karma.conf.js',
+      },
+      integrationBrowsers: {
+        options: {
+          frameworks: ['jasmine', 'detectBrowsers'],
+          detectBrowsers: {
+            enabled: true,
+            // Don't try to load phantomJS, it may not exist.
+            usePhantomJS: false,
+          },
+          flags: ['--no-sandbox'],
+        },
+        configFile: 'test/integration/karma.conf.js',
+      },
     },
   });
 
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-closure-tools');
 
   grunt.registerTask('default', [
     'closureDepsWriter',
     'closure-compiler',
-    'karma',
-    'qunit',
+    'karma:unit',
+    'karma:integration',
+  ]);
+
+  grunt.registerTask('test', [
+    'closure-compiler',
+    'karma:unitBrowsers',
+    'karma:integrationBrowsers',
   ]);
 };

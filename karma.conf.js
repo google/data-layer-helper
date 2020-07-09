@@ -1,5 +1,3 @@
-const BROWSERS_TO_TEST = ['Chrome'];
-
 module.exports = function(config) {
   config.set({
     basePath: '.',
@@ -21,16 +19,20 @@ module.exports = function(config) {
     preprocessors: {'**/*.js': ['googmodule']},
     plugins: [
       require('karma-jasmine'),
+      require('karma-detect-browsers'),
       require('karma-chrome-launcher'),
+      require('karma-firefox-launcher'),
+      require('karma-ie-launcher'),
+      require('karma-safari-launcher'),
       require('karma-spec-reporter'),
       require('karma-jasmine-html-reporter'),
       require('karma-googmodule-preprocessor'),
     ],
+    browsers: ['Chrome'],
     reporters: ['spec', 'kjhtml'],
     port: 9876,
     colors: true,
     autoWatch: true,
-    browsers: BROWSERS_TO_TEST,
     client: {
       clearContext: false,
     },
