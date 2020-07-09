@@ -13,6 +13,7 @@ module.exports = function(config) {
       // jquery
       {pattern: 'test/lib/jquery*'},
       // tests
+      {pattern: 'test/utils.js'},
       {pattern: 'test/*_test.js'},
     ],
     preprocessors: {'**/*.js': ['googmodule']},

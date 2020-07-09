@@ -50,9 +50,6 @@ module.exports = function(grunt) {
         },
       },
     },
-    'qunit': {
-      files: ['test/unit.html'],
-    },
     'karma': {
       options: {
         singleRun: true,
@@ -90,7 +87,6 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-closure-tools');
 

@@ -3,7 +3,7 @@ goog.setTestOnly();
 
 const {processCommand_} = goog.require('helper');
 
-describe(`The 'processCommand_' function`, function() {
+describe('The `processCommand_` function of helper', () => {
   /**
    * A helper method to assert that a command passed to the processCommand
    * method produces the desired result.
@@ -20,10 +20,11 @@ describe(`The 'processCommand_' function`, function() {
     expect(startingModel).toEqual(expectedModel);
   }
 
-  describe('The behavior with built in array commands', function() {
-    describe('functionality with single level keys', function() {
-      it('works with the push command', function() {
-        assertCommand(['a.push', 1], {a: [0]}, {a: [0, 1]});
+  describe('The behavior with built in array commands', () => {
+    describe('functionality with single level keys', () => {
+      it('works with the push command', () => {
+        assertCommand(/* command= */ ['a.push', 1],
+            /* startigModel= */ {a: [0]}, /* expectedModel= */ {a: [0, 1]});
         assertCommand(['a.push', [1]], {a: [0]}, {a: [0, [1]]});
         assertCommand(['a.push', {b: [1]}], {a: [0]}, {a: [0, {b: [1]}]});
         assertCommand(['a.push', 'cat'], {a: [0]}, {a: [0, 'cat']});
@@ -32,7 +33,7 @@ describe(`The 'processCommand_' function`, function() {
         assertCommand(['a.push', 1], {a: [0], b: [1]}, {a: [0, 1], b: [1]});
       });
 
-      it('works with the splice command', function() {
+      it('works with the splice command', () => {
         assertCommand(['a.splice', 2, 1], {a: [1, 2, 3, 4, 5]},
             {a: [1, 2, 4, 5]});
         assertCommand(
@@ -49,7 +50,7 @@ describe(`The 'processCommand_' function`, function() {
             {a: [1, 2, 'cat', 'in', 'the', 'hat', 4, 5]});
       });
 
-      it('works with various array helper commands', function() {
+      it('works with various array helper commands', () => {
         assertCommand(['a.pop'], {a: [0]}, {a: []});
         assertCommand(['a.sort'], {a: [5, 4, 3, 2, 1]}, {a: [1, 2, 3, 4, 5]});
         assertCommand(
@@ -67,8 +68,8 @@ describe(`The 'processCommand_' function`, function() {
       });
     });
 
-    describe('The functionality with multiple level keys', function() {
-      it('supports running the push command on nested arrays', function() {
+    describe('functionality with multiple level keys', () => {
+      it('supports running the push command on nested arrays', () => {
         assertCommand(['a.b.push', 1], {a: {b: [0]}}, {a: {b: [0, 1]}});
         assertCommand(['a.b.push', 1, 2], {a: {b: [0]}}, {a: {b: [0, 1, 2]}});
         assertCommand(['a.b.push', 1, 2, 3, 4],
@@ -79,7 +80,7 @@ describe(`The 'processCommand_' function`, function() {
             {a: {c: [0]}, b: [1]}, {a: {c: [0, 1]}, b: [1]});
       });
 
-      it('supports running the splice command on nested arrays', function() {
+      it('supports running the splice command on nested arrays', () => {
         assertCommand(['a.b.splice', 2, 1],
             {a: {b: [1, 2, 3, 4, 5]}}, {a: {b: [1, 2, 4, 5]}});
         assertCommand(['a.b.splice', 1, Number.MAX_VALUE],
@@ -92,7 +93,7 @@ describe(`The 'processCommand_' function`, function() {
       });
 
       it('supports various other array helper commands on nested arrays',
-          function() {
+          () => {
             assertCommand(['a.b.pop'], {a: {b: [0]}}, {a: {b: []}});
             assertCommand(['a.b.sort'],
                 {a: {b: [5, 4, 3, 2, 1]}}, {a: {b: [1, 2, 3, 4, 5]}});
@@ -111,7 +112,7 @@ describe(`The 'processCommand_' function`, function() {
     });
   });
 
-  it('Works with methods on the Date object', function() {
+  it('supports methods on the Date object', () => {
     const date = new Date();
     assertCommand(['date.setFullYear', 2000], {date: date}, {date: date});
 
@@ -121,7 +122,7 @@ describe(`The 'processCommand_' function`, function() {
     expect(11).toBe(date.getMonth());
   });
 
-  it('Works with objects that have been given custom methods', function() {
+  it('supports objects that have been given custom methods', () => {
     const mutableObject = {a: 1, b: 2};
     mutableObject.addItem = function(item, value) {
       this[item] = value;
