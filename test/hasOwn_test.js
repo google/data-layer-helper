@@ -50,7 +50,7 @@ describe(`The 'hasOwn' method of plain`, function() {
     assertHasOwn({a: 1}, 'constructor', false);
   });
 
-  xit('recognizes function properties', () => {
+  it('recognizes function properties', () => {
     const fn = () => {};
     assertHasOwn(fn, 'constructor', false);
     assertHasOwn(fn, 'valueOf', false);
