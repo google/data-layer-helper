@@ -126,15 +126,16 @@ describe('The data layer helper library', function() {
         dataLayer.push({one: {three: 3}}, {one: {four: 4}});
 
         expect(dataLayer.length).toBe(5);
-        expectEqualContents(dataLayer, [
+        expectDataLayerEquals(/* expected= */ [
           {one: 1, two: 2}, {two: 3},
-          {two: 2}, {one: {three: 3}}, {one: {four: 4}}]);
+          {two: 2}, {one: {three: 3}}, {one: {four: 4}}],
+        dataLayer);
 
         helper.flatten();
 
         expect(dataLayer.length).toBe(1);
-        expectEqualContents(dataLayer,
-            [{one: {three: 3, four: 4}, two: 2}]);
+        expectDataLayerEquals(
+            /* expected= */[{one: {three: 3, four: 4}, two: 2}], dataLayer);
 
         expect(helper.get('one')).toEqual({three: 3, four: 4});
         expect(helper.get('one.four')).toBe(4);
