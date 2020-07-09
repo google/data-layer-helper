@@ -1,7 +1,7 @@
 module.exports = function(config) {
   config.set({
     basePath: '.',
-    frameworks: ['jasmine', 'detectBrowsers'],
+    frameworks: ['jasmine'],
     files: [
       // closure library
       {pattern: 'node_modules/google-closure-library/closure/goog/base.js'},

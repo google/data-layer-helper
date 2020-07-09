@@ -65,6 +65,7 @@ module.exports = function(grunt) {
       },
       unitBrowsers: {
         options: {
+          frameworks: ['jasmine', 'detectBrowsers'],
           detectBrowsers: {
             enabled: true,
             // Don't try to load phantomJS, it may not exist.
@@ -76,6 +77,7 @@ module.exports = function(grunt) {
       },
       integrationBrowsers: {
         options: {
+          frameworks: ['jasmine', 'detectBrowsers'],
           detectBrowsers: {
             enabled: true,
             // Don't try to load phantomJS, it may not exist.
