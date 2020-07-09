@@ -3,39 +3,47 @@ goog.setTestOnly();
 
 const {isArray_} = goog.require('helper');
 
-describe(`The 'isArray_' function of helper`, () => {
+describe('The `isArray_` function of helper', () => {
   /**
    * Ensure that plain.IsPlainObject recognizes value
-   * to be a array iff expected is true.
+   * to be a array.
    * @param {*} value The value to check
-   * @param {boolean} expected If the value is a plain object.
    */
-  function assertIsArray(value, expected) {
-    expect(isArray_(value)).toBe(expected);
+  function assertIsArray(value) {
+    expect(isArray_(value)).toBe(true);
+  }
+
+  /**
+   * Ensure that plain.IsPlainObject doesn't recognize
+   * the value to be an array.
+   * @param {*} value The value to check.
+   */
+  function assertIsNotArray(value) {
+    expect(isArray_(value)).toBe(false);
   }
 
   it(`identifies things that aren't arrays as not arrays`, () => {
-    assertIsArray(23, false);
-    assertIsArray(NaN, false);
-    assertIsArray(true, false);
-    assertIsArray(false, false);
-    assertIsArray(null, false);
-    assertIsArray(undefined, false);
-    assertIsArray('string', false);
-    assertIsArray({a: 1}, false);
-    assertIsArray(function() {}, false);
-    assertIsArray(arguments, false);
-    assertIsArray(window, false);
-    assertIsArray(Array, false);
+    assertIsNotArray(23);
+    assertIsNotArray(NaN);
+    assertIsNotArray(true);
+    assertIsNotArray(false);
+    assertIsNotArray(null);
+    assertIsNotArray(undefined);
+    assertIsNotArray('string');
+    assertIsNotArray({a: 1});
+    assertIsNotArray(function() {});
+    assertIsNotArray(arguments);
+    assertIsNotArray(window);
+    assertIsNotArray(Array);
   });
 
-  it(`identifies things that are arrays as arrays`, () => {
-    assertIsArray([], true);
-    assertIsArray([false], true);
-    assertIsArray(Array(), true);
-    assertIsArray(Array(false), true);
-    assertIsArray(Object([]), true);
-    assertIsArray(Object(Array()), true);
+  it('identifies things that are arrays as arrays', () => {
+    assertIsArray([]);
+    assertIsArray([false]);
+    assertIsArray(Array());
+    assertIsArray(Array(false));
+    assertIsArray(Object([]));
+    assertIsArray(Object(Array()));
   });
 
   it('identifies arrays which were created in a different window.', () => {
@@ -52,6 +60,6 @@ describe(`The 'isArray_' function of helper`, () => {
 
     expect(x[0]).toBe('hello');
     expect(x instanceof Array).toBe(false);
-    assertIsArray(x, true);
+    assertIsArray(x);
   });
 });
