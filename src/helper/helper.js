@@ -81,7 +81,7 @@ class DataLayerHelper {
 
     /**
      * The internal marker for checking if the listener is currently on the stack.
-     * @private @const {boolean}
+     * @private {boolean}
      */
     this.executingListener_ = false;
 
