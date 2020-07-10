@@ -66,17 +66,26 @@ describe('The `processStates_` function of helper', () => {
   });
 
   it('handles merging with nested state arguments', () => {
-    assertProcessStates([{'a.b.c': {d: 1}}, {'a.b.c': {e: 1}}],
-        {a: {b: {c: {d: 1, e: 1}}}},
-        [[{a: {b: {c: {d: 1}}}}, {'a.b.c': {d: 1}}],
-        [{a: {b: {c: {d: 1, e: 1}}}}, {'a.b.c': {e: 1}}]]);
+    assertProcessStates([
+        {'a.b': {f: 1}},
+        {'a.b.c': {d: 1}},
+        {'a.b.c': {e: 1}}],
+        {a: {b: {c: {d: 1, e: 1}, f: 1}}},
+        [[{a: {b: {f: 1}}}, {'a.b': {f: 1}}],
+        [{a: {b: {c: {d: 1}, f: 1}}}, {'a.b.c': {d: 1}}],
+        [{a: {b: {c: {d: 1, e: 1}, f: 1}}}, {'a.b.c': {e: 1}}]]);
   });
 
   it('handles _clear flag with nested state arguments', () => {
-    assertProcessStates([{'a.b.c': {d: 1}}, {'a.b.c': {e: 1}, '_clear': true}],
-        {a: {b: {c: {e: 1}}}},
-        [[{a: {b: {c: {d: 1}}}}, {'a.b.c': {d: 1}}],
-        [{a: {b: {c: {e: 1}}}}, {'a.b.c': {e: 1}}]]);
+    assertProcessStates([
+        {'a.b': {f: 1}},
+        {'a.b.c': {d: 1}},
+        {'a.b.c': {e: 1},
+        '_clear': true}],
+        {a: {b: {c: {e: 1}, f: 1}}},
+        [[{a: {b: {f: 1}}}, {'a.b': {f: 1}}],
+        [{a: {b: {c: {d: 1}, f: 1}}}, {'a.b.c': {d: 1}}],
+        [{a: {b: {c: {e: 1}, f: 1}}}, {'a.b.c': {e: 1}, '_clear': true}]]);
   });
 
   describe('the behavior with custom setter methods', () => {

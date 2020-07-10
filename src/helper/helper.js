@@ -54,7 +54,8 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
  * This internal model object holds the most recent value for all keys which
  * have been set on messages processed by the helper.
  *
- * You can retrieve values from the data model by using the helper's 'get' method.
+ * You can retrieve values from the data model by using the helper's 'get'
+ * method.
  */
 class DataLayerHelper {
   /**
@@ -80,7 +81,8 @@ class DataLayerHelper {
     this.listener_ = listener;
 
     /**
-     * The internal marker for checking if the listener is currently on the stack.
+     * The internal marker for checking if the listener is currently on the
+     * stack.
      * @private {boolean}
      */
     this.executingListener_ = false;
@@ -100,9 +102,9 @@ class DataLayerHelper {
 
     /**
      * The interface to the internal dataLayer model that is exposed to custom
-     * methods. Custom methods will the executed with this interface as the value
-     * of 'this', allowing users to manipulate the model using this.get and
-     * this.set.
+     * methods. Custom methods will the executed with this interface as the
+     * value of 'this', allowing users to manipulate the model using this.get
+     * and this.set.
      * @private @const {!Object<*>}
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
@@ -183,8 +185,9 @@ class DataLayerHelper {
           // TODO: Add some sort of logging when this happens.
         }
       } else if (isPlainObject(update)) {
+        const clearFlag = update['_clear'];
         for (const key in update) {
-          merge_(expandKeyValue_(key, update[key]), this.model_);
+          merge_(expandKeyValue_(key, update[key], clearFlag), this.model_);
         }
       } else {
         continue;
@@ -277,11 +280,13 @@ function processArguments_(args, model) {
  *
  * @param {string} key The key's path, where dots are the path separators.
  * @param {*} value The value to set on the given key path.
+ * @param {boolean=} clearFlag Determines if final constructed object should be
+ *     cleared or merged recursively.
  * @return {!Object<*>} An object representing the given key/value which can be
  *     merged onto the dataLayer's model.
  * @private
  */
-function expandKeyValue_(key, value) {
+function expandKeyValue_(key, value, clearFlag = false) {
   const result = {};
   let target = result;
   const split = key.split('.');
@@ -289,6 +294,8 @@ function expandKeyValue_(key, value) {
     target = target[split[i]] = {};
   }
   target[split[split.length - 1]] = value;
+
+  if (clearFlag) target['_clear'] = true;
   return result;
 }
 
@@ -342,13 +349,14 @@ function isString_(value) {
  * @private
  */
 function merge_(from, to) {
+  const preventMerge = from['_clear'];
   for (const property in from) {
     if (hasOwn(from, property)) {
       const fromProperty = from[property];
-      if (isArray_(fromProperty)) {
+      if (isArray_(fromProperty) && !preventMerge) {
         if (!isArray_(to[property])) to[property] = [];
         merge_(fromProperty, to[property]);
-      } else if (isPlainObject(fromProperty)) {
+      } else if (isPlainObject(fromProperty) && !preventMerge) {
         if (!isPlainObject(to[property])) to[property] = {};
         merge_(fromProperty, to[property]);
       } else {
@@ -356,6 +364,7 @@ function merge_(from, to) {
       }
     }
   }
+  delete to['_clear'];
 }
 
 exports = {
