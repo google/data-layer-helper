@@ -49,23 +49,6 @@ describe('The data layer helper library', function() {
     }
 
     /**
-     * Checks that each of the values of two array-like objects are deep equal.
-     * This is needed because jasmine's toEqual compares the functional
-     * attributes of dataLayer, which includes a push function.
-     * Since the push function is an anonymous function that gets
-     * recreated every time, we can't create an object that
-     * is deep equal to any dataLayer.
-     * @param {!Array<Object>} arr1 The first array-like object
-     * @param {!Array<Object>} arr2 The second array-like object
-     */
-    function expectEqualContents(arr1, arr2) {
-      expect(arr1.length).toBe(arr2.length);
-      for (let i = 0; i < arr1.length; i++) {
-        expect(arr1[i]).toEqual(arr2[i]);
-      }
-    }
-
-    /**
      * Automatically update the callbacks array with a description
      * of calls made to the data layer.
      */
@@ -143,15 +126,16 @@ describe('The data layer helper library', function() {
         dataLayer.push({one: {three: 3}}, {one: {four: 4}});
 
         expect(dataLayer.length).toBe(5);
-        expectEqualContents(dataLayer, [
+        expectDataLayerEquals(/* expected= */ [
           {one: 1, two: 2}, {two: 3},
-          {two: 2}, {one: {three: 3}}, {one: {four: 4}}]);
+          {two: 2}, {one: {three: 3}}, {one: {four: 4}}],
+        dataLayer);
 
         helper.flatten();
 
         expect(dataLayer.length).toBe(1);
-        expectEqualContents(dataLayer,
-            [{one: {three: 3, four: 4}, two: 2}]);
+        expectDataLayerEquals(
+            /* expected= */[{one: {three: 3, four: 4}, two: 2}], dataLayer);
 
         expect(helper.get('one')).toEqual({three: 3, four: 4});
         expect(helper.get('one.four')).toBe(4);

@@ -450,13 +450,6 @@ cd data-layer-helper
 yarn install
 ```
 
-Enter the third_party/closure-linter directory and install the Closure linter:
-
-```bash
-cd third_party/closure-linter
-python setup.py install
-```
-
 Make sure you have `grunt` installed. From the root directory of the project, run:
 
 ```bash
@@ -471,20 +464,19 @@ grunt
 
 The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
 
-This library is being modernized, and the tests are being moved.
 To run the tests for more than a single run, you will need to first install karma globally:
 
 ```bash
 yarn global add karma
 ```
 
-You can run all of the unit tests with the command
+You can run the unit tests from the root directory with the command
 
 ```bash
 karma start
 ```
 
-You can run all of the integration tests from the root directory with the command
+You can run the integration tests from the root directory with the command
 
 ```bash
 karma start test/integration/karma.conf.js
