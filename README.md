@@ -165,8 +165,15 @@ Existing Value     | New Value                     | Result of Overwrite
 {one: {two: 3}}    | {one: {four: 5}}              | {one: {two: 3, four: 5}}
 {one: {two: 3}}    | {two: 4}                      | {one: {two: 3}, two: 4}
 []                 | ['hello']                     | ['hello']
-[1]                | [undefined, 2]                | [1, 2]
-[1, {two: 3}]      | [undefined, {two: 4, six: 8}] | [1, {two: 4, six: 8}] 
+[1]                | [undefined, 2]                | [undefined, 2]
+[1]                | [(empty), 2]                  | [1, 2]
+[1, {two: 3}]      | [undefined, {two: 4, six: 8}] | [undefined, {two: 4, six: 8}]
+[1, {two: 3}]      | [(empty), {two: 4, six: 8}]   | [1, {two: 4, six: 8}]
+
+Notice that an index in a new value array that has been explicitly set to undefined will 
+overwrite the corresponding index in the existing array, however an index that has not been
+set to any value (i.e. empty values in a sparse array) will not overwrite the corresponding
+index in the existing array, even though value at both indexes evaluates to undefined.
 
 ### Meta Commands
 Using the above methods alone, some operations on the abstract model are somewhat cumbersome.
@@ -443,20 +450,13 @@ cd data-layer-helper
 yarn install
 ```
 
-Enter the third_party/closure-linter directory and install the Closure linter:
-
-```bash
-cd third_party/closure-linter
-python setup.py install
-```
-
 Make sure you have `grunt` installed. From the root directory of the project, run:
 
 ```bash
 grunt -version
 ```
 
-That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests.
+That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests in chrome.
 
 ```bash
 grunt
@@ -464,19 +464,23 @@ grunt
 
 The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
 
-This library is being modernized, and the tests are being moved.
-To run the new tests, you will need to first install karma globally:
+To run the tests for more than a single run, you will need to first install karma globally:
 
 ```bash
 yarn global add karma
 ```
 
-You can run the new tests with the command
+You can run the unit tests from the root directory with the command
 
 ```bash
 karma start
 ```
 
+You can run the integration tests from the root directory with the command
+
+```bash
+karma start test/integration/karma.conf.js
+```
 
 ## License
 
