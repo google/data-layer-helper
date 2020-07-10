@@ -54,52 +54,47 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
  * This internal model object holds the most recent value for all keys which
  * have been set on messages processed by the helper.
  *
- * You can retrieve values from the data model by using the helper's get method.
+ * You can retrieve values from the data model by using the helper's 'get' method.
  */
 class DataLayerHelper {
   /**
    * Creates a new helper object for the given dataLayer.
    *
    * @param {!Array.<!Object>} dataLayer The dataLayer to help with.
-   * @param {function(!Object, !Object)=} opt_listener The callback function to
+   * @param {function(!Object, !Object)=} listener The callback function to
    *     execute when a new state gets pushed onto the dataLayer.
-   * @param {boolean=} opt_listenToPast If true, the given listener will be
+   * @param {boolean=} listenToPast If true, the given listener will be
    *     executed for state changes that have already happened.
    */
-  constructor(dataLayer, opt_listener, opt_listenToPast) {
+  constructor(dataLayer, listener, listenToPast) {
     /**
      * The dataLayer to help with.
-     * @type {!Array.<!Object>}
-     * @private
+     * @private @const {!Array.<!Object>}
      */
     this.dataLayer_ = dataLayer;
 
     /**
      * The listener to notify of changes to the dataLayer.
-     * @type {function(!Object, !Object)}
-     * @private
+     * @private @const {function(!Object, !Object)}
      */
-    this.listener_ = opt_listener || function() {};
+    this.listener_ = listener || function() {};
 
     /**
      * The internal marker for checking if the listener is currently on the stack.
-     * @type {boolean}
-     * @private
+     * @private @const {boolean}
      */
     this.executingListener_ = false;
 
     /**
      * The internal representation of the dataLayer's state at the time of the
      * update currently being processed.
-     * @type {!Object}
-     * @private
+     * @private @const {!Object}
      */
     this.model_ = {};
 
     /**
      * The internal queue of dataLayer updates that have not yet been processed.
-     * @type {Array.<Object>}
-     * @private
+     * @private @const {Array.<Object>}
      */
     this.unprocessed_ = [];
 
@@ -108,13 +103,12 @@ class DataLayerHelper {
      * methods. Custom methods will the executed with this interface as the value
      * of 'this', allowing users to manipulate the model using this.get and
      * this.set.
-     * @type {!Object}
-     * @private
+     * @private @const {!Object}
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
     // Process the existing/past states.
-    this.processStates_(dataLayer, !opt_listenToPast);
+    this.processStates_(dataLayer, !listenToPast);
 
     // Add listener for future state changes.
     var oldPush = dataLayer.push;
@@ -164,13 +158,13 @@ class DataLayerHelper {
    *
    * @param {Array.<Object>} states The update objects to process, each
    *     representing a change to the state of the page.
-   * @param {boolean=} opt_skipListener If true, the listener the given states
+   * @param {boolean=} skipListener If true, the listener the given states
    *     will be applied to the internal model, but will not cause the listener
    *     to be executed. This is useful for processing past states that the
    *     listener might not care about.
    * @private
    */
-  processStates_(states, opt_skipListener) {
+  processStates_(states, skipListener) {
     this.unprocessed_.push.apply(this.unprocessed_, states);
     // Checking executingListener here protects against multiple levels of
     // loops trying to process the same queue. This can happen if the listener
@@ -196,7 +190,7 @@ class DataLayerHelper {
       } else {
         continue;
       }
-      if (!opt_skipListener) {
+      if (!skipListener) {
         this.executingListener_ = true;
         this.listener_(this.model_, update);
         this.executingListener_ = false;
