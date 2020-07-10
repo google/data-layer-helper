@@ -173,7 +173,7 @@ DataLayerHelper.prototype['flatten'] = function() {
  */
 DataLayerHelper.prototype.processStates_ =
     function(states, optSkipListener = false) {
-  this.unprocessed_.push.apply(this.unprocessed_, states);
+      this.unprocessed_.push.apply(this.unprocessed_, states);
       // Checking executingListener here protects against multiple levels of
       // loops trying to process the same queue. This can happen if the listener
       // itself is causing new states to be pushed onto the dataLayer.
