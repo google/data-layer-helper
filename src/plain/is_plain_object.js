@@ -16,7 +16,7 @@ goog.module('plain');
 
 /**
  * Pattern used by plain.type to match [object XXX] strings.
- * @type {RegExp}
+ * @type {!RegExp}
  * @private
  * @const
  */
@@ -47,7 +47,7 @@ const TYPE_RE_ =
  */
 function type(value) {
   if (value == null) return String(value);
-  var match = TYPE_RE_.exec(
+  const match = TYPE_RE_.exec(
       Object.prototype.toString.call(Object(value)));
   if (match) return match[1].toLowerCase();
   return 'object';
@@ -75,9 +75,9 @@ function hasOwn(value, key) {
  * @return {boolean} True iff the given value is a "plain" object.
  */
 function isPlainObject(value) {
-  if (!value || type(value) != 'object' ||    // Nulls, dates, etc.
-      value.nodeType ||                             // DOM nodes.
-      value == value.window) {                      // Window objects.
+  if (!value || type(value) != 'object' || // Nulls, dates, etc.
+      value.nodeType || // DOM nodes.
+      value == value.window) { // Window objects.
     return false;
   }
   try {
@@ -97,7 +97,7 @@ function isPlainObject(value) {
   // Lastly, we check that all properties are non-inherited.
   // According to jQuery, inherited properties are always enumerated last, so
   // it's safe to only check the last enumerated property.
-  var key;
+  let key;
   for (key in value) {}
   return key === undefined || hasOwn(value, key);
 }
