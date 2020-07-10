@@ -65,8 +65,8 @@ describe('The data layer helper library', () => {
           () => {
             dataLayer.push({one: 1, two: 2});
 
-            assertCallback(/* expected= */[{one: 1, two: 2}, {one: 1, two: 2}],
-                /* numberOfCalls= */1);
+            assertCallback(/* expected= */ [{one: 1, two: 2}, {one: 1, two: 2}],
+                /* numberOfCalls= */ 1);
 
             expect(helper.get('one')).toBe(1);
             expect(helper.get('two')).toBe(2);
@@ -76,7 +76,7 @@ describe('The data layer helper library', () => {
           () => {
             dataLayer.push({one: 1, two: 2}, {two: 3});
 
-            assertCallback(/* expected= */[{one: 1, two: 3}, {two: 3}],
+            assertCallback(/* expected= */ [{one: 1, two: 3}, {two: 3}],
                 /* numberOfCalls= */ 2);
 
             expect(helper.get('one')).toBe(1);
@@ -97,11 +97,11 @@ describe('The data layer helper library', () => {
         dataLayer.push({one: 1, two: 2}, {two: 3}, {two: 2});
         dataLayer.push({one: {three: 3}});
 
-        assertCallback(/* expected= */[
+        assertCallback(/* expected= */ [
           {one: {three: 3}, two: 2},
           {one: {three: 3}},
         ],
-            /* numberOfCalls= */4);
+            /* numberOfCalls= */ 4);
 
         expect(helper.get('one')).toEqual({three: 3});
         expect(helper.get('two')).toBe(2);
@@ -135,7 +135,7 @@ describe('The data layer helper library', () => {
 
         expect(dataLayer.length).toBe(1);
         expectDataLayerEquals(
-            /* expected= */[{one: {three: 3, four: 4}, two: 2}], dataLayer);
+            /* expected= */ [{one: {three: 3, four: 4}, two: 2}], dataLayer);
 
         expect(helper.get('one')).toEqual({three: 3, four: 4});
         expect(helper.get('one.four')).toBe(4);
