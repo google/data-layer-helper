@@ -51,6 +51,13 @@ describe('The `merge` function of helper', () => {
     assertMerge({a: [1, 2, 3]}, {a: []}, {a: [1, 2, 3]});
   });
 
+  it('prevents merging arrays if the `_clear` flag is true', () => {
+    assertMerge({a: [], _clear: true}, {a: []}, {a: []});
+    assertMerge({a: [], _clear: true}, {a: [1]}, {a: []});
+    assertMerge({a: [], _clear: true}, {a: [undefined, 2]}, {a: []});
+    assertMerge({a: [1], _clear: true}, {a: [undefined, 2]}, {a: [1]});
+  });
+
   it('overwrites `other` type objects when merging with a plain object', () => {
     assertMerge({a: {}}, {}, {a: {}});
     assertMerge({a: {}}, {a: 1}, {a: {}});
@@ -63,6 +70,14 @@ describe('The `merge` function of helper', () => {
     assertMerge({a: {}, b: {}}, {}, {a: {}, b: {}});
     assertMerge({a: {}, b: {}}, {a: 1, b: 2}, {a: {}, b: {}});
     assertMerge({a: {}, b: {}}, {a: 1, b: 2, c: 3}, {a: {}, b: {}, c: 3});
+  });
+
+  it('prevents merging objects if the `_clear` flag is true', () => {
+    assertMerge({a: {}, _clear: true}, {a: {}}, {a: {}});
+    assertMerge({a: {}, _clear: true}, {a: {x: 1}}, {a: {}});
+    assertMerge({a: {}, _clear: true}, {a: {x: undefined, y: 2}}, {a: {}});
+    assertMerge({a: {x: 1}, _clear: true}, {a: {x: undefined, y: 2}},
+        {a: {x: 1}});
   });
 
   it('merges plain objects with the same key together', () => {
@@ -152,8 +167,8 @@ describe('The `merge` function of helper', () => {
         {a: document.body.firstChild});
   });
 
-  it(`overwrites truthy other objects if the object to merge is an 'other'` +
-      `object`, () => {
+  it('overwrites truthy other objects if the object to merge is an `other`' +
+      'object', () => {
     assertMerge({a: null}, {a: true}, {a: null});
     assertMerge({a: true}, {a: 'brian'}, {a: true});
     assertMerge({a: false}, {a: 'with.dots'}, {a: false});
@@ -284,4 +299,56 @@ describe('The `merge` function of helper', () => {
             {a: [[[[[[[[2, 3]]]]]]]]},
             {a: [[[[[[[[1, 3]]]]]]]]});
       });
+
+  it('prevents merge when `_clear` flag is true ' +
+      'even for deeply nested objects or arrays',
+      () => {
+        assertMerge(
+            {a: {b: {c: 3}}, _clear: true},
+            {a: {b: {d: 4}, c: {d: 5}}},
+            {a: {b: {c: 3}}});
+        assertMerge(
+            {a: {b: {d: 4}, c: {d: 5}}, _clear: true},
+            {a: {b: {c: 3}}},
+            {a: {b: {d: 4}, c: {d: 5}}});
+        assertMerge(
+            {a: [{b: 2, c: 3}], _clear: true},
+            {a: [{b: 3, c: 4, d: 5}, {b: 6, c: 7}]},
+            {a: [{b: 2, c: 3}]});
+        assertMerge(
+            {a: {b: [1, 2, 3]}, c: [4, 5], d: null, _clear: true},
+            {a: {c: [1, 2, 3]}, d: [1, 2]},
+            {a: {b: [1, 2, 3]}, c: [4, 5], d: null});
+        assertMerge(
+            {a: [[[[[[[[1]]]]]]]], _clear: true},
+            {a: [[[[[[[[2, 3]]]]]]]]},
+            {a: [[[[[[[[1]]]]]]]]});
+      });
+
+  it('prevents merge when `_clear` flag is true' +
+      'deeper in nested objects or arrays',
+      () => {
+        assertMerge(
+            {a: {b: {c: 3}, _clear: true}},
+            {a: {b: {d: 4}, c: {d: 5}}},
+            {a: {b: {c: 3}, c: {d: 5}}});
+        assertMerge(
+            {a: {b: [[[[[[[[1]]]]]]]], _clear: true}, c: [[[1]]]},
+            {a: {b: [[[[[[[[2, 3]]]]]]]]}, c: [[[2, 3]]]},
+            {a: {b: [[[[[[[[1]]]]]]]]}, c: [[[1, 3]]]});
+      });
+
+  it('prevents merging when the `_clear` flag is truthy', () => {
+    assertMerge({a: {}, _clear: 1}, {a: {x: 1}}, {a: {}});
+    assertMerge({a: {}, _clear: 'example'}, {a: {x: 1}}, {a: {}});
+    assertMerge({a: {}, _clear: {}}, {a: {x: 1}}, {a: {}});
+    assertMerge({a: {}, _clear: []}, {a: {x: 1}}, {a: {}});
+  });
+
+  it('merges when the `_clear` flag is falsy', () => {
+    assertMerge({a: {}, _clear: false}, {a: {x: 1}}, {a: {x: 1}});
+    assertMerge({a: {}, _clear: null}, {a: {x: 1}}, {a: {x: 1}});
+    assertMerge({a: {}, _clear: 0}, {a: {x: 1}}, {a: {x: 1}});
+    assertMerge({a: {}, _clear: ''}, {a: {x: 1}}, {a: {x: 1}});
+  });
 });
