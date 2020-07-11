@@ -172,54 +172,7 @@ Existing Value     | New Value                     | Result of Overwrite
 
 Notice that an index in a new value array that has been explicitly set to undefined will 
 overwrite the corresponding index in the existing array, however an index that has not been
-set to any value (i.e. empty values in a<table>
-  <tr>
-    <td><b>Existing Model:</b></td>
-    <td><pre>
-      {
-        one: {
-          two: {
-            three: 3
-          }
-        }
-      }
-    </pre></td>
-  </tr>
-  <tr>
-    <td><b>Message:</b></td>
-    <td><pre>
-      dataLayer.push({
-        'one.two': {three: 4},
-        _clear: true
-      });
-    </pre></td>
-  </tr>
-  <tr>
-    <td><b>Message:</b></td>
-    <td><pre>
-      dataLayer.push({
-        one: {
-          two: {
-            three: 4
-          },
-          _clear: true
-        }
-      });
-    </pre></td>
-  </tr>
-  <tr>
-    <td><b>Resulting Model:</b></td>
-    <td><pre>
-      {
-        one: {
-          two: {
-            three: 4
-          }
-        }
-      }
-    </pre></td>
-  </tr>
-</table> sparse array) will not overwrite the corresponding
+set to any value (i.e. empty values in a sparse array) will not overwrite the corresponding
 index in the existing array, even though value at both indexes evaluates to undefined.
 
 ### Preventing Default Recursive Merge
