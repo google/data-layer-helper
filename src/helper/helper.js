@@ -278,6 +278,10 @@ function processArguments_(args, model) {
  *
  *   {a: {b: {c: 1}}}
  *
+ * if the clear flag is set to true, the object will become:
+ *
+ *   {a: {b: {c: 1, _clear: true}}}
+ *
  * @param {string} key The key's path, where dots are the path separators.
  * @param {*} value The value to set on the given key path.
  * @param {boolean=} clearFlag Determines if final constructed object should be

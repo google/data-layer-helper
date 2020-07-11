@@ -80,8 +80,7 @@ describe('The `processStates_` function of helper', () => {
     assertProcessStates([
         {'a.b': {f: 1}},
         {'a.b.c': {d: 1}},
-        {'a.b.c': {e: 1},
-        '_clear': true}],
+        {'a.b.c': {e: 1}, '_clear': true}],
         {a: {b: {c: {e: 1}, f: 1}}},
         [[{a: {b: {f: 1}}}, {'a.b': {f: 1}}],
         [{a: {b: {c: {d: 1}, f: 1}}}, {'a.b.c': {d: 1}}],

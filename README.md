@@ -109,8 +109,8 @@ to specify how values will be overwritten and/or merged.
 
 There are two possible actions to take when merging a key/value pair onto the abstract 
 model; overwriting the existing value or recursively merging the new value onto the 
-existing value. The action taken will depend on the type of the two values. For this, 
-we define three types of values:
+existing value. The action taken will depend on the type of the two values unless explicitly 
+overriden. For this, we define three types of values:
 
 * JavaScript Arrays
 * "Plain" Objects
@@ -124,7 +124,7 @@ category of "everything else", along with strings, numbers, booleans, undefined,
 Once the type of the new and existing values has been categorized this way, we can use the 
 following table to describe what action will happen for that key/value pair:
 
-Existing Value | New Value    | Merging Action
+Existing Value | New Value    | Default Merging Action
 ---------------|--------------|--------------------------
 Array          | Array        | Recursively merge
 Array          | Plain Object | Overwrite existing value
@@ -172,8 +172,192 @@ Existing Value     | New Value                     | Result of Overwrite
 
 Notice that an index in a new value array that has been explicitly set to undefined will 
 overwrite the corresponding index in the existing array, however an index that has not been
-set to any value (i.e. empty values in a sparse array) will not overwrite the corresponding
+set to any value (i.e. empty values in a<table>
+  <tr>
+    <td><b>Existing Model:</b></td>
+    <td><pre>
+      {
+        one: {
+          two: {
+            three: 3
+          }
+        }
+      }
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Message:</b></td>
+    <td><pre>
+      dataLayer.push({
+        'one.two': {three: 4},
+        _clear: true
+      });
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Message:</b></td>
+    <td><pre>
+      dataLayer.push({
+        one: {
+          two: {
+            three: 4
+          },
+          _clear: true
+        }
+      });
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Resulting Model:</b></td>
+    <td><pre>
+      {
+        one: {
+          two: {
+            three: 4
+          }
+        }
+      }
+    </pre></td>
+  </tr>
+</table> sparse array) will not overwrite the corresponding
 index in the existing array, even though value at both indexes evaluates to undefined.
+
+### Preventing Default Recursive Merge
+Occasionally you may want to avoid persisting values from earlier in the application state. 
+This is especially true for single page applications where you may not want outdated information 
+in the data model when routing between pages.
+
+To prevent the default recursive merging behavior, a flag can be passed in adjacent 
+to the object(s) or array(s) you wish to prevent merging. To do so, add a truthy '_clear' attribute 
+to the message with the key/value pair(s) you are targeting. The following snippet prevents merging 
+at the topmost level with both the 'five' and 'one' keys not being recursively merged and 
+instead having their values overwritten with the provided values.
+
+<table>
+  <tr>
+    <td><b>Existing Model:</b></td>
+    <td><pre>
+      {
+        one: {
+          two: {
+            three: 3
+          }
+        },
+        five: [1, 2]
+      }
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Message:</b></td>
+    <td><pre>
+      dataLayer.push({
+        one: {
+          two: {
+            four: 4
+          }
+        },
+        five: [3],
+        _clear: true
+      });
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Resulting Model:</b></td>
+    <td><pre>
+      {
+        one: {
+          two: {
+            four: 4
+          }
+        },
+        five: [3]
+      }
+    </pre></td>
+  </tr>
+</table>
+
+If you wish to target specific nested objects, you can do so:
+
+<table>
+  <tr>
+    <td><b>Existing Model:</b></td>
+    <td><pre>
+      {
+        one: {
+          two: {
+            three: 3
+          }
+        },
+        five: [1, 2]
+      }
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Message:</b></td>
+    <td><pre>
+      dataLayer.push({
+        one: {
+          two: {
+            four: 4
+          },
+          _clear: true
+        },
+        five: [3]
+      });
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Resulting Model:</b></td>
+    <td><pre>
+      {
+        one: {
+          two: {
+            four: 4
+          }
+        },
+        five: [3, 2]
+      }
+    </pre></td>
+  </tr>
+</table>
+
+You can also use dot notation:
+
+<table>
+  <tr>
+    <td><b>Existing Model:</b></td>
+    <td><pre>
+      {
+        one: {
+          two: {
+            three: 3
+          }
+        }
+      }
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Message:</b></td>
+    <td><pre>
+      dataLayer.push({
+        'one.two': {four: 4},
+        _clear: true
+      });
+    </pre></td>
+  </tr>
+  <tr>
+    <td><b>Resulting Model:</b></td>
+    <td><pre>
+      {
+        one: {
+          two: {
+            four: 4
+          }
+        }
+      }
+    </pre></td>
+  </tr>
+</table>
 
 ### Meta Commands
 Using the above methods alone, some operations on the abstract model are somewhat cumbersome.
