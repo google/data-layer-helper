@@ -54,33 +54,35 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
  * This internal model object holds the most recent value for all keys which
  * have been set on messages processed by the helper.
  *
- * You can retrieve values from the data model by using the helper's 'get' method.
+ * You can retrieve values from the data model by using the helper's 'get'
+ * method.
  */
 class DataLayerHelper {
   /**
    * Creates a new helper object for the given dataLayer.
    *
-   * @param {!Array.<!Object>} dataLayer The dataLayer to help with.
-   * @param {function(!Object, !Object)=} listener The callback function to
-   *     execute when a new state gets pushed onto the dataLayer.
+   * @param {!Array<*>} dataLayer The dataLayer to help with.
+   * @param {function(!Object<*>, !Object<*>)=} listener The callback
+   *     function to execute when a new state gets pushed onto the dataLayer.
    * @param {boolean=} listenToPast If true, the given listener will be
    *     executed for state changes that have already happened.
    */
-  constructor(dataLayer, listener, listenToPast) {
+  constructor(dataLayer, listener = () => {}, listenToPast = false) {
     /**
      * The dataLayer to help with.
-     * @private @const {!Array.<!Object>}
+     * @private @const {!Array<*>}
      */
     this.dataLayer_ = dataLayer;
 
     /**
      * The listener to notify of changes to the dataLayer.
-     * @private @const {function(!Object, !Object)}
+     * @private @const {function(!Object<*>, *)}
      */
-    this.listener_ = listener || function() {};
+    this.listener_ = listener;
 
     /**
-     * The internal marker for checking if the listener is currently on the stack.
+     * The internal marker for checking if the listener
+     * is currently on the stack.
      * @private {boolean}
      */
     this.executingListener_ = false;
@@ -88,39 +90,43 @@ class DataLayerHelper {
     /**
      * The internal representation of the dataLayer's state at the time of the
      * update currently being processed.
-     * @private @const {!Object}
+     * @private @const {!Object<*>}
      */
     this.model_ = {};
 
     /**
      * The internal queue of dataLayer updates that have not yet been processed.
-     * @private @const {Array.<Object>}
+     * @private @const {!Array<*>}
      */
     this.unprocessed_ = [];
-/*
-  * The internal map of processors to run.
-    * @type {!Object<string, function(*):!Object>}
-  * @private
-  */
+
+    /*
+     * The internal map of processors to run.
+     * @type {!Object<string, function(*):!Object>}
+     * @private
+     */
     this.commandProcessors_ = {};
+
     /**
      * The interface to the internal dataLayer model that is exposed to custom
-     * methods. Custom methods will the executed with this interface as the value
-     * of 'this', allowing users to manipulate the model using this.get and
-     * this.set.
-     * @private @const {!Object}
+     * methods. Custom methods will the executed with this interface as the
+     * value of 'this', allowing users to manipulate the model using
+     * this.get and this.set.
+     * @private @const {!Object<*>}
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
-    // Process the existing/past states.
+    /*
+     * Process the existing/past states.
+     */
     this.processStates_(dataLayer, !listenToPast);
 
     // Add listener for future state changes.
-    var oldPush = dataLayer.push;
-    var that = this;
+    const oldPush = dataLayer.push;
+    const that = this;
     dataLayer.push = function() {
-      var states = [].slice.call(arguments, 0);
-      var result = oldPush.apply(dataLayer, states);
+      const states = [].slice.call(arguments, 0);
+      const result = oldPush.apply(dataLayer, states);
       that.processStates_(states);
       return result;
     };
@@ -135,9 +141,9 @@ class DataLayerHelper {
    * @return {*} The value found at the given key.
    */
   get(key) {
-    var target = this.model_;
-    var split = key.split('.');
-    for (var i = 0; i < split.length; i++) {
+    let target = this.model_;
+    const split = key.split('.');
+    for (let i = 0; i < split.length; i++) {
       if (target[split[i]] === undefined) return undefined;
       target = target[split[i]];
     }
@@ -152,30 +158,31 @@ class DataLayerHelper {
   flatten() {
     this.dataLayer_.splice(0, this.dataLayer_.length);
     this.dataLayer_[0] = {};
-    merge_(this.model_, this.dataLayer_[0]);
+    merge_(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
   }
 
 
   /**
    * Register a function to respond to events with a certain name called by
-   * the command API by storing it in a map. The function will be called any time
-   * the commandAPI is called with first parameter the string name.
+   * the command API by storing it in a map. The function will be called an
+   * time the commandAPI is called with first parameter the string name.
    *
    * @param {string} name The string which should be passed into the command API
-   * to call the processor.
-   * @param {function(*):!Object} processor The function to register to be called later.
-   * So long as this function is not an arrow function, it can access the abstract
-   * model interface by using the this keyword. It is recommended not to modify
-   * the state within the function using this.set. Changes to the model should
-   * only be achieved by the return value, a dict whose values will
-   * automatically be merged into the model.
+   *     to call the processor.
+   * @param {function(*):!Object} processor The function to register to be
+   *     called later.
+   *     So long as this function is not an arrow function, it can access the
+   *     abstract model interface by using the this keyword. It is recommended
+   *     not to modify the state within the function using this.set.
+   *     Changes to the model should only be achieved by the return value, a
+   *     dict whose values will automatically be merged into the model.
    * @this {DataLayerHelper}
    */
   registerProcessor(name, processor) {
-      if (!(name in this.commandProcessors_)) {
-        this.commandProcessors_[name] = [];
-      }
-      this.commandProcessors_[name].push(processor);
+    if (!(name in this.commandProcessors_)) {
+      this.commandProcessors_[name] = [];
+    }
+    this.commandProcessors_[name].push(processor);
   }
 
   /**
@@ -183,21 +190,20 @@ class DataLayerHelper {
    * If a processor for the command has been registered, the processor function
    * will be invoked with any arguments passed in.
    *
-   * @param {Array.<Object>} args The arguments object containing the command
+   * @param {!Array<*>} args The arguments object containing the command
    *     to execute and optional arguments for the processor.
-   * @return {!Array<Object>} states The updates requested to the model state,
-   * in the order they should be processed.
+   * @return {!Array<Object<*>>} states The updates requested to
+   *     the model state, in the order they should be processed.
    * @private
    */
   processArguments_(args) {
-    // Run all registered processors associated with this command
+    // Run all registered processors associated with this command.
     const states = [];
     const name = args[0];
     if (this.commandProcessors_[name]) {
-      // Cache length - don't run processors registered
+      // Don't cache length, to run even processors registered
       // by other processors after the call.
-      const length = this.commandProcessors_[name].length;
-      for (let i = 0; i < length; i++) {
+      for (let i = 0; i < this.commandProcessors_[name].length; i++) {
         const method = this.commandProcessors_[name][i];
         states.push(method.apply(this.abstractModelInterface_,
             [].slice.call(args, 1)));
@@ -210,10 +216,10 @@ class DataLayerHelper {
   /**
    * Merges the given update objects (states) onto the helper's model, calling
    * the listener each time the model is updated. If a command array is pushed
-   * into the dataLayer, the method will be parsed and applied to the value found
-   * at the key, if a one exists.
+   * into the dataLayer, the method will be parsed and applied to the value
+   * found at the key, if a one exists.
    *
-   * @param {Array.<Object>} states The update objects to process, each
+   * @param {!Array<*>} states The update objects to process, each
    *     representing a change to the state of the page.
    * @param {boolean=} skipListener If true, the listener the given states
    *     will be applied to the internal model, but will not cause the listener
@@ -221,20 +227,20 @@ class DataLayerHelper {
    *     listener might not care about.
    * @private
    */
-  processStates_(states, skipListener) {
+  processStates_(states, skipListener = false) {
     this.unprocessed_.push.apply(this.unprocessed_, states);
     // Checking executingListener here protects against multiple levels of
     // loops trying to process the same queue. This can happen if the listener
     // itself is causing new states to be pushed onto the dataLayer.
     while (this.executingListener_ === false && this.unprocessed_.length > 0) {
-      var update = this.unprocessed_.shift();
+      const update = this.unprocessed_.shift();
       if (isArray_(update)) {
-        processCommand_(update, this.model_);
+        processCommand_(/** @type {!Array<*>} */ (update), this.model_);
       } else if (isArguments_(update)) {
-        const newStates = this.processArguments_(update);
+        const newStates = this.processArguments_(
+            /** @type {!Array<*>} */(update));
         this.unprocessed_.push.apply(this.unprocessed_, newStates);
       } else if (typeof update == 'function') {
-        var that = this;
         try {
           update.call(this.abstractModelInterface_);
         } catch (e) {
@@ -242,7 +248,7 @@ class DataLayerHelper {
           // TODO: Add some sort of logging when this happens.
         }
       } else if (isPlainObject(update)) {
-        for (var key in update) {
+        for (const key in update) {
           merge_(expandKeyValue_(key, update[key]), this.model_);
         }
       } else {
@@ -262,19 +268,19 @@ window['DataLayerHelper'] = DataLayerHelper;
  * Helper function that will build the abstract model interface using the
  * supplied dataLayerHelper.
  *
- * @param {DataLayerHelper} dataLayerHelper The helper class to construct the
+ * @param {!DataLayerHelper} dataLayerHelper The helper class to construct the
  *     abstract model interface for.
- * @return {Object} The interface to the abstract data layer model that is given
- *     to Custom Methods.
+ * @return {!Object<*>} The interface to the abstract data layer model that is
+ *     given to Custom Methods.
  * @private
  */
 function buildAbstractModelInterface_(dataLayerHelper) {
   return {
-    'set'(key, value) {
+    set(key, value) {
       merge_(expandKeyValue_(key, value),
           dataLayerHelper.model_);
     },
-    'get'(key) {
+    get(key) {
       return dataLayerHelper.get(key);
     },
   };
@@ -286,9 +292,9 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  * If the method is a valid function of the value, the method will be applies
  * with any arguments passed in.
  *
- * @param {Array.<Object>} command The array containing the key with the
+ * @param {!Array<*>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
- * @param {Object|Array} model The current dataLayer model.
+ * @param {!Object<*>} model The current dataLayer model.
  * @private
  */
 function processCommand_(command, model) {
@@ -309,7 +315,6 @@ function processCommand_(command, model) {
   }
 }
 
-
 /**
  * Converts the given key value pair into an object that can be merged onto
  * another object. Specifically, this method treats dots in the key as path
@@ -323,7 +328,7 @@ function processCommand_(command, model) {
  *
  * @param {string} key The key's path, where dots are the path separators.
  * @param {*} value The value to set on the given key path.
- * @return {Object} An object representing the given key/value which can be
+ * @return {!Object<*>} An object representing the given key/value which can be
  *     merged onto the dataLayer's model.
  * @private
  */
@@ -347,7 +352,7 @@ function expandKeyValue_(key, value) {
  * @private
  */
 function isArray_(value) {
-  return type(value) == 'array';
+  return type(value) === 'array';
 }
 
 /**
@@ -370,7 +375,7 @@ function isArguments_(value) {
  * @private
  */
 function isString_(value) {
-  return type(value) == 'string';
+  return type(value) === 'string';
 }
 
 
@@ -383,8 +388,8 @@ function isString_(value) {
  * objects get cloned and which get copied. More work is needed to flesh
  * out the details here.
  *
- * @param {Object|Array} from The object or array to merge from.
- * @param {Object|Array} to The object or array to merge into.
+ * @param {!Array<*>|!Object<*>} from The object or array to merge from.
+ * @param {!Array<*>|!Object<*>} to The object or array to merge into.
  * @private
  */
 function merge_(from, to) {
