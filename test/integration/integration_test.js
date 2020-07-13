@@ -44,8 +44,8 @@ describe('The data layer helper library', () => {
      * so far.
      */
     function assertCallback(expected, numberOfCalls) {
-      expect(callbackListener.calls).toBe(numberOfCalls);
-      expect(callbackListener.calls.mostRecent()).toEqual(expected);
+      expect(callbackListener.calls.count()).toBe(numberOfCalls);
+      expect(callbackListener.calls.mostRecent().args).toEqual(expected);
     }
 
     beforeEach(() => {
