@@ -40,6 +40,20 @@ describe('The registerProcessor method of helper', () => {
       expect(spy.calls.allArgs()).toEqual([['a']]);
     });
 
+    it('calls registered functions when the commandAPI ' +
+        'fires the appropriate event, no matter where it was called', () => {
+      dlh.registerProcessor('process', () => {
+        spy('a');
+        dlh.registerProcessor('process2', () => {
+          spy('b');
+        });
+        commandAPI('process2');
+      });
+      commandAPI('process');
+
+      expect(spy.calls.allArgs()).toEqual([['a'], ['b']]);
+    });
+
     it('calls registered functions in the order they were registered',
         () => {
           dlh.registerProcessor('myMostFantasticFunction', () => spy('a'));

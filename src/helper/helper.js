@@ -192,7 +192,7 @@ class DataLayerHelper {
    *
    * @param {!Array<*>} args The arguments object containing the command
    *     to execute and optional arguments for the processor.
-   * @return {!Array<Object<*>>} states The updates requested to
+   * @return {!Array<!Object<*>>} states The updates requested to
    *     the model state, in the order they should be processed.
    * @private
    */
@@ -201,9 +201,10 @@ class DataLayerHelper {
     const states = [];
     const name = args[0];
     if (this.commandProcessors_[name]) {
-      // Don't cache length, to run even processors registered
+      // Cache length so as not to run processors registered
       // by other processors after the call.
-      for (let i = 0; i < this.commandProcessors_[name].length; i++) {
+      const length = this.commandProcessors_[name].length;
+      for (let i = 0; i < length; i++) {
         const method = this.commandProcessors_[name][i];
         states.push(method.apply(this.abstractModelInterface_,
             [].slice.call(args, 1)));
