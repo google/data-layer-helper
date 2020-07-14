@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "grunt",
+    "test": "grunt test",
     "unit": "karma start",
     "integration": "karma start test/integration/karma.conf.js"
   },
