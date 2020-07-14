@@ -8,6 +8,18 @@
     "unit": "karma start",
     "integration": "karma start test/integration/karma.conf.js"
   },
+  "browser": "dist/data-layer-helper.js",
+  "//": "Contributers are listed in alphabetical order by last name",
+  "contributors": [
+    "Sam Calhoun",
+    "KJ Galvan",
+    "Brian Kuhn",
+    "Alex Li",
+    "Alex Nau",
+    "Eugene Sambursky",
+    "Pedro Silva",
+    "Dustin Urbaniec"
+  ],
   "devDependencies": {
     "eslint": "~7.3.1",
     "eslint-config-closure-es6": "~0.1.1",
@@ -37,6 +49,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/google/data-layer-helper"
+  },
+  "directories": {
+    "lib": "./src",
+    "bin": "./dist",
+    "test": "./test"
   },
   "keywords": [
     "javascript",
