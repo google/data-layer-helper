@@ -100,10 +100,9 @@ class DataLayerHelper {
      */
     this.unprocessed_ = [];
 
-    /*
+    /**
      * The internal map of processors to run.
-     * @type {!Object<string, function(*):!Object>}
-     * @private
+     * @private @const {!Object<string, !Array<function(*):!Object>>}
      */
     this.commandProcessors_ = {};
 
@@ -116,11 +115,8 @@ class DataLayerHelper {
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
-    /*
-     * Process the existing/past states.
-     */
+    // Process the existing/past states.
     this.processStates_(dataLayer, !listenToPast);
-
     // Add listener for future state changes.
     const oldPush = dataLayer.push;
     const that = this;
@@ -167,15 +163,27 @@ class DataLayerHelper {
    * the command API by storing it in a map. The function will be called an
    * time the commandAPI is called with first parameter the string name.
    *
+   * ---- USAGE ----
+   * If the processor function is not an arrow function, then it can access the
+   * abstract model interface by using the 'this' keyword. It is recommended
+   * not to modify the state within the function using this.set.
+   * Changes to the model should only be achieved by the return value, a
+   * dict whose values will automatically be merged into the model.
+   * Example:
+   * // Suppose that the abstract data model is currently {a: 1}.
+   * dataLayerHelper.registerProcessor('add', function(numberToAdd){
+   *  const a = this.get('a');
+   *  return {sum: numberToAdd + a};
+   * });
+   * // The abstract data model is still {a:1}.
+   * commandAPI('add', 2)
+   * // The abstract data model is now {a:1, sum: 3}.
+   *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
-   * @param {function(*):!Object} processor The function to register to be
-   *     called later.
-   *     So long as this function is not an arrow function, it can access the
-   *     abstract model interface by using the this keyword. It is recommended
-   *     not to modify the state within the function using this.set.
-   *     Changes to the model should only be achieved by the return value, a
-   *     dict whose values will automatically be merged into the model.
+   * @param {function(*):!Object} processor The callback function to register.
+   *    Will be invoked when an arguments object whose first parameter is name
+   *    is pushed to the data layer.
    * @this {DataLayerHelper}
    */
   registerProcessor(name, processor) {
@@ -199,14 +207,16 @@ class DataLayerHelper {
   processArguments_(args) {
     // Run all registered processors associated with this command.
     const states = [];
-    const name = args[0];
+    const name = /** @type {string} */ (args[0]);
     if (this.commandProcessors_[name]) {
       // Cache length so as not to run processors registered
       // by other processors after the call.
+      // This could happen if somebody calls the registerProcessor() method
+      // within a processor call.
       const length = this.commandProcessors_[name].length;
       for (let i = 0; i < length; i++) {
-        const method = this.commandProcessors_[name][i];
-        states.push(method.apply(this.abstractModelInterface_,
+        const callback = this.commandProcessors_[name][i];
+        states.push(callback.apply(this.abstractModelInterface_,
             [].slice.call(args, 1)));
       }
     }
