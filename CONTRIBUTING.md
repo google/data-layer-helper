@@ -8,8 +8,14 @@ As this is a Google project, you *must* first e-sign the [Google Contributor Lic
 
 ## Style
 
-TODO(bkuhn): Instructions on checking style guide before submitting a pull request.
+Before submitting a pull request, please try to ensure that your code conforms to the [google style guide](https://google.github.io/styleguide/jsguide.html).
+Above the style guide, we would like to keep this library small. Do  not write code that requires unneccesary polyfills.
+In particular, do not use for-of loops, rest parameters, spread operators, Map, Set, WeakMap, WeakSet, Symbols, or Generators.
 
 ## Testing
 
-TODO(bkuhn): Instructions on running test suite before submitting a pull request.
+Before submitting a pull request, please make sure that 
+```bash
+yarn test
+```
+does not fail any unit tests or give any lint warnings.

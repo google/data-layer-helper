@@ -49,6 +49,13 @@ goog.module('helper');
 const {type, hasOwn, isPlainObject} = goog.require('plain');
 
 /**
+ * @define {boolean} When true, potential code errors will be logged to the
+ * console. To enable this, run yarn build-debug to compile the distribution
+ * code.
+ */
+const DLH_DEBUG = goog.define('DLH_DEBUG', false);
+
+/**
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -180,7 +187,11 @@ class DataLayerHelper {
           update.call(this.abstractModelInterface_);
         } catch (e) {
           // Catch any exceptions to we don't drop subsequent updates.
-          // TODO: Add some sort of logging when this happens.
+          if (DLH_DEBUG) {
+            console.error(`When running the method ${update}, ` +
+                `an exception was thrown.`);
+            console.error(e);
+          }
         }
       } else if (isPlainObject(update)) {
         for (const key in update) {
@@ -233,20 +244,40 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  * @private
  */
 function processCommand_(command, model) {
-  if (!isString_(command[0])) return;
+  if (!isString_(command[0])) {
+    if (DLH_DEBUG) {
+      console.warn(`You pushed the array ${command} to the data layer. ` +
+          `However, ${command[0]} is not a string, so no command was run. ` +
+          `To call a method, please use the string 'objectLocation.method'` +
+          'as the first parameter.');
+    }
+    return;
+  }
+
   const path = command[0].split('.');
   const method = path.pop();
   const args = command.slice(1);
   let target = model;
   for (let i = 0; i < path.length; i++) {
-    if (target[path[i]] === undefined) return;
+    if (target[path[i]] === undefined) {
+      if (DLH_DEBUG) {
+        console.warn(`You pushed the array ${command} to the data ` +
+            `layer. However, no object was found at the location ${path}, so ` +
+            'no command was run. ');
+      }
+      return;
+    }
     target = target[path[i]];
   }
   try {
     target[method].apply(target, args);
   } catch (e) {
     // Catch any exception so we don't drop subsequent updates.
-    // TODO: Add some sort of logging here when this happens.
+    if (DLH_DEBUG) {
+      console.error(`When trying to run the method ${method} on ` +
+      `${path}, an exception was thrown.`);
+      console.error(e);
+    }
   }
 }
 

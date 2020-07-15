@@ -6,7 +6,7 @@ module.exports = function(config) {
     files: [
       './**_test.js',
       '../utils.js',
-      '../../dist/data-layer-helper.js',
+      '../../dist/data-layer-helper-debug.js',
     ],
   });
 };
