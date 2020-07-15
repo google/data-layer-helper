@@ -8,17 +8,17 @@
     "unit": "karma start",
     "integration": "karma start test/integration/karma.conf.js"
   },
-  "browser": "dist/data-layer-helper.js",
-  "//": "Contributers are listed in alphabetical order by last name",
+  "main": "dist/data-layer-helper.js",
+  "//": "Contributors are listed in alphabetical order by last name. Add yourself!",
   "contributors": [
-    "Sam Calhoun",
-    "KJ Galvan",
-    "Brian Kuhn",
-    "Alex Li",
-    "Alex Nau",
-    "Eugene Sambursky",
-    "Pedro Silva",
-    "Dustin Urbaniec"
+    "Sam Calhoun <calhounsm@google.com>",
+    "KJ Galvan <kaityagalvan@gmail.com>",
+    "Brian Kuhn <bkuhn@google.com>",
+    "Alex Li <7alex7li@gmail.com>",
+    "Alex Nau <arnau@google.com>",
+    "Eugene Sambursky <ievgen@google.com>",
+    "Pedro Silva <pedro.hs.silva0111@gmail.com>",
+    "Dustin Urbaniec <durbanie@google.com>"
   ],
   "devDependencies": {
     "eslint": "~7.3.1",
