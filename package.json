@@ -8,7 +8,7 @@
     "unit": "karma start",
     "integration": "karma start test/integration/karma.conf.js"
   },
-  "main": "dist/data-layer-helper.js",
+  "browser": "dist/data-layer-helper.js",
   "//": "Contributors are listed in alphabetical order by last name. Add yourself!",
   "contributors": [
     "Sam Calhoun <calhounsm@google.com>",
