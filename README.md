@@ -462,7 +462,14 @@ That should be everything.  You can try running the build, which will run the li
 grunt
 ```
 
-The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
+The built version (data-layer-helper.js) will be in the `dist/` subdirectory. However, this build will do it's best to fail silently
+when strange inputs are passed into it. For development, you may want to use a build that will give more detailed logging. Run 
+
+```bash
+yarn build-debug
+```
+
+to make the debug build available (dist/data-layer-helper-debug.js).
 
 To run the tests for more than a single run, you will need to first install karma globally:
 
