@@ -185,9 +185,8 @@ class DataLayerHelper {
           // TODO: Add some sort of logging when this happens.
         }
       } else if (isPlainObject(update)) {
-        const clearFlag = update['_clear'];
         for (const key in update) {
-          merge_(expandKeyValue_(key, update[key], clearFlag), this.model_);
+          merge_(expandKeyValue_(key, update[key]), this.model_);
         }
       } else {
         continue;
@@ -223,7 +222,6 @@ function buildAbstractModelInterface_(dataLayerHelper) {
     },
   };
 }
-
 
 /**
  * Applies the given method to the value in the dataLayer with the given key.
@@ -278,19 +276,13 @@ function processArguments_(args, model) {
  *
  *   {a: {b: {c: 1}}}
  *
- * if the clear flag is set to true, the object will become:
- *
- *   {a: {b: {c: 1, _clear: true}}}
- *
  * @param {string} key The key's path, where dots are the path separators.
  * @param {*} value The value to set on the given key path.
- * @param {boolean=} clearFlag Determines if final constructed object should be
- *     cleared or merged recursively.
  * @return {!Object<*>} An object representing the given key/value which can be
  *     merged onto the dataLayer's model.
  * @private
  */
-function expandKeyValue_(key, value, clearFlag = false) {
+function expandKeyValue_(key, value) {
   const result = {};
   let target = result;
   const split = key.split('.');
@@ -298,11 +290,8 @@ function expandKeyValue_(key, value, clearFlag = false) {
     target = target[split[i]] = {};
   }
   target[split[split.length - 1]] = value;
-
-  if (clearFlag) target['_clear'] = true;
   return result;
 }
-
 
 /**
  * Determines if the given value is an array.
@@ -326,7 +315,6 @@ function isArguments_(value) {
   return type(value) === 'arguments';
 }
 
-
 /**
  * Determines if the given value is a string.
  *
@@ -337,7 +325,6 @@ function isArguments_(value) {
 function isString_(value) {
   return type(value) == 'string';
 }
-
 
 /**
  * Merges one object into another or one array into another. Scalars and
