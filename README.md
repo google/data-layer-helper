@@ -189,14 +189,14 @@ to the message with the key/value pair(s) you are targeting. Here are some examp
   <tr>
     <td><b>Existing Model:</b></td>
     <td>
-      <pre>{
-        one: {
-          two: {
-            three: 3
-          }
-        },
-        five: [1, 2]
-      }</pre>
+<pre>{
+  one: {
+    two: {
+      three: 3
+    }
+  },
+  five: [1, 2]
+}</pre>
     </td>
     <td><pre>
 {
