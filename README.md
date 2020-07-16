@@ -6,6 +6,7 @@ This library provides the ability to process messages passed onto a dataLayer qu
 - [The Abstract Data Model](#the-abstract-data-model)
     - [Overwriting Existing Values](#overwriting-existing-values)
     - [Recursively Merging Values](#recursively-merging-values)
+    - [Preventing Default Recursive Merge](#preventing-default-recursive-merge)
     - [Meta Commands](#meta-commands)
     - [Native Methods](#native-methods)
     - [Custom Methods](#custom-methods)
@@ -182,132 +183,78 @@ in the data model when routing between pages.
 
 To prevent the default recursive merging behavior, a flag can be passed in adjacent 
 to the object(s) or array(s) you wish to prevent merging. To do so, add a truthy '_clear' attribute 
-to the message with the key/value pair(s) you are targeting. The following snippet prevents merging 
-at the topmost level with both the 'five' and 'one' keys not being recursively merged and 
-instead having their values overwritten with the provided values.
+to the message with the key/value pair(s) you are targeting. Here are some examples:
 
 <table>
   <tr>
     <td><b>Existing Model:</b></td>
     <td><pre>
-      {
-        one: {
-          two: {
-            three: 3
-          }
-        },
-        five: [1, 2]
-      }
+{
+  one: {
+    two: {
+      three: 3
+    }
+  },
+  five: [1, 2]
+}
+    </pre></td>
+    <td><pre>
+{
+  one: {
+    two: {
+      three: 3
+    }
+  },
+  five: [1, 2]
+}
     </pre></td>
   </tr>
   <tr>
     <td><b>Message:</b></td>
     <td><pre>
-      dataLayer.push({
-        one: {
-          two: {
-            four: 4
-          }
-        },
-        five: [3],
-        _clear: true
-      });
+dataLayer.push({
+  one: {
+    two: {
+      four: 4
+    }
+  },
+  five: [3],
+  _clear: true
+});
+    </pre></td>
+    <td><pre>
+dataLayer.push({
+  one: {
+    two: {
+      four: 4
+    },
+    _clear: true
+  },
+  five: [3]
+});
     </pre></td>
   </tr>
   <tr>
     <td><b>Resulting Model:</b></td>
     <td><pre>
-      {
-        one: {
-          two: {
-            four: 4
-          }
-        },
-        five: [3]
-      }
+{
+  one: {
+    two: {
+      four: 4
+    }
+  },
+  five: [3]
+}
     </pre></td>
-  </tr>
-</table>
-
-If you wish to target specific nested objects, you can do so:
-
-<table>
-  <tr>
-    <td><b>Existing Model:</b></td>
     <td><pre>
-      {
-        one: {
-          two: {
-            three: 3
-          }
-        },
-        five: [1, 2]
-      }
-    </pre></td>
-  </tr>
-  <tr>
-    <td><b>Message:</b></td>
-    <td><pre>
-      dataLayer.push({
-        one: {
-          two: {
-            four: 4
-          },
-          _clear: true
-        },
-        five: [3]
-      });
-    </pre></td>
-  </tr>
-  <tr>
-    <td><b>Resulting Model:</b></td>
-    <td><pre>
-      {
-        one: {
-          two: {
-            four: 4
-          }
-        },
-        five: [3, 2]
-      }
-    </pre></td>
-  </tr>
-</table>
-
-You can also use dot notation:
-
-<table>
-  <tr>
-    <td><b>Existing Model:</b></td>
-    <td><pre>
-      {
-        one: {
-          two: {
-            three: 3
-          }
-        }
-      }
-    </pre></td>
-  </tr>
-  <tr>
-    <td><b>Message:</b></td>
-    <td><pre>
-      dataLayer.push({
-        'one.two': {four: 4},
-        _clear: true
-      });
-    </pre></td>
-  </tr>
-  <tr>
-    <td><b>Resulting Model:</b></td>
-    <td><pre>
-      {
-        one: {
-          two: {
-            four: 4
-          }
-        }
-      }
+{
+  one: {
+    two: {
+      four: 4
+    }
+  },
+  five: [3, 2]
+}
     </pre></td>
   </tr>
 </table>
