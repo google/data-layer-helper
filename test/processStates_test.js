@@ -65,17 +65,6 @@ describe('The `processStates_` function of helper', () => {
     });
   });
 
-  it('handles merging with nested state arguments', () => {
-    assertProcessStates([
-        {'a.b': {f: 1}},
-        {'a.b.c': {d: 1}},
-        {'a.b.c': {e: 1}}],
-        {a: {b: {c: {d: 1, e: 1}, f: 1}}},
-        [[{a: {b: {f: 1}}}, {'a.b': {f: 1}}],
-        [{a: {b: {c: {d: 1}, f: 1}}}, {'a.b.c': {d: 1}}],
-        [{a: {b: {c: {d: 1, e: 1}, f: 1}}}, {'a.b.c': {e: 1}}]]);
-  });
-
   describe('the behavior with custom setter methods', () => {
     it('makes an overridding setter call', () => {
       const customMethod = function() {
