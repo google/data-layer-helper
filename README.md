@@ -188,31 +188,26 @@ to the message with the key/value pair(s) you are targeting. Here are some examp
 <table>
   <tr>
     <td><b>Existing Model:</b></td>
-    <td>
-<pre>{
+    <td><pre>{
   one: {
     two: {
       three: 3
     }
   },
   five: [1, 2]
-}</pre>
-    </td>
-    <td><pre>
-{
+}</pre></td>
+    <td><pre>{
   one: {
     two: {
       three: 3
     }
   },
   five: [1, 2]
-}
-    </pre></td>
+}</pre></td>
   </tr>
   <tr>
     <td><b>Message:</b></td>
-    <td>
-    <pre>dataLayer.push({
+    <td><pre>dataLayer.push({
   one: {
     two: {
       four: 4
@@ -221,8 +216,7 @@ to the message with the key/value pair(s) you are targeting. Here are some examp
   five: [3],
   _clear: true
 });</pre></td>
-    <td><pre>
-dataLayer.push({
+    <td><pre>dataLayer.push({
   one: {
     two: {
       four: 4
@@ -230,31 +224,26 @@ dataLayer.push({
     _clear: true
   },
   five: [3]
-});
-    </pre></td>
+});</pre></td>
   </tr>
   <tr>
     <td><b>Resulting Model:</b></td>
-    <td><pre>
-{
+    <td><pre>{
   one: {
     two: {
       four: 4
     }
   },
   five: [3]
-}
-    </pre></td>
-    <td><pre>
-{
+}</pre></td>
+    <td><pre>{
   one: {
     two: {
       four: 4
     }
   },
   five: [3, 2]
-}
-    </pre></td>
+}</pre></td>
   </tr>
 </table>
 
