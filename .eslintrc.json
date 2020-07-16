@@ -23,8 +23,9 @@
     // and sometimes it's useful to reference this in jasmine as there is
     // special handling.
     "no-invalid-this": "off",
-    "prefer-spread": "off", // as per Tagging ES6 guidelines
-    "indent": "off", // contradicts closure/indent,
-    "guard-for-in": "off" // we use the hasOwn function to validate object properties
+    "prefer-spread": "off", // As per Tagging ES6 guidelines.
+    "indent": "off", // Contradicts closure/indent.
+    // We use the hasOwn function to validate object properties.
+    "guard-for-in": "off" 
   }
 }
