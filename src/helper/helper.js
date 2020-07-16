@@ -169,15 +169,16 @@ class DataLayerHelper {
    * not to modify the state within the function using this.set.
    * Changes to the model should only be achieved by the return value, a
    * dict whose values will automatically be merged into the model.
+   *
    * Example:
    * // Suppose that the abstract data model is currently {a: 1}.
-   * dataLayerHelper.registerProcessor('add', function(numberToAdd){
-   *  const a = this.get('a');
-   *  return {sum: numberToAdd + a};
+   * dataLayerHelper.registerProcessor('add', function(numberToAdd) {
+   *   const a = this.get('a');
+   *   return {sum: numberToAdd + a};
    * });
-   * // The abstract data model is still {a:1}.
-   * commandAPI('add', 2)
-   * // The abstract data model is now {a:1, sum: 3}.
+   * // The abstract data model is still {a: 1}.
+   * commandAPI('add', 2);
+   * // The abstract data model is now {a: 1, sum: 3}.
    *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
