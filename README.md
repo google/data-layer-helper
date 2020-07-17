@@ -69,7 +69,7 @@ page, you can create a new helper object like this:
 const helper = new DataLayerHelper(dataLayer);
 ```
 
-This helper object will listen for new messages on the given 'dataLayer'.  Each new message will be 
+This helper object will listen for new messages on the given `dataLayer`.  Each new message will be 
 merged into the helper's **"abstract data model"**.  This internal model object holds the most recent
 value for all keys which have been set on messages processed by the helper. 
 
@@ -79,7 +79,7 @@ You can retrieve values from the data model by using the helper's get() method:
 helper.get('category');   // Returns "Science".
 ```
 
-As mentioned above, messages passed onto the 'dataLayer' can be hierarchical. For example, a page 
+As mentioned above, messages passed onto the `dataLayer` can be hierarchical. For example, a page 
 author might push the following message, which has data multiple levels deep:
 
 ```js
@@ -100,8 +100,9 @@ helper.get('one.two');           // Returns {three: 4}.
 ```
 ## The Abstract Data Model
 As mentioned above, the abstract data model is an internal representation, which holds
-the most recent value for all keys that have been set by a 'dataLayer' message. This 
-means that as each message is pushed onto the 'dataLayer, the abstract data model must 
+the most recent value for all keys that have been set by a `dataLayer` message. This 
+means that as each message is pushed onto the , the abstract data model must 
+`dataLayer`
 be updated. The helper library does this using a well-defined process. 
 
 As each message is processed, its key/value pairs will be added to the abstract data 
