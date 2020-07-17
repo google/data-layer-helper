@@ -19,7 +19,7 @@ This library provides the ability to process messages passed onto a dataLayer qu
   
 
 ## What is a dataLayer queue?
-A dataLayer queue is simply a JavaScript array that lives on a webpage. 
+A `dataLayer` queue is simply a JavaScript array that lives on a webpage. 
 
 ```html
 <script>
@@ -66,10 +66,10 @@ sourcing it from the page, or by compiling it into your own JavaScript library. 
 page, you can create a new helper object like this:
 
 ```js
-var helper = new DataLayerHelper(dataLayer);
+const helper = new DataLayerHelper(dataLayer);
 ```
 
-This helper object will listen for new messages on the given dataLayer.  Each new message will be 
+This helper object will listen for new messages on the given 'dataLayer'.  Each new message will be 
 merged into the helper's **"abstract data model"**.  This internal model object holds the most recent
 value for all keys which have been set on messages processed by the helper. 
 
@@ -79,7 +79,7 @@ You can retrieve values from the data model by using the helper's get() method:
 helper.get('category');   // Returns "Science".
 ```
 
-As mentioned above, messages passed onto the dataLayer can be hierarchical. For example, a page 
+As mentioned above, messages passed onto the 'dataLayer' can be hierarchical. For example, a page 
 author might push the following message, which has data multiple levels deep:
 
 ```js
@@ -100,8 +100,8 @@ helper.get('one.two');           // Returns {three: 4}.
 ```
 ## The Abstract Data Model
 As mentioned above, the abstract data model is an internal representation, which holds
-the most recent value for all keys that have been set by a dataLayer message. This 
-means that as each message is pushed onto the dataLayer, the abstract data model must 
+the most recent value for all keys that have been set by a 'dataLayer' message. This 
+means that as each message is pushed onto the 'dataLayer, the abstract data model must 
 be updated. The helper library does this using a well-defined process. 
 
 As each message is processed, its key/value pairs will be added to the abstract data 
@@ -119,9 +119,9 @@ we define three types of values:
 * Everything else
 
 Hopefully, JavaScript Arrays are self-explanatory. "Plain" Objects are JavaScript 
-objects that were created via Object literal notation (e.g. {one: 2}) or via "new Object".
-Nulls, Dates, RegExps, Windows, DOM Elements, etc. are not "Plain". Those fall into the 
-category of "everything else", along with strings, numbers, booleans, undefined, etc.  
+objects that were created via Object literal notation (e.g. `{one: 2}`) or via `new Object`.
+`Nulls`, `Dates`, `RegExps`, `Windows`, `DOM Elements`, etc. are not "Plain". Those fall into the 
+category of "everything else", along with `strings`, `numbers`, `booleans`, `undefined`, etc.  
 
 Once the type of the new and existing values has been categorized this way, we can use the 
 following table to describe what action will happen for that key/value pair:
@@ -345,7 +345,7 @@ The following example demonstrates updating a nested value:
   <tr>
     <td><b>Custom function:</b></td>
     <td><pre>dataLayer.push(function() {
-  var ccc = this.get('aaa.bbb.ccc');
+  const ccc = this.get('aaa.bbb.ccc');
   ccc.push(ccc.pop() * 2);
 })</pre></td>
   </tr>
@@ -380,7 +380,7 @@ The following example demonstrates overwriting a value:
 </table>
 
 ## Listening for Messages
-When creating a DataLayerHelper object, you can also specify a callback function to be called 
+When creating a `DataLayerHelper` object, you can also specify a callback function to be called 
 whenever a message is pushed onto the given dataLayer. This allows your code to be notified
 immediately whenever the dataLayer has been updated, which is a key advantage of the message
 queue approach.
@@ -391,13 +391,13 @@ function listener(model, message) {
   // The helper has merged it onto the model.
   // Now use the message and the updated model to do something.
 }
-var helper = new DataLayerHelper(dataLayer, listener);
+const helper = new DataLayerHelper(dataLayer, listener);
 ```
 
 ### Processing the Past
 Tools that are loaded onto the page asynchronously or lazily will appreciate that you can also
 opt to process message that were pushed onto the dataLayer in the past. This can be done by 
-passing true as the third parameter in the DataLayerHelper constructor.
+passing true as the third parameter in the `DataLayerHelper` constructor.
 
 ```js
 function listener(model, message) {
@@ -405,7 +405,7 @@ function listener(model, message) {
   // The helper has merged it onto the model.
   // Now use the message and the updated model to do something.
 }
-var helper = new DataLayerHelper(dataLayer, listener, true);
+const helper = new DataLayerHelper(dataLayer, listener, true);
 ```
 
 Using this option means that your listener callback will be called once for every message that
@@ -425,21 +425,21 @@ in [recursively merging values](#recursively-merging-values).
 First, set up a commandAPI
 ```js
 const dataLayer = [];
-const dlh = new DataLayerHelper(dataLayer);
+const helper = new DataLayerHelper(dataLayer);
 function commandAPI() {
   dataLayer.push(arguments);
 }
 ```
 Next, use the register processor function.
 ```js
-dlh.registerProcessor('add', function(number1, number2){
-  // the return value will be merged into the model
+helper.registerProcessor('add', function(number1, number2) {
+  // The return value will be merged into the model.
   return {sum: number1 + number2};
 });
 
 // Important: to access the model using this,
 // registered processors must not be arrow functions.
-dlh.registerProcessor('copy', function(){
+helper.registerProcessor('copy', function() {
   const sum = this.get('sum');
   // We could also do this.set('ans', sum), but changing
   // the model inside of a registered processor is discouraged.
@@ -452,12 +452,12 @@ dlh.registerProcessor('copy', function(){
 // this function will be called second. However, it still will not
 // update finalAns on the first call, because updates from return values
 // won't be merged into the model until all functions have been called.
-dlh.registerProcessor('copy', function(){
+helper.registerProcessor('copy', function() {
   const ans = this.get('ans');
   return {finalAns: ans};
 });
 ```
-The above functions won't be called until we call the commandAPI with the first parameter equal to the first parameter of registerProcessor.
+The above functions won't be called until we call the commandAPI with the first parameter equal to the first parameter of `registerProcessor`.
 ```js
 // Abstract data model is {}.
 commandAPI('add', 'a', 1, 2);
@@ -511,13 +511,6 @@ cd data-layer-helper
 yarn install
 ```
 
-Enter the third_party/closure-linter directory and install the Closure linter:
-
-```bash
-cd third_party/closure-linter
-python setup.py install
-```
-
 Make sure you have `grunt` installed. From the root directory of the project, run:
 
 ```bash
@@ -532,20 +525,19 @@ grunt
 
 The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
 
-This library is being modernized, and the tests are being moved.
 To run the tests for more than a single run, you will need to first install karma globally:
 
 ```bash
 yarn global add karma
 ```
 
-You can run all of the unit tests with the command
+You can run the unit tests from the root directory with the command
 
 ```bash
 karma start
 ```
 
-You can run all of the integration tests from the root directory with the command
+You can run the integration tests from the root directory with the command
 
 ```bash
 karma start test/integration/karma.conf.js
