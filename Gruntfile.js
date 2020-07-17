@@ -43,24 +43,65 @@ module.exports = function(grunt) {
             'src/plain/**.js',
           ],
           hide_warnings_for: 'google-closure-library',
+          warning_level: 'VERBOSE',
           compilation_level: 'ADVANCED_OPTIMIZATIONS',
-          language_in: 'ECMASCRIPT6',
+          language_in: 'ECMASCRIPT6_STRICT',
+          language_out: 'ECMASCRIPT5_STRICT',
           output_wrapper: '(function(){%output%})();',
           jscomp_warning: 'lintChecks',
         },
       },
     },
-    'qunit': {
-      files: ['test/unit.html', 'test/integration.html'],
+    'karma': {
+      options: {
+        singleRun: true,
+      },
+      unit: {
+        configFile: 'karma.conf.js',
+      },
+      integration: {
+        configFile: 'test/integration/karma.conf.js',
+      },
+      unitBrowsers: {
+        options: {
+          frameworks: ['jasmine', 'detectBrowsers'],
+          detectBrowsers: {
+            enabled: true,
+            // Don't try to load phantomJS, it may not exist.
+            usePhantomJS: false,
+          },
+          flags: ['--no-sandbox'],
+        },
+        configFile: 'karma.conf.js',
+      },
+      integrationBrowsers: {
+        options: {
+          frameworks: ['jasmine', 'detectBrowsers'],
+          detectBrowsers: {
+            enabled: true,
+            // Don't try to load phantomJS, it may not exist.
+            usePhantomJS: false,
+          },
+          flags: ['--no-sandbox'],
+        },
+        configFile: 'test/integration/karma.conf.js',
+      },
     },
   });
 
-  grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-closure-tools');
 
   grunt.registerTask('default', [
     'closureDepsWriter',
     'closure-compiler',
-    'qunit',
+    'karma:unit',
+    'karma:integration',
+  ]);
+
+  grunt.registerTask('test', [
+    'closure-compiler',
+    'karma:unitBrowsers',
+    'karma:integrationBrowsers',
   ]);
 };

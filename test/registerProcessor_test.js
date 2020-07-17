@@ -5,7 +5,7 @@ const {DataLayerHelper} = goog.require('helper');
 
 describe('The registerProcessor method of helper', () => {
   let dataLayer;
-  let dlh;
+  let dataLayerHelper;
   let commandAPI;
   let spy;
   beforeEach(() => {
@@ -13,13 +13,27 @@ describe('The registerProcessor method of helper', () => {
     commandAPI = function() {
       dataLayer.push(arguments);
     };
-    dlh = new DataLayerHelper(dataLayer);
+    dataLayerHelper = new DataLayerHelper(dataLayer);
     spy = jasmine.createSpy('spy');
+  });
+
+  describe('the examples in documentation', () => {
+    it('is consistent with the documentation in helper.js', () => {
+      dataLayerHelper.registerProcessor('add', function(numberToAdd) {
+        const a = this.get('a');
+        return {sum: numberToAdd + a};
+      });
+      dataLayer.push({a: 1});
+      commandAPI('add', 2);
+
+      expect(dataLayerHelper.get('a')).toBe(1);
+      expect(dataLayerHelper.get('sum')).toBe(3);
+    });
   });
 
   describe('the function registration process', () => {
     it('allows registration of functions with arbitrary names', () => {
-      dlh.registerProcessor('!This funct%n @m@zing~0.0', spy);
+      dataLayerHelper.registerProcessor('!This funct%n @m@zing~0.0', spy);
       commandAPI('!This funct%n @m@zing~0.0');
 
       expect(spy).toHaveBeenCalledWith();
@@ -29,9 +43,9 @@ describe('The registerProcessor method of helper', () => {
   describe('order of calling registered functions', () => {
     it('calls registered functions only when the commandAPI ' +
         'fires the appropriate event', () => {
-      dlh.registerProcessor('process', () => {
+      dataLayerHelper.registerProcessor('process', () => {
         spy('a');
-        dlh.registerProcessor('process', () => {
+        dataLayerHelper.registerProcessor('process', () => {
           spy('b');
         });
       });
@@ -40,20 +54,34 @@ describe('The registerProcessor method of helper', () => {
       expect(spy.calls.allArgs()).toEqual([['a']]);
     });
 
+    it('calls registered functions when the commandAPI ' +
+        'fires the appropriate event, no matter where it was called', () => {
+      dataLayerHelper.registerProcessor('process', () => {
+        spy('a');
+        dataLayerHelper.registerProcessor('process2', () => {
+          spy('b');
+        });
+        commandAPI('process2');
+      });
+      commandAPI('process');
+
+      expect(spy.calls.allArgs()).toEqual([['a'], ['b']]);
+    });
+
     it('calls registered functions in the order they were registered',
         () => {
-          dlh.registerProcessor('myMostFantasticFunction', () => spy('a'));
-          dlh.registerProcessor('myMostFantasticFunction', () => spy('b'));
-          dlh.registerProcessor('myMostFantasticFunction', () => spy('c'));
-          commandAPI('myMostFantasticFunction');
+          dataLayerHelper.registerProcessor('myFunction', () => spy('a'));
+          dataLayerHelper.registerProcessor('myFunction', () => spy('b'));
+          dataLayerHelper.registerProcessor('myFunction', () => spy('c'));
+          commandAPI('myFunction');
 
           expect(spy.calls.allArgs()).toEqual([['a'], ['b'], ['c']]);
         });
 
 
     it('is called before the default listener', () => {
-      dlh = new DataLayerHelper(dataLayer, () => spy('a'));
-      dlh.registerProcessor('method', () => spy('b'));
+      dataLayerHelper = new DataLayerHelper(dataLayer, () => spy('a'));
+      dataLayerHelper.registerProcessor('method', () => spy('b'));
       commandAPI('method');
 
       expect(spy.calls.allArgs()).toEqual([['b'], ['a']]);
@@ -69,8 +97,8 @@ describe('The registerProcessor method of helper', () => {
       const f2 = () => {
         spy('b');
       };
-      dlh = new DataLayerHelper(dataLayer, f1);
-      dlh.registerProcessor('method', f2);
+      dataLayerHelper = new DataLayerHelper(dataLayer, f1);
+      dataLayerHelper.registerProcessor('method', f2);
       commandAPI('Crazy command');
 
       expect(spy.calls.allArgs()).toEqual([['a'], ['b'], ['a']]);
@@ -78,26 +106,26 @@ describe('The registerProcessor method of helper', () => {
 
     it('does not update the model until all processors have run', () => {
       dataLayer.push({'5': 10});
-      dlh.registerProcessor('operate', function() {
+      dataLayerHelper.registerProcessor('operate', function() {
         expect(this.get('5')).toBe(10);
-        expect(dlh.get('5')).toBe(10);
+        expect(dataLayerHelper.get('5')).toBe(10);
         return {5: 20};
       });
-      dlh.registerProcessor('operate', function() {
+      dataLayerHelper.registerProcessor('operate', function() {
         expect(this.get('5')).toBe(10);
-        expect(dlh.get('5')).toBe(10);
+        expect(dataLayerHelper.get('5')).toBe(10);
         return {5: 30};
       });
       commandAPI('operate');
 
-      expect(dlh.get('5')).toBe(30);
+      expect(dataLayerHelper.get('5')).toBe(30);
     });
   });
 
   describe('the parameters of a registered command', () => {
     it('can access the model through the this keyword', () => {
       dataLayer.push({'a': {'b': 4, 'c': 'bad'}}, {'x': []});
-      dlh.registerProcessor('peek', function() {
+      dataLayerHelper.registerProcessor('peek', function() {
         expect(this.get('a')).toEqual({'b': 4, 'c': 'bad'});
         expect(this.get('x')).toEqual([]);
       });
@@ -106,7 +134,7 @@ describe('The registerProcessor method of helper', () => {
 
     it('takes any number of additional arguments passed to the command API',
         () => {
-          dlh.registerProcessor('alphabet',
+          dataLayerHelper.registerProcessor('alphabet',
               (a, b, c, d, e, f, g, h) => {
                 expect(a + b + c + d + e + f + g + h).toBe('abcdefgh');
               });
@@ -114,7 +142,7 @@ describe('The registerProcessor method of helper', () => {
         });
 
     it('can accept parameters of any type', () => {
-      dlh.registerProcessor('method', ({array, date}, ...rest) => {
+      dataLayerHelper.registerProcessor('method', ({array, date}, ...rest) => {
         expect(array).toEqual([1, 6, 28]);
         expect(date).toEqual(new Date(2000, 0));
         expect(rest).toEqual([1, 'rats', 2006]);
@@ -131,40 +159,40 @@ describe('The registerProcessor method of helper', () => {
         });
 
         it('can create a new field in the model', () => {
-          dlh.registerProcessor('method', (eventName, params) => {
+          dataLayerHelper.registerProcessor('method', (eventName, params) => {
             return {
               'last_event': `${eventName} ${params['target']}`,
             };
           });
           commandAPI('method', 'click', {'target': 'button'});
 
-          expect(dlh.get('last_event')).toBe('click button');
+          expect(dataLayerHelper.get('last_event')).toBe('click button');
         });
 
         it('can overwrite nested fields of the model', () => {
-          dlh.registerProcessor('event', () => {
+          dataLayerHelper.registerProcessor('event', () => {
             return {
               'b': {'a': [3]},
             };
           });
           commandAPI('event');
 
-          expect(dlh.get('b.a')).toEqual([3]);
+          expect(dataLayerHelper.get('b.a')).toEqual([3]);
         });
 
         it('can add new nested fields of the model', () => {
-          dlh.registerProcessor('event', () => {
+          dataLayerHelper.registerProcessor('event', () => {
             return {
               'b': {'b': 2},
             };
           });
           commandAPI('event');
 
-          expect(dlh.get('b')).toEqual({'a': [1], 'b': 2});
+          expect(dataLayerHelper.get('b')).toEqual({'a': [1], 'b': 2});
         });
 
         it('can update nested fields of the model', () => {
-          dlh.registerProcessor('event', function() {
+          dataLayerHelper.registerProcessor('event', function() {
             const array = this.get('b.a');
             array.push(2);
             return {
@@ -173,21 +201,21 @@ describe('The registerProcessor method of helper', () => {
           });
           commandAPI('event');
 
-          expect(dlh.get('b')).toEqual({'a': [1, 2]});
+          expect(dataLayerHelper.get('b')).toEqual({'a': [1, 2]});
         });
 
         it('sets the model according to the return value', () => {
           dataLayer.push({'a': {'b': 4, 'c': 'bad'}});
-          dlh.registerProcessor('make good', () => {
+          dataLayerHelper.registerProcessor('make good', () => {
             return {'a': {'c': 'good'}};
           });
           commandAPI('make good');
 
-          expect(dlh.get('a')).toEqual({'b': 4, 'c': 'good'});
+          expect(dataLayerHelper.get('a')).toEqual({'b': 4, 'c': 'good'});
         });
 
         it('can access the abstract model interface through this', () => {
-          dlh.registerProcessor('event', function() {
+          dataLayerHelper.registerProcessor('event', function() {
             const init = this.get('b.a');
             this.set('b.a', 'new');
             const end = this.get('b.a');
@@ -197,17 +225,17 @@ describe('The registerProcessor method of helper', () => {
           });
           commandAPI('event');
 
-          expect(dlh.get('b')).toEqual({'a': 'new'});
+          expect(dataLayerHelper.get('b')).toEqual({'a': 'new'});
         });
       });
 
   describe(`the registered command's connection to a command API`, () => {
     it('can call the command API', () => {
-      dlh.registerProcessor('method', () => {
+      dataLayerHelper.registerProcessor('method', () => {
         spy('a');
         commandAPI('method2');
       });
-      dlh.registerProcessor('method2', () => {
+      dataLayerHelper.registerProcessor('method2', () => {
         spy('b');
       });
       commandAPI('method');
@@ -216,7 +244,7 @@ describe('The registerProcessor method of helper', () => {
     });
 
     it('can call itself with command API', () => {
-      dlh.registerProcessor('method', () => {
+      dataLayerHelper.registerProcessor('method', () => {
         if (spy.calls.count() < 5) {
           spy('a');
           commandAPI('method');
