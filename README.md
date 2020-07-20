@@ -187,6 +187,10 @@ to the message with the key/value pair(s) you are targeting. Here are some examp
 
 Existing Value                         | New Value                                        | Result of Overwrite
 ---------------------------------------|--------------------------------------------------|--------------------------------------
+{a: [1]}                               | {a: [], _clear: true}                            | {a: []}
+{a: {x: 1}}                            | {a: {}, _clear: 1}                               | {a: {}}
+{a: [undefined, 2]}                    | {a: [1], _clear: true}                           | {a: [1]}
+{a: {x: undefined, y: 2}}              | {a: {x: 1}, _clear: true}                        | {a: {x: 1}}
 {one: {two: {three: 3}}, five: [1, 2]} | {one: {two: {four: 4}}, five: [3], _clear: true} | {one: {two: {four: 4}}, five: [3]}
 {one: {two: {three: 3}}, five: [1, 2]} | {one: {two: {four: 4}, _clear: true}, five: [3]} | {one: {two: {four: 4}}, five: [3, 2]}
 
