@@ -61,7 +61,8 @@ const DLH_DEBUG = goog.define('DLH_DEBUG', false);
  * This internal model object holds the most recent value for all keys which
  * have been set on messages processed by the helper.
  *
- * You can retrieve values from the data model by using the helper's 'get' method.
+ * You can retrieve values from the data model by using the helper's 'get'
+ * method.
  */
 class DataLayerHelper {
   /**
@@ -87,7 +88,8 @@ class DataLayerHelper {
     this.listener_ = listener;
 
     /**
-     * The internal marker for checking if the listener is currently on the stack.
+     * The internal marker for checking if the listener
+     * is currently on the stack.
      * @private {boolean}
      */
     this.executingListener_ = false;
@@ -106,17 +108,22 @@ class DataLayerHelper {
     this.unprocessed_ = [];
 
     /**
+     * The internal map of processors to run.
+     * @private @const {!Object<string, !Array<function(*):!Object>>}
+     */
+    this.commandProcessors_ = {};
+
+    /**
      * The interface to the internal dataLayer model that is exposed to custom
-     * methods. Custom methods will the executed with this interface as the value
-     * of 'this', allowing users to manipulate the model using this.get and
-     * this.set.
+     * methods. Custom methods will the executed with this interface as the
+     * value of 'this', allowing users to manipulate the model using
+     * this.get and this.set.
      * @private @const {!Object<*>}
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
     // Process the existing/past states.
     this.processStates_(dataLayer, !listenToPast);
-
     // Add listener for future state changes.
     const oldPush = dataLayer.push;
     const that = this;
@@ -157,6 +164,74 @@ class DataLayerHelper {
     merge_(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
   }
 
+
+  /**
+   * Register a function to respond to events with a certain name called by
+   * the command API by storing it in a map. The function will be called an
+   * time the commandAPI is called with first parameter the string name.
+   *
+   * ---- USAGE ----
+   * If the processor function is not an arrow function, then it can access the
+   * abstract model interface by using the 'this' keyword. It is recommended
+   * not to modify the state within the function using this.set.
+   * Changes to the model should only be achieved by the return value, a
+   * dict whose values will automatically be merged into the model.
+   *
+   * Example:
+   * // Suppose that the abstract data model is currently {a: 1}.
+   * dataLayerHelper.registerProcessor('add', function(numberToAdd) {
+   *   const a = this.get('a');
+   *   return {sum: numberToAdd + a};
+   * });
+   * // The abstract data model is still {a: 1}.
+   * commandAPI('add', 2);
+   * // The abstract data model is now {a: 1, sum: 3}.
+   *
+   * @param {string} name The string which should be passed into the command API
+   *     to call the processor.
+   * @param {function(*):!Object} processor The callback function to register.
+   *    Will be invoked when an arguments object whose first parameter is name
+   *    is pushed to the data layer.
+   * @this {DataLayerHelper}
+   */
+  registerProcessor(name, processor) {
+    if (!(name in this.commandProcessors_)) {
+      this.commandProcessors_[name] = [];
+    }
+    this.commandProcessors_[name].push(processor);
+  }
+
+  /**
+   * Applies the given command to the value in the dataLayer with the given key.
+   * If a processor for the command has been registered, the processor function
+   * will be invoked with any arguments passed in.
+   *
+   * @param {!Array<*>} args The arguments object containing the command
+   *     to execute and optional arguments for the processor.
+   * @return {!Array<!Object<*>>} states The updates requested to
+   *     the model state, in the order they should be processed.
+   * @private
+   */
+  processArguments_(args) {
+    // Run all registered processors associated with this command.
+    const states = [];
+    const name = /** @type {string} */ (args[0]);
+    if (this.commandProcessors_[name]) {
+      // Cache length so as not to run processors registered
+      // by other processors after the call.
+      // This could happen if somebody calls the registerProcessor() method
+      // within a processor call.
+      const length = this.commandProcessors_[name].length;
+      for (let i = 0; i < length; i++) {
+        const callback = this.commandProcessors_[name][i];
+        states.push(callback.apply(this.abstractModelInterface_,
+            [].slice.call(args, 1)));
+      }
+    }
+    return states;
+  }
+
+
   /**
    * Merges the given update objects (states) onto the helper's model, calling
    * the listener each time the model is updated. If a command array is pushed
@@ -181,7 +256,9 @@ class DataLayerHelper {
       if (isArray_(update)) {
         processCommand_(/** @type {!Array<*>} */ (update), this.model_);
       } else if (isArguments_(update)) {
-        processArguments_(/** @type {!Object<*>} */ (update), this.model_);
+        const newStates = this.processArguments_(
+            /** @type {!Array<*>} */(update));
+        this.unprocessed_.push.apply(this.unprocessed_, newStates);
       } else if (typeof update == 'function') {
         try {
           update.call(this.abstractModelInterface_);
@@ -282,20 +359,6 @@ function processCommand_(command, model) {
 }
 
 /**
- * Applies the given command to the value in the dataLayer with the given key.
- * If a processor for the command has been registered, the processor function
- * will be invoked with any arguments passed in.
- *
- * @param {!Object<*>} args The arguments object containing the command
- *     to execute and optional arguments for the processor.
- * @param {!Object<*>} model The current dataLayer model.
- * @private
- */
-function processArguments_(args, model) {
-  // TODO: add process command code
-}
-
-/**
  * Converts the given key value pair into an object that can be merged onto
  * another object. Specifically, this method treats dots in the key as path
  * separators, so the key/value pair:
@@ -332,7 +395,7 @@ function expandKeyValue_(key, value) {
  * @private
  */
 function isArray_(value) {
-  return type(value) == 'array';
+  return type(value) === 'array';
 }
 
 /**
@@ -355,7 +418,7 @@ function isArguments_(value) {
  * @private
  */
 function isString_(value) {
-  return type(value) == 'string';
+  return type(value) === 'string';
 }
 
 
@@ -393,7 +456,6 @@ exports = {
   DataLayerHelper,
   buildAbstractModelInterface_,
   processCommand_,
-  processArguments_,
   expandKeyValue_,
   isArray_,
   isArguments_,
