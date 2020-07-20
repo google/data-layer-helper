@@ -185,67 +185,10 @@ To prevent the default recursive merging behavior, a flag can be passed in adjac
 to the object(s) or array(s) you wish to prevent merging. To do so, add a truthy '_clear' attribute 
 to the message with the key/value pair(s) you are targeting. Here are some examples:
 
-<table>
-  <tr>
-    <td><b>Existing Model:</b></td>
-    <td><pre>{
-  one: {
-    two: {
-      three: 3
-    }
-  },
-  five: [1, 2]
-}</pre></td>
-    <td><pre>{
-  one: {
-    two: {
-      three: 3
-    }
-  },
-  five: [1, 2]
-}</pre></td>
-  </tr>
-  <tr>
-    <td><b>Message:</b></td>
-    <td><pre>dataLayer.push({
-  one: {
-    two: {
-      four: 4
-    }
-  },
-  five: [3],
-  _clear: true
-});</pre></td>
-    <td><pre>dataLayer.push({
-  one: {
-    two: {
-      four: 4
-    },
-    _clear: true
-  },
-  five: [3]
-});</pre></td>
-  </tr>
-  <tr>
-    <td><b>Resulting Model:</b></td>
-    <td><pre>{
-  one: {
-    two: {
-      four: 4
-    }
-  },
-  five: [3]
-}</pre></td>
-    <td><pre>{
-  one: {
-    two: {
-      four: 4
-    }
-  },
-  five: [3, 2]
-}</pre></td>
-  </tr>
-</table>
+Existing Value                         | New Value                                        | Result of Overwrite
+---------------------------------------|--------------------------------------------------|--------------------------------------
+{one: {two: {three: 3}}, five: [1, 2]} | {one: {two: {four: 4}}, five: [3], _clear: true} | {one: {two: {four: 4}}, five: [3]}
+{one: {two: {three: 3}}, five: [1, 2]} | {one: {two: {four: 4}, _clear: true}, five: [3]} | {one: {two: {four: 4}}, five: [3, 2]}
 
 ### Meta Commands
 Using the above methods alone, some operations on the abstract model are somewhat cumbersome.
