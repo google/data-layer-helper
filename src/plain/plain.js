@@ -21,7 +21,7 @@ goog.module('datalayerhelper.plain');
  * @const
  */
 const TYPE_RE_ =
-    /\[object (Boolean|Number|String|Function|Array|Date|RegExp|Arguments)]/;
+    /\[object (Boolean|Number|String|Function|Array|Date|RegExp|Arguments)\]/;
 
 
 /**
@@ -75,9 +75,9 @@ function hasOwn(value, key) {
  * @return {boolean} True iff the given value is a "plain" object.
  */
 function isPlainObject(value) {
-  if (!value || type(value) !== 'object' || // Nulls, dates, etc.
+  if (!value || type(value) != 'object' || // Nulls, dates, etc.
       value.nodeType || // DOM nodes.
-      value === value.window) { // Window objects.
+      value == value.window) { // Window objects.
     return false;
   }
   try {

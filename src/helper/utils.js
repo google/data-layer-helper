@@ -58,7 +58,6 @@ function expandKeyValue_(key, value) {
   return result;
 }
 
-
 /**
  * Determines if the given value is an array.
  *
@@ -81,7 +80,6 @@ function isArguments_(value) {
   return type(value) === 'arguments';
 }
 
-
 /**
  * Determines if the given value is a string.
  *
@@ -92,7 +90,6 @@ function isArguments_(value) {
 function isString_(value) {
   return type(value) === 'string';
 }
-
 
 /**
  * Merges one object into another or one array into another. Scalars and
@@ -108,13 +105,14 @@ function isString_(value) {
  * @private
  */
 function merge_(from, to) {
+  const allowMerge = !from['_clear'];
   for (const property in from) {
     if (hasOwn(from, property)) {
       const fromProperty = from[property];
-      if (isArray_(fromProperty)) {
+      if (isArray_(fromProperty) && allowMerge) {
         if (!isArray_(to[property])) to[property] = [];
         merge_(fromProperty, to[property]);
-      } else if (isPlainObject(fromProperty)) {
+      } else if (isPlainObject(fromProperty) && allowMerge) {
         if (!isPlainObject(to[property])) to[property] = {};
         merge_(fromProperty, to[property]);
       } else {
@@ -122,6 +120,7 @@ function merge_(from, to) {
       }
     }
   }
+  delete to['_clear'];
 }
 
 exports = {
