@@ -6,6 +6,7 @@ This library provides the ability to process messages passed onto a dataLayer qu
 - [The Abstract Data Model](#the-abstract-data-model)
     - [Overwriting Existing Values](#overwriting-existing-values)
     - [Recursively Merging Values](#recursively-merging-values)
+    - [Preventing Default Recursive Merge](#preventing-default-recursive-merge)
     - [Meta Commands](#meta-commands)
     - [Native Methods](#native-methods)
     - [Custom Methods](#custom-methods)
@@ -109,8 +110,8 @@ to specify how values will be overwritten and/or merged.
 
 There are two possible actions to take when merging a key/value pair onto the abstract 
 model; overwriting the existing value or recursively merging the new value onto the 
-existing value. The action taken will depend on the type of the two values. For this, 
-we define three types of values:
+existing value. The action taken will depend on the type of the two values unless explicitly 
+overriden. For this, we define three types of values:
 
 * JavaScript Arrays
 * "Plain" Objects
@@ -124,7 +125,7 @@ category of "everything else", along with strings, numbers, booleans, undefined,
 Once the type of the new and existing values has been categorized this way, we can use the 
 following table to describe what action will happen for that key/value pair:
 
-Existing Value | New Value    | Merging Action
+Existing Value | New Value    | Default Merging Action
 ---------------|--------------|--------------------------
 Array          | Array        | Recursively merge
 Array          | Plain Object | Overwrite existing value
@@ -174,6 +175,24 @@ Notice that an index in a new value array that has been explicitly set to undefi
 overwrite the corresponding index in the existing array, however an index that has not been
 set to any value (i.e. empty values in a sparse array) will not overwrite the corresponding
 index in the existing array, even though value at both indexes evaluates to undefined.
+
+### Preventing Default Recursive Merge
+Occasionally you may want to avoid persisting values from earlier in the application state. 
+This is especially true for single page applications where you may not want outdated information 
+in the data model when routing between pages.
+
+To prevent the default recursive merging behavior, a flag can be passed in adjacent 
+to the object(s) or array(s) you wish to prevent merging. To do so, add a truthy '_clear' attribute 
+to the message with the key/value pair(s) you are targeting. Here are some examples:
+
+Existing Value                         | New Value                                        | Result of Overwrite
+---------------------------------------|--------------------------------------------------|--------------------------------------
+{a: [1]}                               | {a: [], _clear: true}                            | {a: []}
+{a: {x: 1}}                            | {a: {}, _clear: 1}                               | {a: {}}
+{a: [undefined, 2]}                    | {a: [1], _clear: true}                           | {a: [1]}
+{a: {x: undefined, y: 2}}              | {a: {x: 1}, _clear: true}                        | {a: {x: 1}}
+{one: {two: {three: 3}}, five: [1, 2]} | {one: {two: {four: 4}}, five: [3], _clear: true} | {one: {two: {four: 4}}, five: [3]}
+{one: {two: {three: 3}}, five: [1, 2]} | {one: {two: {four: 4}, _clear: true}, five: [3]} | {one: {two: {four: 4}}, five: [3, 2]}
 
 ### Meta Commands
 Using the above methods alone, some operations on the abstract model are somewhat cumbersome.
