@@ -429,3 +429,10 @@ exports = {
   isString_,
   merge_,
 };
+
+// Closure compiler advanced optimizations seems broken
+// because it ignores this function if I do not include this line,
+// see https://github.com/Alex7Li/data-layer-helper/tree/minimalbrokenexample.
+DataLayerHelper.prototype['registerProcessor'] =
+    // eslint-disable-next-line no-self-assign
+    DataLayerHelper.prototype.registerProcessor;
