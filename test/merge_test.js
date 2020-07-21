@@ -3,10 +3,10 @@
  * In this test file, when referring to a variable of 'other' type,
  * we mean a type which is neither an array nor a plain object.
  */
-goog.module('datalayerhelper.helper.testing.merge_');
+goog.module('datalayerhelper.helper.utils.testing.merge_');
 goog.setTestOnly();
 
-const {isArray_, merge_} = goog.require('helper');
+const {isArray_, merge_} = goog.require('datalayerhelper.helper.utils');
 
 describe('The `merge` function of helper', () => {
   /**

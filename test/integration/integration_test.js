@@ -23,8 +23,13 @@ describe('The data layer helper library', () => {
       expect(typeof helper.flatten).toBe('function');
     });
 
+    it('has the function registerProcessor', () => {
+      expect(typeof helper.registerProcessor).toBe('function');
+    });
+
     it('does not expose any private helper functions', () => {
       expect(helper.processStates_).toBeUndefined();
+      expect(helper.processCommand_).toBeUndefined();
       expect(helper.expandKeyValue_).toBeUndefined();
       expect(helper.isArray_).toBeUndefined();
       expect(helper.merge_).toBeUndefined();

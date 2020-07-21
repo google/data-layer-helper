@@ -35,12 +35,13 @@ module.exports = function(grunt) {
     'closure-compiler': {
       my_target: {
         files: {
-          'dist/data-layer-helper.js': 'src/helper/**.js',
+          'dist/data-layer-helper.js': 'src/helper/helper.js',
         },
         options: {
           js: [
             'node_modules/google-closure-library/closure/goog/base.js',
-            'src/plain/**.js',
+            'src/plain/plain.js',
+            'src/helper/utils.js',
           ],
           hide_warnings_for: 'google-closure-library',
           warning_level: 'VERBOSE',

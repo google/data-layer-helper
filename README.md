@@ -1,6 +1,7 @@
 # Data Layer Helper Library
 This library provides the ability to process messages passed onto a dataLayer queue.
 
+- [Quick Start](#quick-start)
 - [Background](#what-is-a-datalayer-queue)
 - [Why Do We Need a Library?](#why-do-we-need-a-library)
 - [The Abstract Data Model](#the-abstract-data-model)
@@ -16,6 +17,24 @@ This library provides the ability to process messages passed onto a dataLayer qu
 - [Build and Test](#build-and-test)
 - [License](#license)
   
+
+## Quick Start
+First, install the package with your favorite package manager
+```bash
+npm install data-layer-helper --save-dev
+// or
+yarn add data-layer-helper --dev
+```
+
+Next, require the code in your javascript
+```js
+import 'node_modules/data-layer-helper/dist/data-layer-helper';
+```
+
+For the development version (bigger file size, but reports possible errors to the console)
+```js
+import 'node_modules/data-layer-helper/dist/data-layer-helper-test-debug';
+````
 
 ## What is a dataLayer queue?
 A dataLayer queue is simply a JavaScript array that lives on a webpage. 
@@ -97,6 +116,7 @@ Using the helper, you can retrieve the nested value using dot-notation:
 helper.get('one.two.three');     // Returns 4.
 helper.get('one.two');           // Returns {three: 4}.
 ```
+
 ## The Abstract Data Model
 As mentioned above, the abstract data model is an internal representation, which holds
 the most recent value for all keys that have been set by a dataLayer message. This 

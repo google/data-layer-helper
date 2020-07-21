@@ -1,7 +1,7 @@
-goog.module('datalayerhelper.helper.testing.isArray_');
+goog.module('datalayerhelper.helper.utils.testing.isArray_');
 goog.setTestOnly();
 
-const {isArray_} = goog.require('helper');
+const {isArray_} = goog.require('datalayerhelper.helper.utils');
 
 describe('The `isArray_` function of helper', () => {
   /**

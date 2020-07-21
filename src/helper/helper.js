@@ -23,7 +23,7 @@
  * a queue so that the page can record changes to its state. For example, a
  * page might start with the following dataLayer in its head section:
  *
- *   var dataLayer = [{
+ *   const dataLayer = [{
  *     title: 'Original page title'
  *   }];
  *
@@ -44,9 +44,9 @@
  * @author bkuhn@google.com (Brian Kuhn)
  */
 
-goog.module('helper');
-
-const {type, hasOwn, isPlainObject} = goog.require('plain');
+goog.module('datalayerhelper.helper.DataLayerHelper');
+const {expandKeyValue_, isArray_, isArguments_, merge_, processCommand_} = goog.require('datalayerhelper.helper.utils');
+const {isPlainObject} = goog.require('datalayerhelper.plain');
 
 /**
  * A helper that will listen for new messages on the given dataLayer.
@@ -186,6 +186,7 @@ class DataLayerHelper {
    *    Will be invoked when an arguments object whose first parameter is name
    *    is pushed to the data layer.
    * @this {DataLayerHelper}
+   * @private
    */
   registerProcessor(name, processor) {
     if (!(name in this.commandProcessors_)) {
@@ -421,11 +422,11 @@ function merge_(from, to) {
 
 exports = {
   DataLayerHelper,
-  buildAbstractModelInterface_,
-  processCommand_,
-  expandKeyValue_,
-  isArray_,
-  isArguments_,
-  isString_,
-  merge_,
 };
+
+// Closure compiler advanced optimizations seems broken
+// because it ignores this function if I do not include this line,
+// see https://github.com/Alex7Li/data-layer-helper/tree/minimalbrokenexample.
+DataLayerHelper.prototype['registerProcessor'] =
+    // eslint-disable-next-line no-self-assign
+    DataLayerHelper.prototype.registerProcessor;

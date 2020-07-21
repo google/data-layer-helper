@@ -1,7 +1,7 @@
 goog.module('datalayerhelper.helper.testing.registerProcessor');
 goog.setTestOnly();
 
-const {DataLayerHelper} = goog.require('helper');
+const {DataLayerHelper} = goog.require('datalayerhelper.helper.DataLayerHelper');
 
 describe('The registerProcessor method of helper', () => {
   let dataLayer;

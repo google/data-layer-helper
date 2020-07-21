@@ -1,7 +1,7 @@
 goog.module('datalayerhelper.helper.testing.processStates');
 goog.setTestOnly();
 
-const {DataLayerHelper} = goog.require('helper');
+const {DataLayerHelper} = goog.require('datalayerhelper.helper.DataLayerHelper');
 
 describe('The `processStates_` function of helper', () => {
   /**

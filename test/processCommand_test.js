@@ -1,7 +1,7 @@
-goog.module('datalayerhelper.helper.testing.processCommand_');
+goog.module('datalayerhelper.helper.utils.testing.processCommand_');
 goog.setTestOnly();
 
-const {processCommand_} = goog.require('helper');
+const {processCommand_} = goog.require('datalayerhelper.helper.utils');
 
 describe('The `processCommand_` function of helper', () => {
   /**

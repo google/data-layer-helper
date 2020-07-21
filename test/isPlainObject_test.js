@@ -1,7 +1,7 @@
 goog.module('datalayerhelper.plain.testing.isPlainObject');
 goog.setTestOnly();
 
-const {isPlainObject} = goog.require('plain');
+const {isPlainObject} = goog.require('datalayerhelper.plain');
 
 describe('The `isPlainObject` method of plain', () => {
   /**
