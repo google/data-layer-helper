@@ -456,14 +456,14 @@ Make sure you have `grunt` installed. From the root directory of the project, ru
 grunt -version
 ```
 
-That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests in chrome.
+That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests in chrome:
 
 ```bash
 grunt
 ```
 
 The built version (data-layer-helper.js) will be in the `dist/` subdirectory. However, this build will do it's best to fail silently
-when strange inputs are passed into it. For development, you may want to use a build that will give more detailed logging. Run 
+when strange inputs are passed into it. For development, you may want to use a build that will give more detailed logging. Run the following command:
 
 ```bash
 yarn build-debug
@@ -477,13 +477,13 @@ To run the tests for more than a single run, you will need to first install karm
 yarn global add karma
 ```
 
-You can run the unit tests from the root directory with the command
+You can run the unit tests from the root directory with the following command:
 
 ```bash
 karma start
 ```
 
-You can run the integration tests from the root directory with the command
+You can run the integration tests from the root directory by using:
 
 ```bash
 karma start test/integration/karma.conf.js

@@ -56,6 +56,20 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
 const DLH_DEBUG = goog.define('DLH_DEBUG', false);
 
 /**
+ * @typedef {number} LogLevel
+ */
+/**
+ * Enum for choosing the level at which to log an error.
+ * @readonly
+ * @enum {LogLevel}
+ */
+const LOG_LEVEL = {
+  LOG: 1,
+  WARNING: 2,
+  ERROR: 3,
+};
+
+/**
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -74,7 +88,8 @@ class DataLayerHelper {
    * @param {boolean=} listenToPast If true, the given listener will be
    *     executed for state changes that have already happened.
    */
-  constructor(dataLayer, listener = () => {}, listenToPast = false) {
+  constructor(dataLayer, listener = () => {
+  }, listenToPast = false) {
     /**
      * The dataLayer to help with.
      * @private @const {!Array<*>}
@@ -164,7 +179,6 @@ class DataLayerHelper {
     merge_(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
   }
 
-
   /**
    * Register a function to respond to events with a certain name called by
    * the command API by storing it in a map. The function will be called an
@@ -231,7 +245,6 @@ class DataLayerHelper {
     return states;
   }
 
-
   /**
    * Merges the given update objects (states) onto the helper's model, calling
    * the listener each time the model is updated. If a command array is pushed
@@ -264,11 +277,9 @@ class DataLayerHelper {
           update.call(this.abstractModelInterface_);
         } catch (e) {
           // Catch any exceptions to we don't drop subsequent updates.
-          if (DLH_DEBUG) {
-            console.error(`When running the method ${update}, ` +
-                `an exception was thrown.`);
-            console.error(e);
-          }
+          logError(`An exception was thrown when running the method ` +
+              `\n${update}, execution was skipped.`, LOG_LEVEL.ERROR);
+          logError(e, LOG_LEVEL.ERROR);
         }
       } else if (isPlainObject(update)) {
         for (const key in update) {
@@ -285,6 +296,7 @@ class DataLayerHelper {
     }
   }
 }
+
 window['DataLayerHelper'] = DataLayerHelper;
 
 /**
@@ -309,7 +321,6 @@ function buildAbstractModelInterface_(dataLayerHelper) {
   };
 }
 
-
 /**
  * Applies the given method to the value in the dataLayer with the given key.
  * If the method is a valid function of the value, the method will be applies
@@ -322,26 +333,19 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  */
 function processCommand_(command, model) {
   if (!isString_(command[0])) {
-    if (DLH_DEBUG) {
-      console.warn(`You pushed the array ${command} to the data layer. ` +
-          `However, ${command[0]} is not a string, so no command was run. ` +
-          `To call a method, please use the string 'objectLocation.method'` +
-          'as the first parameter.');
-    }
-    return;
+    logError(`Error processing command, no command was run. The first ` +
+        `argument must be of type string, but was of type ` +
+        `${typeof command[0]}. \nYou pushed the command\n ${command}.`,
+        LOG_LEVEL.WARNING);
   }
-
   const path = command[0].split('.');
   const method = path.pop();
   const args = command.slice(1);
   let target = model;
   for (let i = 0; i < path.length; i++) {
     if (target[path[i]] === undefined) {
-      if (DLH_DEBUG) {
-        console.warn(`You pushed the array ${command} to the data ` +
-            `layer. However, no object was found at the location ${path}, so ` +
-            'no command was run. ');
-      }
+      logError(`The object at \n${path}\n was undefined, so the` +
+          `command \n${command} was ignored.`, LOG_LEVEL.WARNING);
       return;
     }
     target = target[path[i]];
@@ -350,11 +354,9 @@ function processCommand_(command, model) {
     target[method].apply(target, args);
   } catch (e) {
     // Catch any exception so we don't drop subsequent updates.
-    if (DLH_DEBUG) {
-      console.error(`When trying to run the method ${method} on ` +
-      `${path}, an exception was thrown.`);
-      console.error(e);
-    }
+    logError(`An exception was thrown by the method\n` +
+        `${method}\n, so no command was run.\n${method} was called on the ` +
+        `object stored in \n${path} of data layer helper.`, LOG_LEVEL.ERROR);
   }
 }
 
@@ -386,7 +388,6 @@ function expandKeyValue_(key, value) {
   return result;
 }
 
-
 /**
  * Determines if the given value is an array.
  *
@@ -409,7 +410,6 @@ function isArguments_(value) {
   return type(value) === 'arguments';
 }
 
-
 /**
  * Determines if the given value is a string.
  *
@@ -420,7 +420,6 @@ function isArguments_(value) {
 function isString_(value) {
   return type(value) === 'string';
 }
-
 
 /**
  * Merges one object into another or one array into another. Scalars and
@@ -448,6 +447,29 @@ function merge_(from, to) {
       } else {
         to[property] = fromProperty;
       }
+    }
+  }
+}
+
+/**
+ * Log an error to the console if the debug distribution is in use.
+ *
+ * @param {string} toLog The error to log to the console in debug mode.
+ * @param {LogLevel} logLevel The error to log to the console in debug mode.
+ */
+function logError(toLog, logLevel) {
+  if (DLH_DEBUG) {
+    switch (logLevel) {
+      case LOG_LEVEL.LOG:
+        console.log(toLog);
+        break;
+      case LOG_LEVEL.WARNING:
+        console.warn(toLog);
+        break;
+      case LOG_LEVEL.ERROR:
+        console.error(toLog);
+        break;
+      default:
     }
   }
 }

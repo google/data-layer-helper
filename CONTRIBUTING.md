@@ -8,9 +8,9 @@ As this is a Google project, you *must* first e-sign the [Google Contributor Lic
 
 ## Style
 
-Before submitting a pull request, please try to ensure that your code conforms to the [google style guide](https://google.github.io/styleguide/jsguide.html).
-Above the style guide, we would like to keep this library small. Do  not write code that requires unneccesary polyfills.
-In particular, do not use for-of loops, rest parameters, spread operators, Map, Set, WeakMap, WeakSet, Symbols, or Generators.
+Before submitting a pull request, please try to ensure that your code conforms to the [Google style guide](https://google.github.io/styleguide/jsguide.html).
+Above the style guide, we would like to keep this library small.
+Additionally, we emphasize keeping the library small. Approvers may request changes to reduce binary size (e.g. when using a language feature would require a polyfill).
 
 ## Testing
 
