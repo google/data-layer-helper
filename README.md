@@ -19,22 +19,22 @@ This library provides the ability to process messages passed onto a dataLayer qu
   
 
 ## Quick Start
-First, install the package with your favorite package manager
+First, install the package with your favorite package manager:
 ```bash
-npm install data-layer-helper --save-dev
+npm install data-layer-helper
 // or
-yarn add data-layer-helper --dev
+yarn add data-layer-helper
 ```
 
-Next, require the code in your javascript
+Next, import the code into your javascript:
 ```js
 import 'node_modules/data-layer-helper/dist/data-layer-helper';
 ```
 
-For the development version (bigger file size, but reports possible errors to the console)
+For the development version (bigger file size, but reports possible errors to the console):
 ```js
 import 'node_modules/data-layer-helper/dist/data-layer-helper-test-debug';
-````
+```
 
 ## What is a dataLayer queue?
 A dataLayer queue is simply a JavaScript array that lives on a webpage. 
@@ -79,9 +79,9 @@ This project provides the ability to listen for dataLayer messages and to read t
 that have been set by all the previous messages. It can be used by the tools/vendors mentioned above, 
 or by page authors that need to read back the data they've emitted.
 
-To use this library, you'll need to get it onto the page. You can do this by hosting a copy and 
-sourcing it from the page, or by compiling it into your own JavaScript library. Once it's on the 
-page, you can create a new helper object like this:
+To use this library, you'll need to get it onto the page. The easiest way to do this
+is by [following these instructions.](#quick-start)
+Once it's on the page, you can create a new helper object like this:
 
 ```js
 var helper = new DataLayerHelper(dataLayer);
@@ -341,7 +341,7 @@ return values of any native method calls made from within the function.
 
 When a function is processed, it will be executed in the context of the abstract data model. The 
 value of "this" will be an interface that represents the current abstract data model. This 
-interfact will provide two APIs: get(key) and set(key, value). The following examples demonstrate 
+interface will provide two APIs: get(key) and set(key, value). The following examples demonstrate 
 how these APIs can be used to update values in the abstract data model.
 
 <table>
