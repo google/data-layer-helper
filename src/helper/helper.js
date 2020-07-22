@@ -56,20 +56,6 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
 const DLH_DEBUG = goog.define('DLH_DEBUG', false);
 
 /**
- * @typedef {number} LogLevel
- */
-/**
- * Enum for choosing the level at which to log an error.
- * @readonly
- * @enum {LogLevel}
- */
-const LOG_LEVEL = {
-  LOG: 1,
-  WARNING: 2,
-  ERROR: 3,
-};
-
-/**
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -278,8 +264,8 @@ class DataLayerHelper {
         } catch (e) {
           // Catch any exceptions to we don't drop subsequent updates.
           logError(`An exception was thrown when running the method ` +
-              `\n${update}, execution was skipped.`, LOG_LEVEL.ERROR);
-          logError(e, LOG_LEVEL.ERROR);
+              `\n${update}, execution was skipped.`, LogLevel.ERROR);
+          logError(e, LogLevel.ERROR);
         }
       } else if (isPlainObject(update)) {
         for (const key in update) {
@@ -336,7 +322,7 @@ function processCommand_(command, model) {
     logError(`Error processing command, no command was run. The first ` +
         `argument must be of type string, but was of type ` +
         `${typeof command[0]}. \nYou pushed the command\n ${command}.`,
-        LOG_LEVEL.WARNING);
+        LogLevel.WARNING);
   }
   const path = command[0].split('.');
   const method = path.pop();
@@ -345,7 +331,7 @@ function processCommand_(command, model) {
   for (let i = 0; i < path.length; i++) {
     if (target[path[i]] === undefined) {
       logError(`The object at \n${path}\n was undefined, so the` +
-          `command \n${command} was ignored.`, LOG_LEVEL.WARNING);
+          `command \n${command} was ignored.`, LogLevel.WARNING);
       return;
     }
     target = target[path[i]];
@@ -356,7 +342,7 @@ function processCommand_(command, model) {
     // Catch any exception so we don't drop subsequent updates.
     logError(`An exception was thrown by the method\n` +
         `${method}\n, so no command was run.\n${method} was called on the ` +
-        `object stored in \n${path} of data layer helper.`, LOG_LEVEL.ERROR);
+        `object stored in \n${path} of data layer helper.`, LogLevel.ERROR);
   }
 }
 
@@ -451,22 +437,34 @@ function merge_(from, to) {
   }
 }
 
+
+/**
+ * Enum for choosing the level at which to log an error.
+ * @readonly
+ * @enum {number}
+ */
+const LogLevel = {
+  LOG: 1,
+  WARNING: 2,
+  ERROR: 3,
+};
+
 /**
  * Log an error to the console if the debug distribution is in use.
  *
  * @param {string} toLog The error to log to the console in debug mode.
- * @param {LogLevel} logLevel The error to log to the console in debug mode.
+ * @param {!LogLevel} logLevel The error to log to the console in debug mode.
  */
 function logError(toLog, logLevel) {
   if (DLH_DEBUG) {
     switch (logLevel) {
-      case LOG_LEVEL.LOG:
+      case LogLevel.LOG:
         console.log(toLog);
         break;
-      case LOG_LEVEL.WARNING:
+      case LogLevel.WARNING:
         console.warn(toLog);
         break;
-      case LOG_LEVEL.ERROR:
+      case LogLevel.ERROR:
         console.error(toLog);
         break;
       default:

@@ -48,6 +48,9 @@ module.exports = function(grunt) {
           language_in: 'ECMASCRIPT6_STRICT',
           language_out: 'ECMASCRIPT5_STRICT',
           output_wrapper: '(function(){%output%})();',
+          // A source map can be used by other applications using this library
+          // to debug their code.
+          create_source_map: 'dist/data-layer-helper.js.map',
           jscomp_warning: 'lintChecks',
         },
       },
@@ -67,6 +70,9 @@ module.exports = function(grunt) {
           language_out: 'ECMASCRIPT5_STRICT',
           define: 'DLH_DEBUG=true',
           output_wrapper: '(function(){%output%})();',
+          // A source map can be used by other applications using this library
+          // to debug their code.
+          create_source_map: 'dist/data-layer-helper-debug.js.map',
           jscomp_warning: 'lintChecks',
         },
       },
