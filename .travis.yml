@@ -1,8 +1,6 @@
 language: node_js
 node_js:
   - "14"
-before_script:
-  - yarn global add grunt-cli
 addons:
   firefox: latest
   chrome: stable
@@ -12,4 +10,4 @@ services:
 os:
   - linux
   - osx
-script: grunt test
+script: yarn test
