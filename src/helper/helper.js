@@ -430,9 +430,11 @@ exports = {
   merge_,
 };
 
-// Closure compiler advanced optimizations seems broken
-// because it ignores this function if I do not include this line,
-// see https://github.com/Alex7Li/data-layer-helper/tree/minimalbrokenexample.
+// Closure compiler advanced optimizations will compile get and flatten
+// normally, but this is only because they are library functions somewhere and
+// it may not be intended behavior. Just in case, I add them here
+// see https://groups.google.com/g/closure-compiler-discuss/c/Z5rorPYR0m4/m/7vijpvpqCgAJ
+DataLayerHelper.prototype['get'] = DataLayerHelper.prototype.get;
+DataLayerHelper.prototype['flatten'] = DataLayerHelper.prototype.flatten;
 DataLayerHelper.prototype['registerProcessor'] =
-    // eslint-disable-next-line no-self-assign
     DataLayerHelper.prototype.registerProcessor;
