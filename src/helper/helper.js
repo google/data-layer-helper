@@ -275,6 +275,14 @@ class DataLayerHelper {
   }
 }
 window['DataLayerHelper'] = DataLayerHelper;
+// These methods are exported by DataLayerHelper for use outside of this file.
+// In order to ensure the functions are not compiled away by
+// ADVANCED_OPTIMIZATIONS, we export to the window. See
+// https://groups.google.com/g/closure-compiler-discuss/c/Z5rorPYR0m4/m/7vijpvpqCgAJ
+DataLayerHelper.prototype['get'] = DataLayerHelper.prototype.get;
+DataLayerHelper.prototype['flatten'] = DataLayerHelper.prototype.flatten;
+DataLayerHelper.prototype['registerProcessor'] =
+    DataLayerHelper.prototype.registerProcessor;
 
 /**
  * Helper function that will build the abstract model interface using the
@@ -430,11 +438,3 @@ exports = {
   merge_,
 };
 
-// Closure compiler advanced optimizations will compile get and flatten
-// normally, but this is only because they are library functions somewhere and
-// it may not be intended behavior. Just in case, I add them here
-// see https://groups.google.com/g/closure-compiler-discuss/c/Z5rorPYR0m4/m/7vijpvpqCgAJ
-DataLayerHelper.prototype['get'] = DataLayerHelper.prototype.get;
-DataLayerHelper.prototype['flatten'] = DataLayerHelper.prototype.flatten;
-DataLayerHelper.prototype['registerProcessor'] =
-    DataLayerHelper.prototype.registerProcessor;
