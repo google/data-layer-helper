@@ -198,7 +198,7 @@ class DataLayerHelper {
    *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
-   * @param {function(*)} processor The callback function to register.
+   * @param {!Function} processor The callback function to register.
    *    Will be invoked when an arguments object whose first parameter is name
    *    is pushed to the data layer. If it returns something, it should be
    *    of type Object.
