@@ -21,7 +21,6 @@
     "Pedro Silva <pedro.hs.silva0111@gmail.com>",
     "Dustin Urbaniec <durbanie@google.com>"
   ],
->>>>>>> a558bc00ffea6aecc9d24455461d87a3b60ceef7
   "devDependencies": {
     "eslint": "~7.3.1",
     "eslint-config-closure-es6": "~0.1.1",
