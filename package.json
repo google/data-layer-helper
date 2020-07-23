@@ -1,12 +1,32 @@
 {
   "name": "data-layer-helper",
-  "version": "0.1.0",
+  "description": "A utility to help many vendors manage the data layer of an application.",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "grunt",
+    "build-debug": "grunt build-debug",
+    "test": "grunt test",
+    "unit": "karma start",
+    "integration": "karma start test/integration/karma.conf.js"
+  },
+  "main": "dist/data-layer-helper.js",
+  "//": "Contributors are listed in alphabetical order by last name. Add yourself!",
+  "contributors": [
+    "Sam Calhoun <calhounsm@google.com>",
+    "KJ Galvan <kaityagalvan@gmail.com>",
+    "Brian Kuhn <bkuhn@google.com>",
+    "Alex Li <7alex7li@gmail.com>",
+    "Alex Nau <arnau@google.com>",
+    "Eugene Sambursky <ievgen@google.com>",
+    "Pedro Silva <pedro.hs.silva0111@gmail.com>",
+    "Dustin Urbaniec <durbanie@google.com>"
+  ],
   "devDependencies": {
     "eslint": "~7.3.1",
     "eslint-config-closure-es6": "~0.1.1",
     "eslint-config-google": "~0.14.0",
     "eslint-plugin-jasmine": "~4.1.1",
-    "grunt": "~1.0.4",
+    "grunt": "~1.2.1",
     "grunt-closure-tools": "~1.0.0",
     "grunt-karma": "~4.0.0",
     "jasmine": "~3.5.0",
@@ -26,5 +46,25 @@
   "dependencies": {
     "google-closure-compiler": "~20200614.0.0",
     "google-closure-library": "~20200614.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/google/data-layer-helper"
+  },
+  "directories": {
+    "lib": "./src",
+    "bin": "./dist",
+    "test": "./test"
+  },
+  "keywords": [
+    "javascript",
+    "tool",
+    "utility",
+    "queue",
+    "message",
+    "data",
+    "layer",
+    "datalayer"
+  ],
+  "license": "Apache-2.0"
 }

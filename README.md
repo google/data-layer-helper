@@ -456,12 +456,6 @@ Clone a copy of the project repo by running:
 git clone --recursive git://github.com/google/data-layer-helper.git
 ```
 
-Install the [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli) package if you haven't before. This should be done as global install:
-
-```bash
-yarn global add grunt-cli
-```
-
 Enter the data-layer-helper directory and install the Node dependencies, this time *without* specifying a global install:
 
 ```bash
@@ -469,37 +463,32 @@ cd data-layer-helper
 yarn install
 ```
 
-Make sure you have `grunt` installed. From the root directory of the project, run:
-
-```bash
-grunt -version
-```
-
 That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests in chrome.
 
 ```bash
-grunt
+yarn start
 ```
 
-The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
-
-To run the tests for more than a single run, you will need to first install karma globally:
+The built version (data-layer-helper.js) will be in the `dist/` subdirectory. However, this build will do it's best to fail silently
+when strange inputs are passed into it. For development, you may want to use a build that will give more detailed logging. Run the following command:
 
 ```bash
-yarn global add karma
+yarn build-debug
 ```
 
-You can run the unit tests from the root directory with the command
+to make the debug build available (dist/data-layer-helper-debug.js).
+
+To run the tests for more than a single run (i.e. for development), you can the run the command
 
 ```bash
-karma start
+yarn unit
 ```
-
-You can run the integration tests from the root directory with the command
-
+or
 ```bash
-karma start test/integration/karma.conf.js
+yarn integration
 ```
+
+depending on if you would like to run the unit or integration tests.
 
 ## License
 

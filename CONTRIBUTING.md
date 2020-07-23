@@ -8,8 +8,14 @@ As this is a Google project, you *must* first e-sign the [Google Contributor Lic
 
 ## Style
 
-TODO(bkuhn): Instructions on checking style guide before submitting a pull request.
+Before submitting a pull request, please try to ensure that your code conforms to the [Google style guide](https://google.github.io/styleguide/jsguide.html).
+Above the style guide, we would like to keep this library small.
+Additionally, we emphasize keeping the library small. Approvers may request changes to reduce binary size (e.g. when using a language feature would require a polyfill).
 
 ## Testing
 
-TODO(bkuhn): Instructions on running test suite before submitting a pull request.
+Before submitting a pull request, please make sure that no unit tests fail and
+no compiler warnings appear after running the command:
+```bash
+yarn test
+```
