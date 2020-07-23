@@ -125,6 +125,22 @@ class DataLayerHelper {
 
     // Process the existing/past states.
     this.processStates_(dataLayer, !listenToPast);
+
+    // Register a processor for set command.
+    this.registerProcessor('set', function() {
+      const model = this;
+
+      if (arguments.length === 1 && type(arguments[0]) === 'object') {
+        merge_(arguments[0], model);
+      } else if (arguments.length === 2 &&
+        type(arguments[0]) === 'string') {
+        // Maintain consistency with how objects are merged
+        // outside of the set command (overwrite or recursively merge).
+        const obj = expandKeyValue_(arguments[0], arguments[1]);
+        merge_(obj, model);
+      }
+    });
+
     // Add listener for future state changes.
     const oldPush = dataLayer.push;
     const that = this;
