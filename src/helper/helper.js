@@ -49,6 +49,13 @@ goog.module('helper');
 const {type, hasOwn, isPlainObject} = goog.require('plain');
 
 /**
+ * @define {boolean} When true, potential code errors will be logged to the
+ * console. To enable this, run yarn build-debug to compile the distribution
+ * code.
+ */
+const DLH_DEBUG = goog.define('DLH_DEBUG', false);
+
+/**
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -67,7 +74,8 @@ class DataLayerHelper {
    * @param {boolean=} listenToPast If true, the given listener will be
    *     executed for state changes that have already happened.
    */
-  constructor(dataLayer, listener = () => {}, listenToPast = false) {
+  constructor(dataLayer, listener = () => {
+  }, listenToPast = false) {
     /**
      * The dataLayer to help with.
      * @private @const {!Array<*>}
@@ -157,7 +165,6 @@ class DataLayerHelper {
     merge_(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
   }
 
-
   /**
    * Register a function to respond to events with a certain name called by
    * the command API by storing it in a map. The function will be called an
@@ -224,7 +231,6 @@ class DataLayerHelper {
     return states;
   }
 
-
   /**
    * Merges the given update objects (states) onto the helper's model, calling
    * the listener each time the model is updated. If a command array is pushed
@@ -257,7 +263,9 @@ class DataLayerHelper {
           update.call(this.abstractModelInterface_);
         } catch (e) {
           // Catch any exceptions to we don't drop subsequent updates.
-          // TODO: Add some sort of logging when this happens.
+          logError(`An exception was thrown when running the method ` +
+              `${update}, execution was skipped.`, LogLevel.ERROR);
+          logError(e, LogLevel.ERROR);
         }
       } else if (isPlainObject(update)) {
         for (const key in update) {
@@ -274,6 +282,7 @@ class DataLayerHelper {
     }
   }
 }
+
 window['DataLayerHelper'] = DataLayerHelper;
 
 /**
@@ -309,20 +318,32 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  * @private
  */
 function processCommand_(command, model) {
-  if (!isString_(command[0])) return;
+  if (!isString_(command[0])) {
+    logError(`Error processing command, no command was run. The first ` +
+        `argument must be of type string, but was of type ` +
+        `${typeof command[0]}.\nThe command run was ${command}`,
+        LogLevel.WARNING);
+  }
   const path = command[0].split('.');
   const method = path.pop();
   const args = command.slice(1);
   let target = model;
   for (let i = 0; i < path.length; i++) {
-    if (target[path[i]] === undefined) return;
+    if (target[path[i]] === undefined) {
+      logError(`Error processing command, no command was run as the ` +
+          `object at ${path} was undefined.\nThe command run was ${command}`,
+          LogLevel.WARNING);
+      return;
+    }
     target = target[path[i]];
   }
   try {
     target[method].apply(target, args);
   } catch (e) {
     // Catch any exception so we don't drop subsequent updates.
-    // TODO: Add some sort of logging here when this happens.
+    logError(`An exception was thrown by the method ` +
+        `${method}, so no command was run.\nThe method was called on the ` +
+        `data layer object at the location ${path}.`, LogLevel.ERROR);
   }
 }
 
@@ -417,6 +438,40 @@ function merge_(from, to) {
     }
   }
   delete to['_clear'];
+}
+
+/**
+ * Enum for choosing the level at which to log an error.
+ * @readonly
+ * @enum {number}
+ */
+const LogLevel = {
+  LOG: 1,
+  WARNING: 2,
+  ERROR: 3,
+};
+
+/**
+ * Log an error to the console if the debug distribution is in use.
+ *
+ * @param {string} toLog The error to log to the console in debug mode.
+ * @param {!LogLevel} logLevel The error to log to the console in debug mode.
+ */
+function logError(toLog, logLevel) {
+  if (DLH_DEBUG) {
+    switch (logLevel) {
+      case LogLevel.LOG:
+        console.log(toLog);
+        break;
+      case LogLevel.WARNING:
+        console.warn(toLog);
+        break;
+      case LogLevel.ERROR:
+        console.error(toLog);
+        break;
+      default:
+    }
+  }
 }
 
 exports = {
