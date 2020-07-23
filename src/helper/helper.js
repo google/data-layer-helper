@@ -45,7 +45,7 @@
  */
 
 goog.module('datalayerhelper.helper.DataLayerHelper');
-const {expandKeyValue_, isArray_, isArguments_, merge_, processCommand_} = goog.require('datalayerhelper.helper.utils');
+const {expandKeyValue, isArray, isArguments, merge, processCommand} = goog.require('datalayerhelper.helper.utils');
 const {isPlainObject} = goog.require('datalayerhelper.plain');
 
 /**
@@ -154,7 +154,7 @@ class DataLayerHelper {
   flatten() {
     this.dataLayer_.splice(0, this.dataLayer_.length);
     this.dataLayer_[0] = {};
-    merge_(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
+    merge(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
   }
 
 
@@ -246,9 +246,9 @@ class DataLayerHelper {
     // itself is causing new states to be pushed onto the dataLayer.
     while (this.executingListener_ === false && this.unprocessed_.length > 0) {
       const update = this.unprocessed_.shift();
-      if (isArray_(update)) {
-        processCommand_(/** @type {!Array<*>} */ (update), this.model_);
-      } else if (isArguments_(update)) {
+      if (isArray(update)) {
+        processCommand(/** @type {!Array<*>} */ (update), this.model_);
+      } else if (isArguments(update)) {
         const newStates = this.processArguments_(
             /** @type {!Array<*>} */(update));
         this.unprocessed_.push.apply(this.unprocessed_, newStates);
@@ -261,7 +261,7 @@ class DataLayerHelper {
         }
       } else if (isPlainObject(update)) {
         for (const key in update) {
-          merge_(expandKeyValue_(key, update[key]), this.model_);
+          merge(expandKeyValue(key, update[key]), this.model_);
         }
       } else {
         continue;
@@ -289,7 +289,7 @@ window['DataLayerHelper'] = DataLayerHelper;
 function buildAbstractModelInterface_(dataLayerHelper) {
   return {
     set(key, value) {
-      merge_(expandKeyValue_(key, value),
+      merge(expandKeyValue(key, value),
           dataLayerHelper.model_);
     },
     get(key) {
@@ -298,6 +298,5 @@ function buildAbstractModelInterface_(dataLayerHelper) {
   };
 }
 
-exports = {
-  DataLayerHelper,
-};
+exports = DataLayerHelper;
+

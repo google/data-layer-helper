@@ -1,21 +1,21 @@
-goog.module('datalayerhelper.helper.utils.testing.processCommand_');
+goog.module('datalayerhelper.helper.utils.testing.processCommand');
 goog.setTestOnly();
 
-const {processCommand_} = goog.require('datalayerhelper.helper.utils');
+const {processCommand} = goog.require('datalayerhelper.helper.utils');
 
-describe('The `processCommand_` function of helper', () => {
+describe('The `processCommand` function of helper', () => {
   /**
    * A helper method to assert that a command passed to the processCommand
    * method produces the desired result.
    * @param {!Array<Object>} command A list of arguments to be given to the
-   *     processCommand_function of helper, representing the command to
+   *     processCommandfunction of helper, representing the command to
    *     run on the model.
    * @param {!Object} startingModel The starting state of the model.
    * @param {!Object} expectedModel The expected state of the model after
    *     processing the command.
    */
   function assertCommand(command, startingModel, expectedModel) {
-    processCommand_(command, startingModel);
+    processCommand(command, startingModel);
 
     expect(startingModel).toEqual(expectedModel);
   }

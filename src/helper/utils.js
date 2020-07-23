@@ -10,10 +10,10 @@ const {type, hasOwn, isPlainObject} = goog.require('datalayerhelper.plain');
  * @param {!Array<*>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
  * @param {!Object<*>} model The current dataLayer model.
- * @private
+ * @package
  */
-function processCommand_(command, model) {
-  if (!isString_(command[0])) return;
+function processCommand(command, model) {
+  if (!isString(command[0])) return;
   const path = command[0].split('.');
   const method = path.pop();
   const args = command.slice(1);
@@ -45,9 +45,9 @@ function processCommand_(command, model) {
  * @param {*} value The value to set on the given key path.
  * @return {!Object<*>} An object representing the given key/value which can be
  *     merged onto the dataLayer's model.
- * @private
+ * @package
  */
-function expandKeyValue_(key, value) {
+function expandKeyValue(key, value) {
   const result = {};
   let target = result;
   const split = key.split('.');
@@ -63,9 +63,9 @@ function expandKeyValue_(key, value) {
  *
  * @param {*} value The value to test.
  * @return {boolean} True iff the given value is an array.
- * @private
+ * @package
  */
-function isArray_(value) {
+function isArray(value) {
   return type(value) === 'array';
 }
 
@@ -74,9 +74,9 @@ function isArray_(value) {
  *
  * @param {*} value The value to test.
  * @return {boolean} True iff the given value is an arguments object.
- * @private
+ * @package
  */
-function isArguments_(value) {
+function isArguments(value) {
   return type(value) === 'arguments';
 }
 
@@ -85,9 +85,9 @@ function isArguments_(value) {
  *
  * @param {*} value The value to test.
  * @return {boolean} True iff the given value is a string.
- * @private
+ * @package
  */
-function isString_(value) {
+function isString(value) {
   return type(value) === 'string';
 }
 
@@ -102,19 +102,19 @@ function isString_(value) {
  *
  * @param {!Array<*>|!Object<*>} from The object or array to merge from.
  * @param {!Array<*>|!Object<*>} to The object or array to merge into.
- * @private
+ * @package
  */
-function merge_(from, to) {
+function merge(from, to) {
   const allowMerge = !from['_clear'];
   for (const property in from) {
     if (hasOwn(from, property)) {
       const fromProperty = from[property];
-      if (isArray_(fromProperty) && allowMerge) {
-        if (!isArray_(to[property])) to[property] = [];
-        merge_(fromProperty, to[property]);
+      if (isArray(fromProperty) && allowMerge) {
+        if (!isArray(to[property])) to[property] = [];
+        merge(fromProperty, to[property]);
       } else if (isPlainObject(fromProperty) && allowMerge) {
         if (!isPlainObject(to[property])) to[property] = {};
-        merge_(fromProperty, to[property]);
+        merge(fromProperty, to[property]);
       } else {
         to[property] = fromProperty;
       }
@@ -124,9 +124,9 @@ function merge_(from, to) {
 }
 
 exports = {
-  processCommand_,
-  expandKeyValue_,
-  isArray_,
-  isArguments_,
-  merge_,
+  processCommand,
+  expandKeyValue,
+  isArray,
+  isArguments,
+  merge,
 };

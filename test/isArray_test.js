@@ -1,25 +1,25 @@
-goog.module('datalayerhelper.helper.utils.testing.isArray_');
+goog.module('datalayerhelper.helper.utils.testing.isArray');
 goog.setTestOnly();
 
-const {isArray_} = goog.require('datalayerhelper.helper.utils');
+const {isArray} = goog.require('datalayerhelper.helper.utils');
 
-describe('The `isArray_` function of helper', () => {
+describe('The `isArray` function of helper', () => {
   /**
-   * Ensure that the isArray_ function recognizes value
+   * Ensure that the isArray function recognizes value
    * to be a array.
    * @param {*} value The value to check.
    */
   function assertIsArray(value) {
-    expect(isArray_(value)).toBe(true);
+    expect(isArray(value)).toBe(true);
   }
 
   /**
-   * Ensure that the isArray_ function does not
+   * Ensure that the isArray function does not
    * recognize the value to be an array.
    * @param {*} value The value to check.
    */
   function assertIsNotArray(value) {
-    expect(isArray_(value)).toBe(false);
+    expect(isArray(value)).toBe(false);
   }
 
   it(`identifies things that aren't arrays as not arrays`, () => {
