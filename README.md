@@ -6,6 +6,7 @@ This library provides the ability to process messages passed onto a dataLayer qu
 - [The Abstract Data Model](#the-abstract-data-model)
     - [Overwriting Existing Values](#overwriting-existing-values)
     - [Recursively Merging Values](#recursively-merging-values)
+    - [Preventing Default Recursive Merge](#preventing-default-recursive-merge)
     - [Meta Commands](#meta-commands)
     - [Native Methods](#native-methods)
     - [Custom Methods](#custom-methods)
@@ -109,8 +110,8 @@ to specify how values will be overwritten and/or merged.
 
 There are two possible actions to take when merging a key/value pair onto the abstract 
 model; overwriting the existing value or recursively merging the new value onto the 
-existing value. The action taken will depend on the type of the two values. For this, 
-we define three types of values:
+existing value. The action taken will depend on the type of the two values unless explicitly 
+overriden. For this, we define three types of values:
 
 * JavaScript Arrays
 * "Plain" Objects
@@ -124,7 +125,7 @@ category of "everything else", along with strings, numbers, booleans, undefined,
 Once the type of the new and existing values has been categorized this way, we can use the 
 following table to describe what action will happen for that key/value pair:
 
-Existing Value | New Value    | Merging Action
+Existing Value | New Value    | Default Merging Action
 ---------------|--------------|--------------------------
 Array          | Array        | Recursively merge
 Array          | Plain Object | Overwrite existing value
@@ -174,6 +175,24 @@ Notice that an index in a new value array that has been explicitly set to undefi
 overwrite the corresponding index in the existing array, however an index that has not been
 set to any value (i.e. empty values in a sparse array) will not overwrite the corresponding
 index in the existing array, even though value at both indexes evaluates to undefined.
+
+### Preventing Default Recursive Merge
+Occasionally you may want to avoid persisting values from earlier in the application state. 
+This is especially true for single page applications where you may not want outdated information 
+in the data model when routing between pages.
+
+To prevent the default recursive merging behavior, a flag can be passed in adjacent 
+to the object(s) or array(s) you wish to prevent merging. To do so, add a truthy '_clear' attribute 
+to the message with the key/value pair(s) you are targeting. Here are some examples:
+
+Existing Value                         | New Value                                        | Result of Overwrite
+---------------------------------------|--------------------------------------------------|--------------------------------------
+{a: [1]}                               | {a: [], _clear: true}                            | {a: []}
+{a: {x: 1}}                            | {a: {}, _clear: 1}                               | {a: {}}
+{a: [undefined, 2]}                    | {a: [1], _clear: true}                           | {a: [1]}
+{a: {x: undefined, y: 2}}              | {a: {x: 1}, _clear: true}                        | {a: {x: 1}}
+{one: {two: {three: 3}}, five: [1, 2]} | {one: {two: {four: 4}}, five: [3], _clear: true} | {one: {two: {four: 4}}, five: [3]}
+{one: {two: {three: 3}}, five: [1, 2]} | {one: {two: {four: 4}, _clear: true}, five: [3]} | {one: {two: {four: 4}}, five: [3, 2]}
 
 ### Meta Commands
 Using the above methods alone, some operations on the abstract model are somewhat cumbersome.
@@ -437,12 +456,6 @@ Clone a copy of the project repo by running:
 git clone --recursive git://github.com/google/data-layer-helper.git
 ```
 
-Install the [grunt-cli](http://gruntjs.com/getting-started#installing-the-cli) package if you haven't before. This should be done as global install:
-
-```bash
-yarn global add grunt-cli
-```
-
 Enter the data-layer-helper directory and install the Node dependencies, this time *without* specifying a global install:
 
 ```bash
@@ -450,6 +463,7 @@ cd data-layer-helper
 yarn install
 ```
 
+<<<<<<< HEAD
 Make sure you have `grunt` installed. From the root directory of the project, run:
 
 ```bash
@@ -457,9 +471,12 @@ grunt -version
 ```
 
 That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests in chrome:
+=======
+That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests in chrome.
+>>>>>>> a558bc00ffea6aecc9d24455461d87a3b60ceef7
 
 ```bash
-grunt
+yarn start
 ```
 
 The built version (data-layer-helper.js) will be in the `dist/` subdirectory. However, this build will do it's best to fail silently
@@ -471,23 +488,17 @@ yarn build-debug
 
 to make the debug build available (dist/data-layer-helper-debug.js).
 
-To run the tests for more than a single run, you will need to first install karma globally:
+To run the tests for more than a single run (i.e. for development), you can the run the command
 
 ```bash
-yarn global add karma
+yarn unit
 ```
-
-You can run the unit tests from the root directory with the following command:
-
+or
 ```bash
-karma start
+yarn integration
 ```
 
-You can run the integration tests from the root directory by using:
-
-```bash
-karma start test/integration/karma.conf.js
-```
+depending on if you would like to run the unit or integration tests.
 
 ## License
 
