@@ -14,8 +14,8 @@ Additionally, we emphasize keeping the library small. Approvers may request chan
 
 ## Testing
 
-Before submitting a pull request, please make sure that 
+Before submitting a pull request, please make sure that no unit tests fail and
+no compiler warnings appear after running the command:
 ```bash
 yarn test
 ```
-does not fail any unit tests or give any lint warnings.

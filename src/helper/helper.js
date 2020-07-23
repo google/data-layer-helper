@@ -264,7 +264,7 @@ class DataLayerHelper {
         } catch (e) {
           // Catch any exceptions to we don't drop subsequent updates.
           logError(`An exception was thrown when running the method ` +
-              `\n${update}, execution was skipped.`, LogLevel.ERROR);
+              `${update}, execution was skipped.`, LogLevel.ERROR);
           logError(e, LogLevel.ERROR);
         }
       } else if (isPlainObject(update)) {
@@ -321,7 +321,7 @@ function processCommand_(command, model) {
   if (!isString_(command[0])) {
     logError(`Error processing command, no command was run. The first ` +
         `argument must be of type string, but was of type ` +
-        `${typeof command[0]}. \nYou pushed the command\n ${command}.`,
+        `${typeof command[0]}.\nThe command run was ${command}`,
         LogLevel.WARNING);
   }
   const path = command[0].split('.');
@@ -330,8 +330,9 @@ function processCommand_(command, model) {
   let target = model;
   for (let i = 0; i < path.length; i++) {
     if (target[path[i]] === undefined) {
-      logError(`The object at \n${path}\n was undefined, so the` +
-          `command \n${command} was ignored.`, LogLevel.WARNING);
+      logError(`Error processing command, no command was run as the ` +
+          `object at ${path} was undefined.\nThe command run was ${command}`,
+          LogLevel.WARNING);
       return;
     }
     target = target[path[i]];
@@ -340,9 +341,9 @@ function processCommand_(command, model) {
     target[method].apply(target, args);
   } catch (e) {
     // Catch any exception so we don't drop subsequent updates.
-    logError(`An exception was thrown by the method\n` +
-        `${method}\n, so no command was run.\n${method} was called on the ` +
-        `object stored in \n${path} of data layer helper.`, LogLevel.ERROR);
+    logError(`An exception was thrown by the method ` +
+        `${method}, so no command was run.\nThe method was called on the ` +
+        `data layer object at the location ${path}.`, LogLevel.ERROR);
   }
 }
 
@@ -436,7 +437,6 @@ function merge_(from, to) {
     }
   }
 }
-
 
 /**
  * Enum for choosing the level at which to log an error.
