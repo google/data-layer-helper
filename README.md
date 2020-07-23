@@ -463,17 +463,7 @@ cd data-layer-helper
 yarn install
 ```
 
-<<<<<<< HEAD
-Make sure you have `grunt` installed. From the root directory of the project, run:
-
-```bash
-grunt -version
-```
-
-That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests in chrome:
-=======
 That should be everything.  You can try running the build, which will run the linter, compile/minify the JavaScript and run the tests in chrome.
->>>>>>> a558bc00ffea6aecc9d24455461d87a3b60ceef7
 
 ```bash
 yarn start
