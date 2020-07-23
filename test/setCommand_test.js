@@ -6,20 +6,24 @@ const {DataLayerHelper} = goog.require('helper');
 describe('The set command', () => {
   let dataLayer;
   let dlh;
+  let targetModel;
   let commandAPI;
+
   beforeAll(() => {
-    dataLayer = [];
     commandAPI = function() {
       dataLayer.push(arguments);
     };
+  });
+
+  beforeEach(() => {
+    dataLayer = [];
     dlh = new DataLayerHelper(dataLayer);
     commandAPI('set', 'bar', 'foo');
+    targetModel = Object.assign({}, dlh.abstractModelInterface_);
   });
 
   describe('with 2 argument format', () => {
-    it('updates model without corrupting it.', () =>
-    {
-      const targetModel = Object.assign({}, dlh.abstractModelInterface_);
+    it('updates model without corrupting it.', () => {
       commandAPI('set', 'foo', 'bar');
       targetModel['foo'] = 'bar';
 
@@ -27,7 +31,6 @@ describe('The set command', () => {
     });
 
     it('updates model using dot-notation without corrupting it.', () => {
-      const targetModel = Object.assign({}, dlh.abstractModelInterface_);
       commandAPI('set', 'foobar.barfoo.val', 'testVal');
       targetModel['foobar'] = {'barfoo': {'val': 'testVal'}};
 
@@ -35,28 +38,24 @@ describe('The set command', () => {
     });
 
     it('results in no-op with unecpected number of arguments(0 args)', () => {
-      const targetModel = Object.assign({}, dlh.abstractModelInterface_);
       commandAPI('set');
 
       expect(dlh.abstractModelInterface_).toEqual(targetModel);
     });
 
     it('results in no-op with unecpected number of arguments: 3 args', () => {
-      const targetModel = Object.assign({}, dlh.abstractModelInterface_);
       commandAPI('set', 'foo', 'bar', 'extra');
 
       expect(dlh.abstractModelInterface_).toEqual(targetModel);
     });
 
     it('results in no-op with an unecpected type for 1st argument', () => {
-      const targetModel = Object.assign({}, dlh.abstractModelInterface_);
       commandAPI('set', 2, 'bar');
 
       expect(dlh.abstractModelInterface_).toEqual(targetModel);
     });
 
     it('updates existing key with new val', () => {
-      const targetModel = Object.assign({}, dlh.abstractModelInterface_);
       commandAPI('set', 'foo', 'newBar');
       targetModel['foo'] = 'newBar';
 
@@ -67,7 +66,6 @@ describe('The set command', () => {
   describe('with 1 argument format', () => {
     it('updates model without corruption with a single key- val pair',
         () => {
-          const targetModel = Object.assign({}, dlh.abstractModelInterface_);
           commandAPI('set', {'yes': 'no'});
           targetModel['yes'] = 'no';
 
@@ -77,7 +75,6 @@ describe('The set command', () => {
 
     it('updates model without corruption with multiple key-val pairs',
         () => {
-          const targetModel = Object.assign({}, dlh.abstractModelInterface_);
           commandAPI('set',
             {'yes': 'no', 'hello': 'world', 'goodbye': 'bluesky'});
           targetModel['yes'] = 'no';
@@ -90,7 +87,6 @@ describe('The set command', () => {
 
     it('updates model without corruption with nested key-val pairs',
         () => {
-          const targetModel = Object.assign({}, dlh.abstractModelInterface_);
           commandAPI('set', {'yes': {'yes': 'no', 'no': 'yes'}});
           targetModel['yes'] = {'yes': 'no', 'no': 'yes'};
 
@@ -105,7 +101,6 @@ describe('The set command', () => {
 
     it('updates model by merging existing array with a new one',
         () => {
-          const targetModel = Object.assign({}, dlh.abstractModelInterface_);
           commandAPI('set', {'array': [1, 2, 3]});
           targetModel['array'] = [1, 2, 3];
 
@@ -130,7 +125,6 @@ describe('The set command', () => {
 
     it('updates model by merging existing object with a new one',
         () => {
-          const targetModel = Object.assign({}, dlh.abstractModelInterface_);
           commandAPI('set', {'object': {'test': 'value'}});
           targetModel['object'] = {'test': 'value'};
 
@@ -145,7 +139,6 @@ describe('The set command', () => {
 
     it('results in no-op when single argument is not an object',
         () => {
-          const targetModel = Object.assign({}, dlh.abstractModelInterface_);
           commandAPI('set', 'no op');
 
           expect(dlh.abstractModelInterface_).toEqual(targetModel);
