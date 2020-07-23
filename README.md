@@ -489,21 +489,26 @@ That should be everything.  You can try running the build, which will run the li
 yarn start
 ```
 
-The built version (data-layer-helper.js) will be in the `dist/` subdirectory.
+The built version (data-layer-helper.js) will be in the `dist/` subdirectory. However, this build will do it's best to fail silently
+when strange inputs are passed into it. For development, you may want to use a build that will give more detailed logging. Run the following command:
+
+```bash
+yarn build-debug
+```
+
+to make the debug build available (dist/data-layer-helper-debug.js).
 
 To run the tests for more than a single run (i.e. for development), you can the run the command
 
 ```bash
 yarn unit
 ```
-
 or
-
 ```bash
 yarn integration
 ```
 
-depending on if you would like to run the unit of integration tests.
+depending on if you would like to run the unit or integration tests.
 
 ## License
 

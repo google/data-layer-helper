@@ -45,8 +45,8 @@
  */
 
 goog.module('datalayerhelper.helper.DataLayerHelper');
-const {expandKeyValue, isArray, isArguments, merge, processCommand} = goog.require('datalayerhelper.helper.utils');
-const {isPlainObject} = goog.require('datalayerhelper.plain');
+const {expandKeyValue, isArray, isArguments, merge, processCommand, LogLevel, logError} = goog.require('datalayerhelper.helper.utils');
+const {isPlainObject, type} = goog.require('datalayerhelper.plain');
 
 /**
  * A helper that will listen for new messages on the given dataLayer.
@@ -67,7 +67,8 @@ class DataLayerHelper {
    * @param {boolean=} listenToPast If true, the given listener will be
    *     executed for state changes that have already happened.
    */
-  constructor(dataLayer, listener = () => {}, listenToPast = false) {
+  constructor(dataLayer, listener = () => {
+  }, listenToPast = false) {
     /**
      * The dataLayer to help with.
      * @private @const {!Array<*>}
@@ -117,6 +118,22 @@ class DataLayerHelper {
 
     // Process the existing/past states.
     this.processStates_(dataLayer, !listenToPast);
+
+    // Register a processor for set command.
+    this.registerProcessor('set', function() {
+      const model = this;
+
+      if (arguments.length === 1 && type(arguments[0]) === 'object') {
+        merge(arguments[0], model);
+      } else if (arguments.length === 2 &&
+        type(arguments[0]) === 'string') {
+        // Maintain consistency with how objects are merged
+        // outside of the set command (overwrite or recursively merge).
+        const obj = expandKeyValue(arguments[0], arguments[1]);
+        merge(obj, model);
+      }
+    });
+
     // Add listener for future state changes.
     const oldPush = dataLayer.push;
     const that = this;
@@ -157,7 +174,6 @@ class DataLayerHelper {
     merge(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
   }
 
-
   /**
    * Register a function to respond to events with a certain name called by
    * the command API by storing it in a map. The function will be called an
@@ -182,9 +198,10 @@ class DataLayerHelper {
    *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
-   * @param {function(*):!Object} processor The callback function to register.
+   * @param {function(*)} processor The callback function to register.
    *    Will be invoked when an arguments object whose first parameter is name
-   *    is pushed to the data layer.
+   *    is pushed to the data layer. If it returns something, it should be
+   *    of type Object.
    * @this {DataLayerHelper}
    */
   registerProcessor(name, processor) {
@@ -224,7 +241,6 @@ class DataLayerHelper {
     return states;
   }
 
-
   /**
    * Merges the given update objects (states) onto the helper's model, calling
    * the listener each time the model is updated. If a command array is pushed
@@ -257,7 +273,9 @@ class DataLayerHelper {
           update.call(this.abstractModelInterface_);
         } catch (e) {
           // Catch any exceptions to we don't drop subsequent updates.
-          // TODO: Add some sort of logging when this happens.
+          logError(`An exception was thrown when running the method ` +
+              `${update}, execution was skipped.`, LogLevel.ERROR);
+          logError(e, LogLevel.ERROR);
         }
       } else if (isPlainObject(update)) {
         for (const key in update) {
@@ -274,6 +292,7 @@ class DataLayerHelper {
     }
   }
 }
+
 window['DataLayerHelper'] = DataLayerHelper;
 
 /**
@@ -299,4 +318,3 @@ function buildAbstractModelInterface_(dataLayerHelper) {
 }
 
 exports = DataLayerHelper;
-

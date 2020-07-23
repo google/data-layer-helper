@@ -33,23 +33,39 @@ module.exports = function(grunt) {
 
     // Using https://www.npmjs.com/package/google-closure-compiler
     'closure-compiler': {
-      my_target: {
+      options: {
+        js: [
+          'node_modules/google-closure-library/closure/goog/base.js',
+          'src/plain/plain.js',
+          'src/helper/utils.js',
+        ],
+        hide_warnings_for: 'google-closure-library',
+        warning_level: 'VERBOSE',
+        compilation_level: 'ADVANCED_OPTIMIZATIONS',
+        language_in: 'ECMASCRIPT6_STRICT',
+        language_out: 'ECMASCRIPT5_STRICT',
+        output_wrapper: '(function(){%output%})();',
+        jscomp_warning: 'lintChecks',
+      },
+      distribution: {
         files: {
           'dist/data-layer-helper.js': 'src/helper/helper.js',
         },
         options: {
-          js: [
-            'node_modules/google-closure-library/closure/goog/base.js',
-            'src/plain/plain.js',
-            'src/helper/utils.js',
-          ],
-          hide_warnings_for: 'google-closure-library',
-          warning_level: 'VERBOSE',
-          compilation_level: 'ADVANCED_OPTIMIZATIONS',
-          language_in: 'ECMASCRIPT6_STRICT',
-          language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){%output%})();',
-          jscomp_warning: 'lintChecks',
+          // A source map can be used by other applications using this library
+          // to debug their code.
+          create_source_map: 'dist/data-layer-helper.js.map',
+        },
+      },
+      debug: {
+        files: {
+          'dist/data-layer-helper-debug.js': 'src/helper/helper.js',
+        },
+        options: {
+          // A source map can be used by other applications using this library
+          // to debug their code.
+          define: 'DLH_DEBUG=true',
+          create_source_map: 'dist/data-layer-helper.js.map',
         },
       },
     },
@@ -95,7 +111,14 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', [
     'closureDepsWriter',
-    'closure-compiler',
+    'closure-compiler:distribution',
+    'karma:unit',
+    'karma:integration',
+  ]);
+
+  grunt.registerTask('build-debug', [
+    'closureDepsWriter',
+    'closure-compiler:debug',
     'karma:unit',
     'karma:integration',
   ]);
