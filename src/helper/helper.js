@@ -44,9 +44,10 @@
  * @author bkuhn@google.com (Brian Kuhn)
  */
 
-goog.module('datalayerhelper.helper.DataLayerHelper');
-const {expandKeyValue, isArray, isArguments, merge, processCommand, LogLevel, logError} = goog.require('datalayerhelper.helper.utils');
-const {isPlainObject, type} = goog.require('datalayerhelper.plain');
+goog.module('data_layer_helper.helper.DataLayerHelper');
+const {LogLevel, log} = goog.require('data_layer_helper.logging');
+const {expandKeyValue, isArray, isString, isArguments, merge} = goog.require('data_layer_helper.helper.utils');
+const {isPlainObject, type} = goog.require('data_layer_helper.plain');
 
 /**
  * A helper that will listen for new messages on the given dataLayer.
@@ -273,9 +274,9 @@ class DataLayerHelper {
           update.call(this.abstractModelInterface_);
         } catch (e) {
           // Catch any exceptions to we don't drop subsequent updates.
-          logError(`An exception was thrown when running the method ` +
+          log(`An exception was thrown when running the method ` +
               `${update}, execution was skipped.`, LogLevel.ERROR);
-          logError(e, LogLevel.ERROR);
+          log(e, LogLevel.ERROR);
         }
       } else if (isPlainObject(update)) {
         for (const key in update) {
@@ -315,6 +316,46 @@ function buildAbstractModelInterface_(dataLayerHelper) {
       return dataLayerHelper.get(key);
     },
   };
+}
+
+/**
+ * Applies the given method to the value in the dataLayer with the given key.
+ * If the method is a valid function of the value, the method will be applies
+ * with any arguments passed in.
+ *
+ * @param {!Array<*>} command The array containing the key with the
+ *     method to execute and optional arguments for the method.
+ * @param {!Object<*>} model The current dataLayer model.
+ * @private
+ */
+function processCommand(command, model) {
+  if (!isString(command[0])) {
+    log(`Error processing command, no command was run. The first ` +
+        `argument must be of type string, but was of type ` +
+        `${typeof command[0]}.\nThe command run was ${command}`,
+        LogLevel.WARNING);
+  }
+  const path = command[0].split('.');
+  const method = path.pop();
+  const args = command.slice(1);
+  let target = model;
+  for (let i = 0; i < path.length; i++) {
+    if (target[path[i]] === undefined) {
+      log(`Error processing command, no command was run as the ` +
+          `object at ${path} was undefined.\nThe command run was ${command}`,
+          LogLevel.WARNING);
+      return;
+    }
+    target = target[path[i]];
+  }
+  try {
+    target[method].apply(target, args);
+  } catch (e) {
+    // Catch any exception so we don't drop subsequent updates.
+    log(`An exception was thrown by the method ` +
+        `${method}, so no command was run.\nThe method was called on the ` +
+        `data layer object at the location ${path}.`, LogLevel.ERROR);
+  }
 }
 
 exports = DataLayerHelper;

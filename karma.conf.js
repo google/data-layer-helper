@@ -8,6 +8,7 @@ module.exports = function(config) {
       // Source files
       // Dependencies must be listed before the file they are used in for
       // the googmodule preprocessor to function properly.
+      {pattern: 'src/logging.js'},
       {pattern: 'src/plain/plain.js'},
       {pattern: 'src/helper/utils.js'},
       {pattern: 'src/helper/helper.js'},

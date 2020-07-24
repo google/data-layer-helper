@@ -1,7 +1,7 @@
-goog.module('datalayerhelper.helper.utils.testing.expandKeyValue');
+goog.module('data_layer_helper.helper.utils.testing.expandKeyValue');
 goog.setTestOnly();
 
-const {expandKeyValue} = goog.require('datalayerhelper.helper.utils');
+const {expandKeyValue} = goog.require('data_layer_helper.helper.utils');
 
 describe('The `expandKeyValue` function of helper', () => {
   /**

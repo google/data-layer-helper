@@ -1,23 +1,31 @@
-goog.module('datalayerhelper.helper.utils.testing.processCommand');
+goog.module('data_layer_helper.helper.utils.testing.processCommand');
 goog.setTestOnly();
 
-const {processCommand} = goog.require('datalayerhelper.helper.utils');
+const DataLayerHelper = goog.require('data_layer_helper.helper.DataLayerHelper');
 
 describe('The `processCommand` function of helper', () => {
   /**
    * A helper method to assert that a command passed to the processCommand
    * method produces the desired result.
    * @param {!Array<Object>} command A list of arguments to be given to the
-   *     processCommandfunction of helper, representing the command to
+   *     processCommand function of helper, representing the command to
    *     run on the model.
    * @param {!Object} startingModel The starting state of the model.
    * @param {!Object} expectedModel The expected state of the model after
    *     processing the command.
    */
   function assertCommand(command, startingModel, expectedModel) {
-    processCommand(command, startingModel);
+    const dataLayer = [];
+    const helper = new DataLayerHelper(dataLayer);
+    dataLayer.push(startingModel);
+    // Run the command on the model
+    dataLayer.push(command);
 
-    expect(startingModel).toEqual(expectedModel);
+    // Use flatten to make the model the first entry of dataLayer.
+    helper.flatten();
+    const endModel = dataLayer[0];
+
+    expect(endModel).toEqual(expectedModel);
   }
 
   describe('The behavior with built in array commands', () => {
@@ -97,10 +105,11 @@ describe('The `processCommand` function of helper', () => {
             assertCommand(['a.b.pop'], {a: {b: [0]}}, {a: {b: []}});
             assertCommand(['a.b.sort'],
                 {a: {b: [5, 4, 3, 2, 1]}}, {a: {b: [1, 2, 3, 4, 5]}});
-            assertCommand(['a.b.sort', function(a, b) {
-              return b - a;
-            }],
-            {a: {b: [1, 2, 3, 4, 5]}}, {a: {b: [5, 4, 3, 2, 1]}});
+            assertCommand([
+                  'a.b.sort', function(a, b) {
+                    return b - a;
+                  }],
+                {a: {b: [1, 2, 3, 4, 5]}}, {a: {b: [5, 4, 3, 2, 1]}});
             assertCommand(['a.b.reverse'],
                 {a: {b: [5, 4, 3, 2, 1]}}, {a: {b: [1, 2, 3, 4, 5]}});
             assertCommand(['a.b.shift'], {a: {b: [1, 2, 3]}}, {a: {b: [2, 3]}});
@@ -123,22 +132,32 @@ describe('The `processCommand` function of helper', () => {
   });
 
   it('supports objects that have been given custom methods', () => {
-    const mutableObject = {a: 1, b: 2};
-    mutableObject.addItem = function(item, value) {
-      this[item] = value;
-    };
-    mutableObject.updateItem = function(item, value) {
-      if (this[item] !== undefined) {
-        this[item] = value;
+    /** A class with custom functions that modifies state. */
+    class MutableObject {
+      /**
+       * Create a object with the given initial state.
+       * @param {!Object<string, number>} startingState
+       */
+      constructor(startingState) {
+        this.state = startingState;
       }
-    };
-    assertCommand(['object.addItem', 'c', 3],
-        {object: mutableObject}, {object: mutableObject});
 
-    expect(mutableObject['c']).toBe(3);
-    assertCommand(['object.updateItem', 'a', 'cat'],
-        {object: mutableObject}, {object: mutableObject});
+      /**
+       * Add or change a key-value pair in the state.
+       *  @param {string} key The location to update.
+       *  @param {number} value The item to place at the key.
+       */
+      updateItem(key, value) {
+        this.state[key] = value;
+      }
+    }
 
-    expect(mutableObject['a']).toBe('cat');
+    assertCommand(['object.updateItem', 'c', 3],
+        {object: new MutableObject({a: 1, b: 2})},
+        {object: new MutableObject({a: 1, b: 2, c: 3})});
+
+    assertCommand(['object.updateItem', 'a', 5],
+        {object: new MutableObject({a: 1, b: 2})},
+        {object: new MutableObject({a: 5, b: 2})});
   });
 });

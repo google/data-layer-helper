@@ -1,7 +1,7 @@
-goog.module('datalayerhelper.plain.testing.type');
+goog.module('data_layer_helper.plain.testing.type');
 goog.setTestOnly();
 
-const {type} = goog.require('datalayerhelper.plain');
+const {type} = goog.require('data_layer_helper.plain');
 
 describe('The `type` function of plain', () => {
   /**

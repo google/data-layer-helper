@@ -1,7 +1,7 @@
-goog.module('datalayerhelper.helper.utils.testing.isArguments');
+goog.module('data_layer_helper.helper.utils.testing.isArguments');
 goog.setTestOnly();
 
-const {isArguments} = goog.require('datalayerhelper.helper.utils');
+const {isArguments} = goog.require('data_layer_helper.helper.utils');
 
 describe('The `isArguments` function of helper', () => {
   it('identifies an arguments object', () => {

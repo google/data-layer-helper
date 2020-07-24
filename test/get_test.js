@@ -1,7 +1,7 @@
-goog.module('datalayerhelper.helper.testing.get');
+goog.module('data_layer_helper.helper.testing.get');
 goog.setTestOnly();
 
-const DataLayerHelper = goog.require('datalayerhelper.helper.DataLayerHelper');
+const DataLayerHelper = goog.require('data_layer_helper.helper.DataLayerHelper');
 
 describe('The `get` function of helper', () => {
   const h = new DataLayerHelper(/* dataLayer= */[{

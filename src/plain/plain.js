@@ -11,7 +11,7 @@
  * @author bkuhn@google.com (Brian Kuhn)
  */
 
-goog.module('datalayerhelper.plain');
+goog.module('data_layer_helper.plain');
 
 
 /**
