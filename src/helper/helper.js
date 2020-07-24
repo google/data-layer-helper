@@ -104,7 +104,8 @@ class DataLayerHelper {
 
     /**
      * The internal map of processors to run.
-     * @private @const {!Object<string, !Array<function(*):!Object>>}
+     * @private @const
+     *    {!Object<string, !Array<function(...*):!Object|undefined>>}
      */
     this.commandProcessors_ = {};
 
@@ -199,10 +200,10 @@ class DataLayerHelper {
    *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
-   * @param {!Function} processor The callback function to register.
-   *    Will be invoked when an arguments object whose first parameter is name
-   *    is pushed to the data layer. If it returns something, it should be
-   *    of type Object.
+   * @param {function(...*):undefined|!Object} processor The callback function
+   *    to register. Will be invoked when an arguments object whose first
+   *    parameter is name is pushed to the data layer. If it returns something,
+   *    it should be of type Object.
    * @this {DataLayerHelper}
    */
   registerProcessor(name, processor) {
