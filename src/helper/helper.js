@@ -264,7 +264,7 @@ class DataLayerHelper {
     while (this.executingListener_ === false && this.unprocessed_.length > 0) {
       const update = this.unprocessed_.shift();
       if (isArray(update)) {
-        processCommand(/** @type {!Array<*>} */ (update), this.model_);
+        processCommand_(/** @type {!Array<*>} */ (update), this.model_);
       } else if (isArguments(update)) {
         const newStates = this.processArguments_(
             /** @type {!Array<*>} */(update));
@@ -328,7 +328,7 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  * @param {!Object<*>} model The current dataLayer model.
  * @private
  */
-function processCommand(command, model) {
+function processCommand_(command, model) {
   if (!isString(command[0])) {
     log(`Error processing command, no command was run. The first ` +
         `argument must be of type string, but was of type ` +
