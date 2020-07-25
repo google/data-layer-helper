@@ -69,13 +69,33 @@ class DataLayerHelper {
    * Creates a new helper object for the given dataLayer.
    *
    * @param {!Array<*>} dataLayer The dataLayer to help with.
-   * @param {function(!Object<*>, !Object<*>)=} listener The callback
-   *     function to execute when a new state gets pushed onto the dataLayer.
-   * @param {boolean=} listenToPast If true, the given listener will be
-   *     executed for state changes that have already happened.
+   * @param {{listener: function(!Object<*>, !Object<*>),
+   *     listenToPast: boolean,
+   *     processNow: boolean,
+   *     commandProcessors: !Object<string,
+   *         !Array<function(*):(!Object|undefined)>>,}=} optionsObject
    */
-  constructor(dataLayer, listener = () => {
-  }, listenToPast = false) {
+  constructor(dataLayer, {
+    // The callback function to execute when a new state
+    // gets pushed onto the dataLayer.
+    'listener': listener = (() => {}),
+    // If true, the given listener will be
+    // executed for state changes that have already happened.
+    'listenToPast': listenToPast = false,
+    // If false, halts the setup of the helper and delays processing the
+    // dataLayer until the 'process' method is called. Primarily used to
+    // register processors after construction of the helper.
+    'processNow': processNow = true,
+    'commandProcessors': commandProcessors = {},
+  } = {}) {
+    // Support backwards compatibility by checking if listener
+    // function was passed in instead of options object.
+    // If so, override the listener and listenToPast legacy arguments.
+    if (typeof arguments[1] === 'function') {
+      listener = arguments[1];
+      listenToPast = arguments[2] || false;
+    }
+
     /**
      * The dataLayer to help with.
      * @private @const {!Array<*>}
@@ -87,6 +107,12 @@ class DataLayerHelper {
      * @private @const {function(!Object<*>, *)}
      */
     this.listener_ = listener;
+
+    /**
+     * The internal marker for checking if the listener
+     * should be called for previous state changes.
+     */
+    this.listenToPast_ = listenToPast;
 
     /**
      * The internal marker for checking if the listener
@@ -110,9 +136,10 @@ class DataLayerHelper {
 
     /**
      * The internal map of processors to run.
-     * @private @const {!Object<string, !Array<function(*):!Object>>}
+     * @private @const {!Object<string,
+     *     !Array<function(*):(!Object|undefined)>>}
      */
-    this.commandProcessors_ = {};
+    this.commandProcessors_ = commandProcessors;
 
     /**
      * The interface to the internal dataLayer model that is exposed to custom
@@ -123,8 +150,21 @@ class DataLayerHelper {
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
+    if (processNow) {
+      this.process();
+    }
+  }
+
+  /**
+   * Processes the current dataLayer and registers the set command.
+   * The helper will not respond to pushes to the dataLayer until
+   * this method has been executed. Unless the processNow argument is
+   * intentionally set to false via the constructor, this method will
+   * always execute at construction time.
+   */
+  process() {
     // Process the existing/past states.
-    this.processStates_(dataLayer, !listenToPast);
+    this.processStates_(this.dataLayer_, !(this.listenToPast_));
 
     // Register a processor for set command.
     this.registerProcessor('set', function() {
@@ -142,11 +182,11 @@ class DataLayerHelper {
     });
 
     // Add listener for future state changes.
-    const oldPush = dataLayer.push;
+    const oldPush = this.dataLayer_.push;
     const that = this;
-    dataLayer.push = function() {
+    this.dataLayer_.push = function() {
       const states = [].slice.call(arguments, 0);
-      const result = oldPush.apply(dataLayer, states);
+      const result = oldPush.apply(that.dataLayer_, states);
       that.processStates_(states);
       return result;
     };
@@ -205,9 +245,9 @@ class DataLayerHelper {
    *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
-   * @param {function(*):!Object} processor The callback function to register.
-   *    Will be invoked when an arguments object whose first parameter is name
-   *    is pushed to the data layer.
+   * @param {function(*):(!Object|undefined)} processor The callback function to
+   *    register. Will be invoked when an arguments object whose first parameter
+   *    is name is pushed to the data layer.
    * @this {DataLayerHelper}
    */
   registerProcessor(name, processor) {
@@ -300,6 +340,8 @@ class DataLayerHelper {
 }
 
 window['DataLayerHelper'] = DataLayerHelper;
+DataLayerHelper.prototype['process'] = DataLayerHelper.prototype.process;
+DataLayerHelper.prototype['registerProcessor'] = DataLayerHelper.prototype.registerProcessor;
 
 /**
  * Helper function that will build the abstract model interface using the
