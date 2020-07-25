@@ -12,6 +12,8 @@ This library provides the ability to process messages passed onto a dataLayer qu
     - [Custom Methods](#custom-methods)
 - [Listening for Messages](#listening-for-messages)
     - [Processing the Past](#processing-the-past)
+    - [Registering Processors](#registering-processors)
+    - [Delaying Processing](#delaying-processing)
 - [Summary](#summary)
 - [Build and Test](#build-and-test)
 - [License](#license)
@@ -394,10 +396,11 @@ The following example demonstrates overwriting a value:
 </table>
 
 ## Listening for Messages
-When creating a DataLayerHelper object, you can also specify a callback function to be called 
+When creating a `DataLayerHelper` object, you can also specify a callback function to be called 
 whenever a message is pushed onto the given dataLayer. This allows your code to be notified
 immediately whenever the dataLayer has been updated, which is a key advantage of the message
-queue approach.
+queue approach. To do so, add the function under the `listener` attribute in an options object for
+the second parameter of the `DataLayerHelper` constructor.
 
 ```js
 function listener(model, message) {
@@ -405,13 +408,14 @@ function listener(model, message) {
   // The helper has merged it onto the model.
   // Now use the message and the updated model to do something.
 }
-var helper = new DataLayerHelper(dataLayer, listener);
+const helper = new DataLayerHelper(dataLayer, {listener: listener});
 ```
 
-### Processing the Past
+### Listening to the Past
 Tools that are loaded onto the page asynchronously or lazily will appreciate that you can also
-opt to process message that were pushed onto the dataLayer in the past. This can be done by 
-passing true as the third parameter in the DataLayerHelper constructor.
+opt to listen to message that were pushed onto the dataLayer in the past. To do so, mark the
+`listenToPast` attribute as true in an options object for the second parameter of the `DataLayerHelper`
+constructor.
 
 ```js
 function listener(model, message) {
@@ -419,12 +423,63 @@ function listener(model, message) {
   // The helper has merged it onto the model.
   // Now use the message and the updated model to do something.
 }
-var helper = new DataLayerHelper(dataLayer, listener, true);
+const helper = new DataLayerHelper(dataLayer, {
+  listener: listener,
+  listenToPast: true,
+});
 ```
 
 Using this option means that your listener callback will be called once for every message that
 has ever been pushed onto the given dataLayer. And on each call to the callback, the model
 will represent the abstract model at the time of the message.
+
+### Registering Processors
+
+To register multiple processors when constructing a helper, you can use the second parameter of the
+`DataLayerHelper` constructor as an options object. Pass the processors in under the `commandProcessors`
+attribute following the data structure presented:
+
+```js
+const helper = new DataLayerHelper(dataLayer, {
+  commandProcessors: {
+    'add': [
+      function(a, b) {return {sum: a + b}},
+      function(a, b) {return {totalSum: this.get('totalSum') + a + b}},
+    ],
+    'event': function(eventName) {return {lastEvent: eventName}},
+  },
+});
+```
+
+Similar to the `registerProcessor` method, the `add` command will invoke the two functions passed in to
+the `add` attribute in order.
+
+### Delaying Processing
+
+Tools that are loaded onto the page asynchronously or lazily will appreciate that you can also
+opt to delay the processing the dataLayer until all command API processors are registered. Since
+command API processors do not reprocess past dataLayer messages, it is important to register them
+before processing the commands intended to invoke them.
+
+To delay processing, mark the `processNow` attribute as false in an options object for the second parameter
+of the `DataLayerHelper` constructor. When the helper is ready to begin processing the dataLayer, simply call
+the `process` method of `DataLayerHelper`. Note that the helper will not respond to any messages pushed onto
+the dataLayer until `process` has been called.
+
+```js
+const helper = new DataLayerHelper(dataLayer, {
+  processNow: false,
+});
+
+// Command processors are registered lazily as asynchronous actions occur.
+// The abstract data model is empty as the helper has not yet processed the dataLayer.
+// Once all async actions are completed, we are ready for our helper to process the dataLayer.
+
+helper.process();
+
+// All messages that have been pushed onto the dataLayer are processed and added to the data model.
+// If any commands were pushed, they invoke the registered command processors.
+```
 
 ## Summary
 We've seen above that the dataLayer provides a simple API for page authors. They simply define
