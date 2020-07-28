@@ -24,6 +24,10 @@ describe('The data layer helper library', () => {
       expect(typeof helper.process).toBe('function');
     });
 
+    it('has the function registerProcessor', () => {
+      expect(typeof helper.registerProcessor).toBe('function');
+    });
+
     it('does not expose any private helper functions', () => {
       expect(helper.processStates_).toBeUndefined();
       expect(helper.expandKeyValue_).toBeUndefined();
@@ -207,9 +211,9 @@ describe('The data layer helper library', () => {
         dataLayer.push({one: {three: 3}});
 
         assertCallback(/* expected= */ [
-          {one: {three: 3}, two: 2},
-          {one: {three: 3}},
-        ],
+              {one: {three: 3}, two: 2},
+              {one: {three: 3}},
+            ],
             /* numberOfCalls= */ 4);
 
         expect(helper.get('one')).toEqual({three: 3});
@@ -236,9 +240,9 @@ describe('The data layer helper library', () => {
 
         expect(dataLayer.length).toBe(5);
         expectDataLayerEquals(/* expected= */ [
-          {one: 1, two: 2}, {two: 3},
-          {two: 2}, {one: {three: 3}}, {one: {four: 4}}],
-        dataLayer);
+              {one: 1, two: 2}, {two: 3},
+              {two: 2}, {one: {three: 3}}, {one: {four: 4}}],
+            dataLayer);
 
         helper.flatten();
 
@@ -270,7 +274,7 @@ describe('The data layer helper library', () => {
 
     describe('the result of calling custom methods', () => {
       it('calls custom methods pushed to the dataLayer that ' +
-        'may change state', () => {
+          'may change state', () => {
         dataLayer.push(
             {a: 'originalValue'},
             () => {
@@ -281,7 +285,7 @@ describe('The data layer helper library', () => {
       });
 
       it('allows for recursive type methods that ' +
-        'push themselves to the dataLayer', () => {
+          'push themselves to the dataLayer', () => {
         dataLayer.push(
             {numCustomMethodCalls: 0},
             function() {
@@ -296,6 +300,25 @@ describe('The data layer helper library', () => {
             });
 
         expect(helper.get('numCustomMethodCalls')).toBe(10);
+      });
+    });
+
+    describe('the registerProcessor command', () => {
+      it('Runs commands that use registerProcessor', () => {
+        /** Set up the command API. */
+        function commandAPI() {
+          dataLayer.push(arguments);
+        }
+        helper = new DataLayerHelper(dataLayer);
+        helper.registerProcessor('add', function(numberToAdd) {
+          const a = this.get('a');
+          return {sum: numberToAdd + a};
+        });
+        dataLayer.push({a: 1});
+        commandAPI('add', 2);
+
+        expect(helper.get('a')).toBe(1);
+        expect(helper.get('sum')).toBe(3);
       });
     });
   });
