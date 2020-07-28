@@ -13,7 +13,7 @@ const DLH_DEBUG = goog.define('DLH_DEBUG', false);
  * @enum {number}
  */
 const LogLevel = {
-  LOG: 1,
+  INFO: 1,
   WARNING: 2,
   ERROR: 3,
 };
@@ -27,7 +27,7 @@ const LogLevel = {
 function log(toLog, logLevel) {
   if (DLH_DEBUG) {
     switch (logLevel) {
-      case LogLevel.LOG:
+      case LogLevel.INFO:
         console.log(toLog);
         break;
       case LogLevel.WARNING:
