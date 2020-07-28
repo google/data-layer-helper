@@ -10,6 +10,10 @@
     "integration": "karma start test/integration/karma.conf.js"
   },
   "main": "dist/data-layer-helper.js",
+  "files": [
+    "/dist",
+    "/src"
+  ],
   "//": "Contributors are listed in alphabetical order by last name. Add yourself!",
   "contributors": [
     "Sam Calhoun <calhounsm@google.com>",
