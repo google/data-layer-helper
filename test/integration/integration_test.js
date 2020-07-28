@@ -22,9 +22,6 @@ describe('The data layer helper library', () => {
       expect(typeof helper.get).toBe('function');
       expect(typeof helper.flatten).toBe('function');
       expect(typeof helper.process).toBe('function');
-    });
-
-    it('has the function registerProcessor', () => {
       expect(typeof helper.registerProcessor).toBe('function');
     });
 
