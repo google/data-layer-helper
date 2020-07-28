@@ -52,6 +52,7 @@ module.exports = function(grunt) {
           // to debug their code.
           create_source_map: 'dist/data-layer-helper.js.map',
           jscomp_warning: 'lintChecks',
+          generate_exports: true,
         },
       },
       debug: {
@@ -74,6 +75,7 @@ module.exports = function(grunt) {
           // to debug their code.
           create_source_map: 'dist/data-layer-helper-debug.js.map',
           jscomp_warning: 'lintChecks',
+          generate_exports: true,
         },
       },
     },

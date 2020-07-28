@@ -56,6 +56,17 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
 const DLH_DEBUG = goog.define('DLH_DEBUG', false);
 
 /**
+ * @typedef {!Object<string,{
+ *       listener: (function(!Object,!Object):undefined),
+ *       listenToPast: boolean,
+ *       processNow: boolean,
+ *       commandProcessors:
+ *         !Object<string,!Array<function(*):(!Object|undefined)>>
+ *     }>} DataLayerOptions
+ */
+const DataLayerOptions = {};
+
+/**
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -69,31 +80,31 @@ class DataLayerHelper {
    * Creates a new helper object for the given dataLayer.
    *
    * @param {!Array<*>} dataLayer The dataLayer to help with.
-   * @param {{listener: function(!Object<*>, !Object<*>),
-   *     listenToPast: boolean,
-   *     processNow: boolean,
-   *     commandProcessors: !Object<string,
-   *         !Array<function(*):(!Object|undefined)>>,}=} optionsObject
+   * @param {(!DataLayerOptions|(function(!Object,!Object):undefined))=} options
+   * @param {boolean=} listenToPast
    */
-  constructor(dataLayer, {
-    // The callback function to execute when a new state
-    // gets pushed onto the dataLayer.
-    'listener': listener = (() => {}),
-    // If true, the given listener will be
-    // executed for state changes that have already happened.
-    'listenToPast': listenToPast = false,
-    // If false, halts the setup of the helper and delays processing the
-    // dataLayer until the 'process' method is called. Primarily used to
-    // register processors after construction of the helper.
-    'processNow': processNow = true,
-    'commandProcessors': commandProcessors = {},
-  } = {}) {
-    // Support backwards compatibility by checking if listener
-    // function was passed in instead of options object.
-    // If so, override the listener and listenToPast legacy arguments.
-    if (typeof arguments[1] === 'function') {
-      listener = arguments[1];
-      listenToPast = arguments[2] || false;
+  constructor(dataLayer, options = {}, listenToPast = false) {
+    // Legacy invocation
+    if (typeof options === 'function') {
+      logError(`Legacy constructor was used. ` +
+          `See README for latest usage.`, LogLevel.WARNING);
+      options = {
+        listener: options,
+        listenToPast: listenToPast,
+        processNow: true,
+        commandProcessors: {},
+      };
+    } else {
+      options = {
+        listener: options['listener'] === undefined ?
+            () => {} : options['listener'],
+        listenToPast: options['listenToPast'] === undefined ?
+            false : options['listenToPast'],
+        processNow: options['processNow'] === undefined ?
+            true : options['processNow'],
+        commandProcessors: options['commandProcessors'] === undefined ?
+            {} : options['commandProcessors'],
+      };
     }
 
     /**
@@ -106,13 +117,13 @@ class DataLayerHelper {
      * The listener to notify of changes to the dataLayer.
      * @private @const {function(!Object<*>, *)}
      */
-    this.listener_ = listener;
+    this.listener_ = options.listener;
 
     /**
      * The internal marker for checking if the listener
      * should be called for previous state changes.
      */
-    this.listenToPast_ = listenToPast;
+    this.listenToPast_ = options.listenToPast;
 
     /**
      * The internal marker for checking if the listener
@@ -139,7 +150,7 @@ class DataLayerHelper {
      * @private @const {!Object<string,
      *     !Array<function(*):(!Object|undefined)>>}
      */
-    this.commandProcessors_ = commandProcessors;
+    this.commandProcessors_ = options.commandProcessors;
 
     /**
      * The interface to the internal dataLayer model that is exposed to custom
@@ -150,7 +161,7 @@ class DataLayerHelper {
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
-    if (processNow) {
+    if (options.processNow) {
       this.process();
     }
   }
@@ -161,8 +172,14 @@ class DataLayerHelper {
    * this method has been executed. Unless the processNow argument is
    * intentionally set to false via the constructor, this method will
    * always execute at construction time.
+   *
+   * Note: This method should only be called a single time to prepare
+   * the helper.
+   * @export
    */
   process() {
+    logError(`Process has already been ran. This method should only ` +
+        `run a single time to prepare the helper.`, LogLevel.ERROR);
     // Process the existing/past states.
     this.processStates_(this.dataLayer_, !(this.listenToPast_));
 
@@ -199,6 +216,7 @@ class DataLayerHelper {
    * @param {string} key The path of the key to set on the model, where dot (.)
    *     is the path separator.
    * @return {*} The value found at the given key.
+   * @export
    */
   get(key) {
     let target = this.model_;
@@ -214,6 +232,7 @@ class DataLayerHelper {
    * Flattens the dataLayer's history into a single object that represents the
    * current state. This is useful for long running apps, where the dataLayer's
    * history may get very large.
+   * @export
    */
   flatten() {
     this.dataLayer_.splice(0, this.dataLayer_.length);
@@ -249,6 +268,7 @@ class DataLayerHelper {
    *    register. Will be invoked when an arguments object whose first parameter
    *    is name is pushed to the data layer.
    * @this {DataLayerHelper}
+   * @export
    */
   registerProcessor(name, processor) {
     if (!(name in this.commandProcessors_)) {
@@ -340,15 +360,6 @@ class DataLayerHelper {
 }
 
 window['DataLayerHelper'] = DataLayerHelper;
-// These methods are exported by DataLayerHelper for use outside of this file.
-// In order to ensure the functions are not compiled away by
-// ADVANCED_OPTIMIZATIONS, we export to the window. See
-// https://groups.google.com/g/closure-compiler-discuss/c/Z5rorPYR0m4/m/7vijpvpqCgAJ
-DataLayerHelper.prototype['get'] = DataLayerHelper.prototype.get;
-DataLayerHelper.prototype['flatten'] = DataLayerHelper.prototype.flatten;
-DataLayerHelper.prototype['process'] = DataLayerHelper.prototype.process;
-DataLayerHelper.prototype['registerProcessor'] =
-    DataLayerHelper.prototype.registerProcessor;
 
 /**
  * Helper function that will build the abstract model interface using the
