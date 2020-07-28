@@ -61,7 +61,7 @@ const DLH_DEBUG = goog.define('DLH_DEBUG', false);
  *       listenToPast: boolean,
  *       processNow: boolean,
  *       commandProcessors:
- *         !Object<string,!Array<function(*):(!Object|undefined)>>
+ *         !Object<string,!Array<function(...*):(!Object|undefined)>>
  *     }>} DataLayerOptions
  */
 const DataLayerOptions = {};
@@ -148,7 +148,7 @@ class DataLayerHelper {
     /**
      * The internal map of processors to run.
      * @private @const {!Object<string,
-     *     !Array<function(*):(!Object|undefined)>>}
+     *     !Array<function(...*):(!Object|undefined)>>}
      */
     this.commandProcessors_ = options.commandProcessors;
 
@@ -178,8 +178,11 @@ class DataLayerHelper {
    * @export
    */
   process() {
-    logError(`Process has already been ran. This method should only ` +
+    if (this.commandProcessors_['set']) {
+      logError(`Process has already been ran. This method should only ` +
         `run a single time to prepare the helper.`, LogLevel.ERROR);
+    }
+
     // Process the existing/past states.
     this.processStates_(this.dataLayer_, !(this.listenToPast_));
 
@@ -264,9 +267,9 @@ class DataLayerHelper {
    *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
-   * @param {function(*):(!Object|undefined)} processor The callback function to
-   *    register. Will be invoked when an arguments object whose first parameter
-   *    is name is pushed to the data layer.
+   * @param {function(...*):(!Object|undefined)} processor The callback function
+   *    to register. Will be invoked when an arguments object whose first
+   *    parameter is name is pushed to the data layer.
    * @this {DataLayerHelper}
    * @export
    */
