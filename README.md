@@ -12,7 +12,7 @@ This library provides the ability to process messages passed onto a data layer q
     - [Custom Methods](#custom-methods)
         - [The Abstract Data Model Interface](#the-abstract-data-model-interface)
 - [Listening for Messages](#listening-for-messages)
-    - [Processing the Past](#processing-the-past)
+    - [Listening to the Past](#listening-to-the-past)
     - [Registering Processors](#registering-processors)
     - [Delaying Processing](#delaying-processing)
 - [Summary](#summary)
@@ -439,7 +439,6 @@ has ever been pushed onto the given data layer. And on each call to the callback
 will represent the abstract model at the time of the message.
 
 ### Registering Processors
-
 If you are using a command API to bring messages to the data layer, you may want to run
 different processors to respond to different commands pushed to the data layer instead of just
 having one global listener for all commands. You can register a function to run whenever commands
