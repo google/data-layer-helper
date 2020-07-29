@@ -55,7 +55,7 @@ describe('The registerProcessor method of helper', () => {
       expect(dataLayerHelper.get('finalAns')).toBe(3);
     });
 
-    it('is consistent with the documentation in helper.js', () => {
+    it('is consistent with the documentation in data-layer-helper.js', () => {
       dataLayerHelper.registerProcessor('add', function(numberToAdd) {
         const a = this.get('a');
         return {sum: numberToAdd + a};

@@ -11,7 +11,7 @@ module.exports = function(config) {
       {pattern: 'src/logging.js'},
       {pattern: 'src/plain/plain.js'},
       {pattern: 'src/helper/utils.js'},
-      {pattern: 'src/helper/helper.js'},
+      {pattern: 'src/helper/data-layer-helper.js'},
       // jQuery
       {pattern: 'test/lib/jquery*'},
       // Tests
