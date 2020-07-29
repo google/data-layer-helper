@@ -47,6 +47,7 @@ module.exports = function(grunt) {
         language_out: 'ECMASCRIPT5_STRICT',
         output_wrapper: '(function(){%output%})();',
         jscomp_warning: 'lintChecks',
+        generate_exports: true,
       },
       distribution: {
         files: {
@@ -66,7 +67,7 @@ module.exports = function(grunt) {
           // A source map can be used by other applications using this library
           // to debug their code.
           define: 'DLH_DEBUG=true',
-          create_source_map: 'dist/data-layer-helper.js.map',
+          create_source_map: 'dist/data-layer-helper-debug.js.map',
         },
       },
     },

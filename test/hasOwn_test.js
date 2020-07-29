@@ -1,7 +1,7 @@
-goog.module('data_layer_helper.plain.testing.hasOwn');
+goog.module('dataLayerHelper.plain.testing.hasOwn');
 goog.setTestOnly();
 
-const {hasOwn} = goog.require('data_layer_helper.plain');
+const {hasOwn} = goog.require('dataLayerHelper.plain');
 
 describe('The `hasOwn` method of plain', () => {
   /**

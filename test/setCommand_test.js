@@ -1,7 +1,7 @@
-goog.module('data_layer_helper.helper.testing.setCommand');
+goog.module('dataLayerHelper.helper.testing.setCommand');
 goog.setTestOnly();
 
-const DataLayerHelper = goog.require('data_layer_helper.helper.DataLayerHelper');
+const DataLayerHelper = goog.require('dataLayerHelper.helper.DataLayerHelper');
 
 describe('The set command', () => {
   let dataLayer;

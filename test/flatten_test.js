@@ -1,7 +1,7 @@
-goog.module('data_layer_helper.helper.testing.flatten');
+goog.module('dataLayerHelper.helper.testing.flatten');
 goog.setTestOnly();
 
-const DataLayerHelper = goog.require('data_layer_helper.helper.DataLayerHelper');
+const DataLayerHelper = goog.require('dataLayerHelper.helper.DataLayerHelper');
 
 describe('The `flatten` method of helper', () => {
   beforeEach(function() {

@@ -1,4 +1,4 @@
-goog.module('data_layer_helper.logging');
+goog.module('dataLayerHelper.logging');
 
 /**
  * @define {boolean} When true, potential code errors will be logged to the

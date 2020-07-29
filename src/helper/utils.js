@@ -1,6 +1,6 @@
-goog.module('data_layer_helper.helper.utils');
+goog.module('dataLayerHelper.helper.utils');
 
-const {type, hasOwn, isPlainObject} = goog.require('data_layer_helper.plain');
+const {type, hasOwn, isPlainObject} = goog.require('dataLayerHelper.plain');
 
 /**
  * Converts the given key value pair into an object that can be merged onto
