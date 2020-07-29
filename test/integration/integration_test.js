@@ -18,12 +18,10 @@ describe('The data layer helper library', () => {
       expect(typeof DataLayerHelper).toBe('function');
     });
 
-    it('has two functions, get and flatten', () => {
+    it('has four methods: get, flatten, process and registerProcessor', () => {
       expect(typeof helper.get).toBe('function');
       expect(typeof helper.flatten).toBe('function');
-    });
-
-    it('has the function registerProcessor', () => {
+      expect(typeof helper.process).toBe('function');
       expect(typeof helper.registerProcessor).toBe('function');
     });
 
@@ -32,6 +30,114 @@ describe('The data layer helper library', () => {
       expect(helper.expandKeyValue_).toBeUndefined();
       expect(helper.isArray_).toBeUndefined();
       expect(helper.merge_).toBeUndefined();
+    });
+  });
+
+  describe('the DataLayerHelper constructor', () => {
+    let helper;
+    let dataLayer;
+    let callbackListener;
+
+    /**
+     * Asserts that the construction of the helper was performed
+     * correctly based on if listener and listenToPast arguments
+     * are working correctly.
+     * @param {number} callsAfterConstruction
+     * @param {number} callsAfterPush
+     */
+    function checkConstructor(callsAfterConstruction, callsAfterPush) {
+      expect(callbackListener.calls.count()).toBe(callsAfterConstruction);
+      dataLayer.push({one: 1});
+
+      expect(callbackListener.calls.count()).toBe(callsAfterPush);
+    }
+
+    beforeEach(() => {
+      callbackListener = jasmine.createSpy();
+    });
+
+    it('supports the legacy listener argument', () => {
+      dataLayer = [];
+      helper = new DataLayerHelper(dataLayer,
+          /* listener= */ callbackListener);
+
+      checkConstructor(0, 1);
+    });
+
+    it('supports the legacy listener and listenToPast arguments', () => {
+      dataLayer = [{one: 1}];
+      helper = new DataLayerHelper(dataLayer,
+          /* listener= */ callbackListener,
+          /* listenToPast= */ true);
+
+      checkConstructor(1, 2);
+    });
+
+    it('does not listenToPast by default using legacy arguments', () => {
+      dataLayer = [{one: 1}];
+      helper = new DataLayerHelper(dataLayer,
+        /* listener= */ callbackListener);
+
+      checkConstructor(0, 1);
+    });
+
+    it('supports the options object', () => {
+      dataLayer = [];
+      helper = new DataLayerHelper(dataLayer, {listener: callbackListener});
+
+      checkConstructor(0, 1);
+    });
+
+    it('supports listenToPast in options object', () => {
+      dataLayer = [{one: 1}];
+      helper = new DataLayerHelper(dataLayer,
+          {listener: callbackListener, listenToPast: true});
+
+      checkConstructor(1, 2);
+    });
+
+    it('does not listenToPast by default using options object', () => {
+      dataLayer = [{one: 1}];
+      helper = new DataLayerHelper(dataLayer, {listener: callbackListener});
+
+      checkConstructor(0, 1);
+    });
+
+    it('supports registering commandProcessors in options object', () => {
+      dataLayer = [{totalSum: 2}];
+      const commandAPI = function() {
+        dataLayer.push(arguments);
+      };
+      helper = new DataLayerHelper(dataLayer, {
+        commandProcessors: {
+          'add': [function(a, b) {
+            return {sum: a + b};
+          },
+          function(a, b) {
+            return {sum: this.get('totalSum') + a + b};
+          }],
+        }});
+
+      commandAPI('add', 1, 2);
+
+      expect(helper.get('sum')).toBe(5);
+      expect(helper.get('totalSum')).toBe(2);
+    });
+
+    it('supports processNow in options object', () => {
+      dataLayer = [{one: 1}];
+      helper = new DataLayerHelper(dataLayer,
+          {listener: callbackListener, listenToPast: true,
+            processNow: false});
+
+      checkConstructor(0, 0);
+
+      expect(helper.get('one')).toBe(undefined);
+
+      helper.process();
+
+      expect(callbackListener.calls.count()).toBe(2);
+      expect(helper.get('one')).toBe(1);
     });
   });
 
