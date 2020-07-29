@@ -56,13 +56,13 @@ const {type, hasOwn, isPlainObject} = goog.require('plain');
 const DLH_DEBUG = goog.define('DLH_DEBUG', false);
 
 /**
- * @typedef {!Object<string,{
- *       listener: (function(!Object,!Object):undefined),
- *       listenToPast: boolean,
- *       processNow: boolean,
- *       commandProcessors:
- *         !Object<string,!Array<function(...*):(!Object|undefined)>>
- *     }>} DataLayerOptions
+ * @typedef {{
+ *   listener: (function(!Object,!Object):undefined),
+ *   listenToPast: boolean,
+ *   processNow: boolean,
+ *   commandProcessors:
+ *     !Object<string,!Array<function(...*):(!Object|undefined)>>
+ * }}
  */
 const DataLayerOptions = {};
 
