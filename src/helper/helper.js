@@ -96,14 +96,11 @@ class DataLayerHelper {
       };
     } else {
       options = {
-        listener: options['listener'] === undefined ?
-            () => {} : options['listener'],
-        listenToPast: options['listenToPast'] === undefined ?
-            false : options['listenToPast'],
+        listener: options['listener'] || (() => {}),
+        listenToPast: options['listenToPast'] || false,
         processNow: options['processNow'] === undefined ?
             true : options['processNow'],
-        commandProcessors: options['commandProcessors'] === undefined ?
-            {} : options['commandProcessors'],
+        commandProcessors: options['commandProcessors'] || {},
       };
     }
 
@@ -124,6 +121,12 @@ class DataLayerHelper {
      * should be called for previous state changes.
      */
     this.listenToPast_ = options.listenToPast;
+
+    /**
+     * The internal marker for checking if the helper has been processed.
+     * @private {boolean}
+     */
+    this.processed_ = false;
 
     /**
      * The internal marker for checking if the listener
@@ -178,7 +181,7 @@ class DataLayerHelper {
    * @export
    */
   process() {
-    if (this.commandProcessors_['set']) {
+    if (this.processed_) {
       logError(`Process has already been ran. This method should only ` +
         `run a single time to prepare the helper.`, LogLevel.ERROR);
     }
@@ -200,6 +203,9 @@ class DataLayerHelper {
         merge_(obj, model);
       }
     });
+
+    // Mark helper as having been processed.
+    this.processed_ = true;
 
     // Add listener for future state changes.
     const oldPush = this.dataLayer_.push;
