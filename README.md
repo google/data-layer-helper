@@ -1,8 +1,8 @@
 # Data Layer Helper Library
-This library provides the ability to process messages passed onto a dataLayer queue.
+This library provides the ability to process messages passed onto a data layer queue.
 
 - [Quick Start](#quick-start)
-- [Background](#what-is-a-datalayer-queue)
+- [Background](#what-is-a-data-layer-queue)
 - [Why Do We Need a Library?](#why-do-we-need-a-library)
 - [The Abstract Data Model](#the-abstract-data-model)
     - [Overwriting Existing Values](#overwriting-existing-values)
@@ -11,13 +11,16 @@ This library provides the ability to process messages passed onto a dataLayer qu
     - [Meta Commands](#meta-commands)
     - [Native Methods](#native-methods)
     - [Custom Methods](#custom-methods)
+        - [The Abstract Data Model Interface](#the-abstract-data-model-interface)
 - [Listening for Messages](#listening-for-messages)
     - [Processing the Past](#processing-the-past)
+    - [Registering Processors](#registering-processors)
 - [Summary](#summary)
 - [Build and Test](#build-and-test)
 - [License](#license)
   
 
+<<<<<<< HEAD
 ## Quick Start
 First, install the package with your favorite package manager:
 ```bash
@@ -36,8 +39,8 @@ For the development version (bigger file size, but reports possible errors to th
 import 'node_modules/data-layer-helper/dist/data-layer-helper-test-debug';
 ```
 
-## What is a dataLayer queue?
-A dataLayer queue is simply a JavaScript array that lives on a webpage. 
+## What is a Data Layer Queue?
+A data layer queue is simply a JavaScript array that lives on a webpage. 
 
 ```html
 <script>
@@ -70,12 +73,12 @@ this data in a standard way, so page authors can avoid using a bunch of propriet
 * It doesn't require page authors to expose the same data multiple times.
 * It allows page authors to add, remove or change vendors easily.
 
-## Why do we need a library?
-The dataLayer system make things very easy for page authors. The syntax is simple, and there's no
+## Why do we need a Library?
+The data layer system makes things very easy for page authors. The syntax is simple, and there's no
 extra code to load. But this system _does_ make life a little more difficult for vendors and tools
 that want to consume the data. That's where this library comes in. 
 
-This project provides the ability to listen for dataLayer messages and to read the key/value pairs 
+This project provides the ability to listen for data layer messages and to read the key/value pairs 
 that have been set by all the previous messages. It can be used by the tools/vendors mentioned above, 
 or by page authors that need to read back the data they've emitted.
 
@@ -84,20 +87,20 @@ is by [following these instructions.](#quick-start)
 Once it's on the page, you can create a new helper object like this:
 
 ```js
-var helper = new DataLayerHelper(dataLayer);
+const helper = new DataLayerHelper(dataLayer);
 ```
 
-This helper object will listen for new messages on the given dataLayer.  Each new message will be 
+This helper object will listen for new messages on the given data layer.  Each new message will be 
 merged into the helper's **"abstract data model"**.  This internal model object holds the most recent
 value for all keys which have been set on messages processed by the helper. 
 
-You can retrieve values from the data model by using the helper's get() method:
+You can retrieve values from the data model by using the helper's `get()` method:
 
 ```js
 helper.get('category');   // Returns "Science".
 ```
 
-As mentioned above, messages passed onto the dataLayer can be hierarchical. For example, a page 
+As mentioned above, messages passed onto the data layer can be hierarchical. For example, a page 
 author might push the following message, which has data multiple levels deep:
 
 ```js
@@ -119,8 +122,8 @@ helper.get('one.two');           // Returns {three: 4}.
 
 ## The Abstract Data Model
 As mentioned above, the abstract data model is an internal representation, which holds
-the most recent value for all keys that have been set by a dataLayer message. This 
-means that as each message is pushed onto the dataLayer, the abstract data model must 
+the most recent value for all keys that have been set by a data layer message. This 
+means that as each message is pushed onto the data layer, the abstract data model must 
 be updated. The helper library does this using a well-defined process. 
 
 As each message is processed, its key/value pairs will be added to the abstract data 
@@ -138,9 +141,9 @@ overriden. For this, we define three types of values:
 * Everything else
 
 Hopefully, JavaScript Arrays are self-explanatory. "Plain" Objects are JavaScript 
-objects that were created via Object literal notation (e.g. {one: 2}) or via "new Object".
-Nulls, Dates, RegExps, Windows, DOM Elements, etc. are not "Plain". Those fall into the 
-category of "everything else", along with strings, numbers, booleans, undefined, etc.  
+objects that were created via Object literal notation (e.g. `{one: 2}`) or via `new Object`.
+`Nulls`, `Dates`, `RegExps`, `Windows`, `DOM Elements`, etc. are not "Plain". Those fall into the 
+category of "everything else", along with `strings`, `numbers`, `booleans`, `undefined`, etc.  
 
 Once the type of the new and existing values has been categorized this way, we can use the 
 following table to describe what action will happen for that key/value pair:
@@ -222,9 +225,9 @@ merged onto the existing value.  To make these cases easier, we provide a set of
 syntaxes for updating values that are already in the abstract data model. 
 
 The first of these syntaxes allows you to call any method supported on the existing type. 
-For example, if the existing value in the abstract model is an Array, you'd have a wide 
-variety of APIs that can be called (e.g. push, pop, concat, shift, unshift, etc.).  To invoke
-this syntax, you would push a "command array" onto the dataLayer instead of a normal message 
+For example, if the existing value in the abstract model is an `Array`, you'd have a wide 
+variety of APIs that can be called (e.g. `push`, `pop`, `concat`, `shift`, `unshift`, etc.).  To invoke
+this syntax, you would push a "command array" onto the data layer instead of a normal message 
 object.  
 
 ```js
@@ -233,8 +236,8 @@ dataLayer.push(['abc.push', 4, 5, 6]);
 
 A command array is a normal JavaScript array, where the first element is a string. The string 
 contains the key of the value to update, followed by a dot (.), followed by the name of the 
-method to invoke on the value.  In the above example, the key to update is 'abc', and the 
-method to invoke is the 'push' method.  The string may be followed by zero or more arguments, 
+method to invoke on the value.  In the above example, the key to update is `abc`, and the 
+method to invoke is the `push` method.  The string may be followed by zero or more arguments, 
 which will be passed to the invoked method.  
 
 If the given method name does not exist on the existing value, or if the invocation throws an 
@@ -286,7 +289,7 @@ In the following example, no arguments are provided:
 </table>
 
 
-In the following example, the value to update (bbb) is nested inside a top level object (aaa):
+In the following example, the value to update (`bbb`) is nested inside a top level object (`aaa`):
 
 <table>
   <tr>
@@ -334,14 +337,18 @@ return values from these method invocations. This brings us to our second syntax
 values in the abstract data model.
 
 ### Custom Methods
-So far, we've seen that objects (messages) can be pushed onto the dataLayer, as well as arrays 
-(command arrays). Pushing a function onto the dataLayer will also allow you to update the abstract 
-data model, but with custom code. This technique has the added benefit of being able to handle 
-return values of any native method calls made from within the function.
+So far, we've seen that objects (messages) can be pushed onto the data layer, as well as arrays
+(command arrays). Pushing a function onto the data layer will also allow you to update the abstract
+data model, but with custom code. This technique has the added benefit of being able to handle
+return values of any native method calls made from within the function. When a function
+is processed, the value of `this` will be the abstract data model interface, described below.
 
-When a function is processed, it will be executed in the context of the abstract data model. The 
-value of "this" will be an interface that represents the current abstract data model. This 
-interface will provide two APIs: get(key) and set(key, value). The following examples demonstrate 
+#### The Abstract Data Model Interface
+To safely access the abstract data model from within a custom method, an
+API with a getter and setter is provided. `get(key)` will get a key of the model,
+and `set(key, value)` will create or overwrite the given key with the new value.
+
+The following examples demonstrate 
 how these APIs can be used to update values in the abstract data model.
 
 <table>
@@ -379,7 +386,7 @@ The following example demonstrates updating a nested value:
   <tr>
     <td><b>Custom function:</b></td>
     <td><pre>dataLayer.push(function() {
-  var ccc = this.get('aaa.bbb.ccc');
+  const ccc = this.get('aaa.bbb.ccc');
   ccc.push(ccc.pop() * 2);
 })</pre></td>
   </tr>
@@ -414,9 +421,9 @@ The following example demonstrates overwriting a value:
 </table>
 
 ## Listening for Messages
-When creating a DataLayerHelper object, you can also specify a callback function to be called 
-whenever a message is pushed onto the given dataLayer. This allows your code to be notified
-immediately whenever the dataLayer has been updated, which is a key advantage of the message
+When creating a `DataLayerHelper` object, you can also specify a callback function to be called 
+whenever a message is pushed onto the given data layer. This allows your code to be notified
+immediately whenever the data layer has been updated, which is a key advantage of the message
 queue approach.
 
 ```js
@@ -425,13 +432,13 @@ function listener(model, message) {
   // The helper has merged it onto the model.
   // Now use the message and the updated model to do something.
 }
-var helper = new DataLayerHelper(dataLayer, listener);
+const helper = new DataLayerHelper(dataLayer, listener);
 ```
 
 ### Processing the Past
 Tools that are loaded onto the page asynchronously or lazily will appreciate that you can also
-opt to process message that were pushed onto the dataLayer in the past. This can be done by 
-passing true as the third parameter in the DataLayerHelper constructor.
+opt to process message that were pushed onto the data layer in the past. This can be done by 
+passing true as the third parameter in the `DataLayerHelper` constructor.
 
 ```js
 function listener(model, message) {
@@ -439,16 +446,71 @@ function listener(model, message) {
   // The helper has merged it onto the model.
   // Now use the message and the updated model to do something.
 }
-var helper = new DataLayerHelper(dataLayer, listener, true);
+const helper = new DataLayerHelper(dataLayer, listener, true);
 ```
 
 Using this option means that your listener callback will be called once for every message that
-has ever been pushed onto the given dataLayer. And on each call to the callback, the model
+has ever been pushed onto the given data layer. And on each call to the callback, the model
 will represent the abstract model at the time of the message.
 
+
+### Registering Processors
+If you are using a command API to bring messages to the data layer, you may want to run
+different processors to respond to different commands pushed to the data layer instead of just
+having one global listener for all commands. You can register a function to run whenever commands
+with a specific name are pushed to the command API. The function can take any number of arbitrary
+arguments, and within the function, the value of this will be [the abstract data model interface](#the-abstract-data-model-interface)
+The return value of the function will be merged into the model following the rules
+in [recursively merging values](#recursively-merging-values).
+
+First, set up a `commandAPI` function
+```js
+const dataLayer = [];
+const helper = new DataLayerHelper(dataLayer);
+function commandAPI() {
+  dataLayer.push(arguments);
+}
+```
+Next, use the `registerProcessor` function.
+```js
+helper.registerProcessor('add', function(number1, number2) {
+  // The return value will be merged into the model.
+  return {sum: number1 + number2};
+});
+
+// Important: to access the model using this,
+// registered processors must not be arrow functions.
+helper.registerProcessor('copy', function() {
+  const sum = this.get('sum');
+  // We could also do this.set('ans', sum), but changing
+  // the model inside of a registered processor is discouraged.
+  return {ans: sum};
+});
+
+// If multiple functions are registered with the same key, they
+// will be called in the order that they have been registered. Hence,
+// this function will be called second. However, it still will not
+// update finalAns on the first call, because updates from return values
+// won't be merged into the model until all functions have been called.
+helper.registerProcessor('copy', function() {
+  const ans = this.get('ans');
+  return {finalAns: ans};
+});
+```
+The above functions won't be called until we call `commandAPI` with the first parameter equal to the first parameter of `registerProcessor`.
+```js
+// Abstract data model is {}.
+commandAPI('add', 'a', 1, 2);
+// Abstract data model is {sum: 3}.
+commandAPI('copy');
+// Abstract data model is {sum: 3, ans: 3, finalAns: undefined}.
+commandAPI('copy');
+// Abstract data model is {sum: 3, ans: 3, finalAns: 3}.
+```
+
 ## Summary
-We've seen above that the dataLayer provides a simple API for page authors. They simply define
-an array called dataLayer, then push messages onto it. 
+We've seen above that the data layer provides a simple API for page authors. They simply define
+an array called `dataLayer`, then push messages onto it. 
 
 There are three types of messages:
 * Standard Messages (Objects)
@@ -457,7 +519,7 @@ There are three types of messages:
 
 This helper library provides tools and vendors a way to consume these messages. It automatically
 listens for new messages and merges them onto its abstract data model. You can query the model
-using the get() API, or you can get message notifications with a callback function.
+using the `get()` API, or you can get message notifications with a callback function.
 
 At this point, we highly recommend that you read the code and browse the tests for examples of
 how the library works and how it can be used.

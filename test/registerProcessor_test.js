@@ -17,7 +17,44 @@ describe('The registerProcessor method of helper', () => {
     spy = jasmine.createSpy('spy');
   });
 
-  describe('the examples in documentation', () => {
+  describe('the examples in the README', () => {
+    it('is consistent with the register processors subsection of the ' +
+        'README', () => {
+      dataLayerHelper.registerProcessor('add', function(number1, number2) {
+        // The return value will be merged into the model.
+        return {sum: number1 + number2};
+      });
+
+      dataLayerHelper.registerProcessor('copy', function() {
+        const sum = this.get('sum');
+        return {ans: sum};
+      });
+
+      dataLayerHelper.registerProcessor('copy', function() {
+        const ans = this.get('ans');
+        return {finalAns: ans};
+      });
+
+      expect(dataLayerHelper.get('sum')).toBeUndefined();
+      expect(dataLayerHelper.get('ans')).toBeUndefined();
+      expect(dataLayerHelper.get('finalAns')).toBeUndefined();
+      commandAPI('add', 1, 2);
+
+      expect(dataLayerHelper.get('sum')).toBe(3);
+      expect(dataLayerHelper.get('ans')).toBeUndefined();
+      expect(dataLayerHelper.get('finalAns')).toBeUndefined();
+      commandAPI('copy');
+
+      expect(dataLayerHelper.get('sum')).toBe(3);
+      expect(dataLayerHelper.get('ans')).toBe(3);
+      expect(dataLayerHelper.get('finalAns')).toBeUndefined();
+      commandAPI('copy');
+
+      expect(dataLayerHelper.get('sum')).toBe(3);
+      expect(dataLayerHelper.get('ans')).toBe(3);
+      expect(dataLayerHelper.get('finalAns')).toBe(3);
+    });
+
     it('is consistent with the documentation in helper.js', () => {
       dataLayerHelper.registerProcessor('add', function(numberToAdd) {
         const a = this.get('a');
