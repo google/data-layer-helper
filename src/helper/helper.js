@@ -228,7 +228,7 @@ class DataLayerHelper {
    */
   get(key) {
     let target = this.model_;
-    const split = key === '' ? [] : key.split('.');
+    const split = key.split('.');
     for (let i = 0; i < split.length; i++) {
       if (target[split[i]] === undefined) return undefined;
       target = target[split[i]];
