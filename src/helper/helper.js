@@ -96,7 +96,8 @@ class DataLayerHelper {
       };
     } else {
       options = {
-        listener: options['listener'] || (() => {}),
+        listener: options['listener'] || (() => {
+        }),
         listenToPast: options['listenToPast'] || false,
         processNow: options['processNow'] === undefined ?
             true : options['processNow'],
@@ -183,26 +184,24 @@ class DataLayerHelper {
   process() {
     if (this.processed_) {
       logError(`Process has already been ran. This method should only ` +
-        `run a single time to prepare the helper.`, LogLevel.ERROR);
+          `run a single time to prepare the helper.`, LogLevel.ERROR);
     }
-
-    // Process the existing/past states.
-    this.processStates_(this.dataLayer_, !(this.listenToPast_));
 
     // Register a processor for set command.
     this.registerProcessor('set', function() {
-      const model = this;
-
+      let toMerge = {};
       if (arguments.length === 1 && type(arguments[0]) === 'object') {
-        merge_(arguments[0], model);
+        toMerge = arguments[0];
       } else if (arguments.length === 2 &&
-        type(arguments[0]) === 'string') {
+          type(arguments[0]) === 'string') {
         // Maintain consistency with how objects are merged
         // outside of the set command (overwrite or recursively merge).
-        const obj = expandKeyValue_(arguments[0], arguments[1]);
-        merge_(obj, model);
+        toMerge = expandKeyValue_(arguments[0], arguments[1]);
       }
+      return toMerge;
     });
+    // Process the existing/past states.
+    this.processStates_(this.dataLayer_, !(this.listenToPast_));
 
     // Mark helper as having been processed.
     this.processed_ = true;
@@ -229,7 +228,7 @@ class DataLayerHelper {
    */
   get(key) {
     let target = this.model_;
-    const split = key.split('.');
+    const split = key === '' ? [] : key.split('.');
     for (let i = 0; i < split.length; i++) {
       if (target[split[i]] === undefined) return undefined;
       target = target[split[i]];
