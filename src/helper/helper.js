@@ -88,19 +88,22 @@ class DataLayerHelper {
     if (typeof options === 'function') {
       logError(`Legacy constructor was used. ` +
           `See README for latest usage.`, LogLevel.WARNING);
+      // Use only quoted keys for options, or the compiler
+      // may produce unexpected behavior.
       options = {
-        listener: options,
-        listenToPast: listenToPast,
-        processNow: true,
-        commandProcessors: {},
+        'listener': options,
+        'listenToPast': listenToPast,
+        'processNow': true,
+        'commandProcessors': {},
       };
     } else {
       options = {
-        listener: options['listener'] || (() => {}),
-        listenToPast: options['listenToPast'] || false,
-        processNow: options['processNow'] === undefined ?
+        'listener': options['listener'] || (() => {
+        }),
+        'listenToPast': options['listenToPast'] || false,
+        'processNow': options['processNow'] === undefined ?
             true : options['processNow'],
-        commandProcessors: options['commandProcessors'] || {},
+        'commandProcessors': options['commandProcessors'] || {},
       };
     }
 
@@ -114,13 +117,13 @@ class DataLayerHelper {
      * The listener to notify of changes to the dataLayer.
      * @private @const {function(!Object<*>, *)}
      */
-    this.listener_ = options.listener;
+    this.listener_ = options['listener'];
 
     /**
      * The internal marker for checking if the listener
      * should be called for previous state changes.
      */
-    this.listenToPast_ = options.listenToPast;
+    this.listenToPast_ = options['listenToPast'];
 
     /**
      * The internal marker for checking if the helper has been processed.
@@ -153,7 +156,7 @@ class DataLayerHelper {
      * @private @const {!Object<string,
      *     !Array<function(...*):(!Object|undefined)>>}
      */
-    this.commandProcessors_ = options.commandProcessors;
+    this.commandProcessors_ = options['commandProcessors'];
 
     /**
      * The interface to the internal dataLayer model that is exposed to custom
@@ -164,7 +167,7 @@ class DataLayerHelper {
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
-    if (options.processNow) {
+    if (options['processNow']) {
       this.process();
     }
   }
@@ -183,7 +186,7 @@ class DataLayerHelper {
   process() {
     if (this.processed_) {
       logError(`Process has already been ran. This method should only ` +
-        `run a single time to prepare the helper.`, LogLevel.ERROR);
+          `run a single time to prepare the helper.`, LogLevel.ERROR);
     }
 
     // Process the existing/past states.
@@ -196,7 +199,7 @@ class DataLayerHelper {
       if (arguments.length === 1 && type(arguments[0]) === 'object') {
         merge_(arguments[0], model);
       } else if (arguments.length === 2 &&
-        type(arguments[0]) === 'string') {
+          type(arguments[0]) === 'string') {
         // Maintain consistency with how objects are merged
         // outside of the set command (overwrite or recursively merge).
         const obj = expandKeyValue_(arguments[0], arguments[1]);
