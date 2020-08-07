@@ -3,10 +3,10 @@
  * In this test file, when referring to a variable of 'other' type,
  * we mean a type which is neither an array nor a plain object.
  */
-goog.module('datalayerhelper.helper.testing.merge_');
+goog.module('dataLayerHelper.helper.utils.testing.merge');
 goog.setTestOnly();
 
-const {isArray_, merge_} = goog.require('helper');
+const {isArray, merge} = goog.require('dataLayerHelper.helper.utils');
 
 describe('The `merge` function of helper', () => {
   /**
@@ -17,10 +17,10 @@ describe('The `merge` function of helper', () => {
    * @param {!Object} expected The expected result
    */
   function assertMerge(from, to, expected) {
-    const fromCopy = isArray_(from) ? [] : {};
+    const fromCopy = isArray(from) ? [] : {};
     // Merge from into fromCopy.
     jQuery.extend(true, fromCopy, from);
-    merge_(from, to);
+    merge(from, to);
 
     expect(from).toEqual(fromCopy);
     expect(to).toEqual(expected);
