@@ -23,7 +23,7 @@
  * a queue so that the page can record changes to its state. For example, a
  * page might start with the following dataLayer in its head section:
  *
- *   var dataLayer = [{
+ *   const dataLayer = [{
  *     title: 'Original page title'
  *   }];
  *
@@ -44,24 +44,18 @@
  * @author bkuhn@google.com (Brian Kuhn)
  */
 
-goog.module('helper');
-
-const {type, hasOwn, isPlainObject} = goog.require('plain');
-
-/**
- * @define {boolean} When true, potential code errors will be logged to the
- * console. To enable this, run yarn build-debug to compile the distribution
- * code.
- */
-const DLH_DEBUG = goog.define('DLH_DEBUG', false);
+goog.module('dataLayerHelper.helper.DataLayerHelper');
+const {LogLevel, log} = goog.require('dataLayerHelper.logging');
+const {expandKeyValue, isArray, isString, isArguments, merge} = goog.require('dataLayerHelper.helper.utils');
+const {isPlainObject, type} = goog.require('dataLayerHelper.plain');
 
 /**
  * @typedef {{
- *   listener: (function(!Object,!Object):undefined),
- *   listenToPast: boolean,
- *   processNow: boolean,
+ *   listener: (function(!Object,!Object)|undefined),
+ *   listenToPast: (boolean|undefined),
+ *   processNow: (boolean|undefined),
  *   commandProcessors:
- *     !Object<string,!Array<function(...*):(!Object|undefined)>>
+ *     (!Object<string,!Array<function(...*):(!Object|undefined)>>|undefined)
  * }}
  */
 const DataLayerOptions = {};
@@ -86,7 +80,7 @@ class DataLayerHelper {
   constructor(dataLayer, options = {}, listenToPast = false) {
     // Legacy invocation
     if (typeof options === 'function') {
-      logError(`Legacy constructor was used. ` +
+      log(`Legacy constructor was used. ` +
           `See README for latest usage.`, LogLevel.WARNING);
       options = {
         listener: options,
@@ -182,8 +176,8 @@ class DataLayerHelper {
    */
   process() {
     if (this.processed_) {
-      logError(`Process has already been ran. This method should only ` +
-          `run a single time to prepare the helper.`, LogLevel.ERROR);
+      log(`Process has already been run. This method should only ` +
+        `run a single time to prepare the helper.`, LogLevel.ERROR);
     }
 
     // Register a processor for set command.
@@ -194,7 +188,7 @@ class DataLayerHelper {
       } else if (arguments.length === 2 && type(arguments[0]) === 'string') {
         // Maintain consistency with how objects are merged
         // outside of the set command (overwrite or recursively merge).
-        toMerge = expandKeyValue_(arguments[0], arguments[1]);
+        toMerge = expandKeyValue(arguments[0], arguments[1]);
       }
       return toMerge;
     });
@@ -243,7 +237,7 @@ class DataLayerHelper {
   flatten() {
     this.dataLayer_.splice(0, this.dataLayer_.length);
     this.dataLayer_[0] = {};
-    merge_(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
+    merge(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
   }
 
   /**
@@ -334,9 +328,9 @@ class DataLayerHelper {
     // itself is causing new states to be pushed onto the dataLayer.
     while (this.executingListener_ === false && this.unprocessed_.length > 0) {
       const update = this.unprocessed_.shift();
-      if (isArray_(update)) {
+      if (isArray(update)) {
         processCommand_(/** @type {!Array<*>} */ (update), this.model_);
-      } else if (isArguments_(update)) {
+      } else if (isArguments(update)) {
         const newStates = this.processArguments_(
             /** @type {!Array<*>} */(update));
         this.unprocessed_.push.apply(this.unprocessed_, newStates);
@@ -345,13 +339,13 @@ class DataLayerHelper {
           update.call(this.abstractModelInterface_);
         } catch (e) {
           // Catch any exceptions to we don't drop subsequent updates.
-          logError(`An exception was thrown when running the method ` +
+          log(`An exception was thrown when running the method ` +
               `${update}, execution was skipped.`, LogLevel.ERROR);
-          logError(e, LogLevel.ERROR);
+          log(e, LogLevel.ERROR);
         }
       } else if (isPlainObject(update)) {
         for (const key in update) {
-          merge_(expandKeyValue_(key, update[key]), this.model_);
+          merge(expandKeyValue(key, update[key]), this.model_);
         }
       } else {
         continue;
@@ -380,7 +374,7 @@ window['DataLayerHelper'] = DataLayerHelper;
 function buildAbstractModelInterface_(dataLayerHelper) {
   return {
     set(key, value) {
-      merge_(expandKeyValue_(key, value),
+      merge(expandKeyValue(key, value),
           dataLayerHelper.model_);
     },
     get(key) {
@@ -400,8 +394,8 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  * @private
  */
 function processCommand_(command, model) {
-  if (!isString_(command[0])) {
-    logError(`Error processing command, no command was run. The first ` +
+  if (!isString(command[0])) {
+    log(`Error processing command, no command was run. The first ` +
         `argument must be of type string, but was of type ` +
         `${typeof command[0]}.\nThe command run was ${command}`,
         LogLevel.WARNING);
@@ -412,7 +406,7 @@ function processCommand_(command, model) {
   let target = model;
   for (let i = 0; i < path.length; i++) {
     if (target[path[i]] === undefined) {
-      logError(`Error processing command, no command was run as the ` +
+      log(`Error processing command, no command was run as the ` +
           `object at ${path} was undefined.\nThe command run was ${command}`,
           LogLevel.WARNING);
       return;
@@ -423,147 +417,10 @@ function processCommand_(command, model) {
     target[method].apply(target, args);
   } catch (e) {
     // Catch any exception so we don't drop subsequent updates.
-    logError(`An exception was thrown by the method ` +
+    log(`An exception was thrown by the method ` +
         `${method}, so no command was run.\nThe method was called on the ` +
         `data layer object at the location ${path}.`, LogLevel.ERROR);
   }
 }
 
-/**
- * Converts the given key value pair into an object that can be merged onto
- * another object. Specifically, this method treats dots in the key as path
- * separators, so the key/value pair:
- *
- *   'a.b.c', 1
- *
- * will become the object:
- *
- *   {a: {b: {c: 1}}}
- *
- * @param {string} key The key's path, where dots are the path separators.
- * @param {*} value The value to set on the given key path.
- * @return {!Object<*>} An object representing the given key/value which can be
- *     merged onto the dataLayer's model.
- * @private
- */
-function expandKeyValue_(key, value) {
-  const result = {};
-  let target = result;
-  const split = key.split('.');
-  for (let i = 0; i < split.length - 1; i++) {
-    target = target[split[i]] = {};
-  }
-  target[split[split.length - 1]] = value;
-  return result;
-}
-
-/**
- * Determines if the given value is an array.
- *
- * @param {*} value The value to test.
- * @return {boolean} True iff the given value is an array.
- * @private
- */
-function isArray_(value) {
-  return type(value) === 'array';
-}
-
-/**
- * Determines if the given value is an arguments object.
- *
- * @param {*} value The value to test.
- * @return {boolean} True iff the given value is an arguments object.
- * @private
- */
-function isArguments_(value) {
-  return type(value) === 'arguments';
-}
-
-/**
- * Determines if the given value is a string.
- *
- * @param {*} value The value to test.
- * @return {boolean} True iff the given value is a string.
- * @private
- */
-function isString_(value) {
-  return type(value) === 'string';
-}
-
-/**
- * Merges one object into another or one array into another. Scalars and
- * "non-plain" objects are overwritten when there is a merge conflict.
- * Arrays and "plain" objects are merged recursively.
- *
- * TODO(bkuhn): This is just a starting point for how we'll decide which
- * objects get cloned and which get copied. More work is needed to flesh
- * out the details here.
- *
- * @param {!Array<*>|!Object<*>} from The object or array to merge from.
- * @param {!Array<*>|!Object<*>} to The object or array to merge into.
- * @private
- */
-function merge_(from, to) {
-  const allowMerge = !from['_clear'];
-  for (const property in from) {
-    if (hasOwn(from, property)) {
-      const fromProperty = from[property];
-      if (isArray_(fromProperty) && allowMerge) {
-        if (!isArray_(to[property])) to[property] = [];
-        merge_(fromProperty, to[property]);
-      } else if (isPlainObject(fromProperty) && allowMerge) {
-        if (!isPlainObject(to[property])) to[property] = {};
-        merge_(fromProperty, to[property]);
-      } else {
-        to[property] = fromProperty;
-      }
-    }
-  }
-  delete to['_clear'];
-}
-
-/**
- * Enum for choosing the level at which to log an error.
- * @readonly
- * @enum {number}
- */
-const LogLevel = {
-  LOG: 1,
-  WARNING: 2,
-  ERROR: 3,
-};
-
-/**
- * Log an error to the console if the debug distribution is in use.
- *
- * @param {string} toLog The error to log to the console in debug mode.
- * @param {!LogLevel} logLevel The error to log to the console in debug mode.
- */
-function logError(toLog, logLevel) {
-  if (DLH_DEBUG) {
-    switch (logLevel) {
-      case LogLevel.LOG:
-        console.log(toLog);
-        break;
-      case LogLevel.WARNING:
-        console.warn(toLog);
-        break;
-      case LogLevel.ERROR:
-        console.error(toLog);
-        break;
-      default:
-    }
-  }
-}
-
-exports = {
-  DataLayerHelper,
-  buildAbstractModelInterface_,
-  processCommand_,
-  expandKeyValue_,
-  isArray_,
-  isArguments_,
-  isString_,
-  merge_,
-};
-
+exports = DataLayerHelper;

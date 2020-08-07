@@ -3,16 +3,18 @@ module.exports = function(config) {
     basePath: '.',
     frameworks: ['jasmine'],
     files: [
-      // closure library
+      // Closure library
       {pattern: 'node_modules/google-closure-library/closure/goog/base.js'},
-      // source files
-      // dependencies must be listed before the file they are used in for
-      // the googmodule preprocessor to function properly
-      {pattern: 'src/**/is_plain_object.js'},
-      {pattern: 'src/**/helper.js'},
-      // jquery
+      // Source files
+      // Dependencies must be listed before the file they are used in for
+      // the googmodule preprocessor to function properly.
+      {pattern: 'src/logging.js'},
+      {pattern: 'src/plain/plain.js'},
+      {pattern: 'src/helper/utils.js'},
+      {pattern: 'src/helper/data-layer-helper.js'},
+      // jQuery
       {pattern: 'test/lib/jquery*'},
-      // tests
+      // Tests
       {pattern: 'test/utils.js'},
       {pattern: 'test/*_test.js'},
     ],

@@ -1,19 +1,19 @@
-goog.module('datalayerhelper.helper.testing.isArgument_');
+goog.module('dataLayerHelper.helper.utils.testing.isArguments');
 goog.setTestOnly();
 
-const {isArguments_} = goog.require('helper');
+const {isArguments} = goog.require('dataLayerHelper.helper.utils');
 
-describe('The `isArguments_` function of helper', () => {
+describe('The `isArguments` function of helper', () => {
   it('identifies an arguments object', () => {
     const argumentsTest = function() {
-      expect(isArguments_(arguments)).toBeTrue();
+      expect(isArguments(arguments)).toBeTrue();
     };
     argumentsTest(1, 2, 3, 4);
   });
 
   it('identifies an empty arguments object', () => {
     const argumentsTest = function() {
-      expect(isArguments_(arguments)).toBeTrue();
+      expect(isArguments(arguments)).toBeTrue();
     };
     argumentsTest();
   });
@@ -23,38 +23,38 @@ describe('The `isArguments_` function of helper', () => {
       argumentsAsArgTest(arguments);
     };
     const argumentsAsArgTest = (args) => {
-      expect(isArguments_(args)).toBeTrue();
+      expect(isArguments(args)).toBeTrue();
     };
     argumentsTest(1, 2, 3, 4);
   });
 
   it('identifies an rest parameters as not an arguments object', () => {
     const restTest = (...restArgs) => {
-      expect(isArguments_(...restArgs)).toBeFalse();
+      expect(isArguments(...restArgs)).toBeFalse();
     };
     restTest('foo', 2, [null, null], 4);
   });
 
   it('identifies falsey types as not an Arguments object', () => {
-    expect(isArguments_(null)).toBeFalse();
-    expect(isArguments_(0)).toBeFalse();
-    expect(isArguments_('')).toBeFalse();
-    expect(isArguments_(undefined)).toBeFalse();
-    expect(isArguments_(false)).toBeFalse();
+    expect(isArguments(null)).toBeFalse();
+    expect(isArguments(0)).toBeFalse();
+    expect(isArguments('')).toBeFalse();
+    expect(isArguments(undefined)).toBeFalse();
+    expect(isArguments(false)).toBeFalse();
   });
 
   it('identifies non-arguments objects as not Arguments objects', () => {
-    expect(isArguments_([1, 2, 3])).toBeFalse();
-    expect(isArguments_({'hello': 'world', 'foo': 'bar'})).toBeFalse();
-    expect(isArguments_(new Object())).toBeFalse();
-    expect(isArguments_(new String('test'))).toBeFalse();
-    expect(isArguments_(() => {})).toBeFalse();
-    expect(isArguments_(function() {})).toBeFalse();
+    expect(isArguments([1, 2, 3])).toBeFalse();
+    expect(isArguments({'hello': 'world', 'foo': 'bar'})).toBeFalse();
+    expect(isArguments(new Object())).toBeFalse();
+    expect(isArguments(new String('test'))).toBeFalse();
+    expect(isArguments(() => {})).toBeFalse();
+    expect(isArguments(function() {})).toBeFalse();
   });
 
   it('identifies primitive types as not Arguments Objects', () => {
-    expect(isArguments_('primitive string')).toBeFalse();
-    expect(isArguments_(true)).toBeFalse();
-    expect(isArguments_(1)).toBeFalse();
+    expect(isArguments('primitive string')).toBeFalse();
+    expect(isArguments(true)).toBeFalse();
+    expect(isArguments(1)).toBeFalse();
   });
 });

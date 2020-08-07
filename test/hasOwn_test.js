@@ -1,9 +1,9 @@
-goog.module('datalayerhelper.plain.testing.hasOwn');
+goog.module('dataLayerHelper.plain.testing.hasOwn');
 goog.setTestOnly();
 
-const {hasOwn} = goog.require('plain');
+const {hasOwn} = goog.require('dataLayerHelper.plain');
 
-describe('The `hasOwn` method of plain',() => {
+describe('The `hasOwn` method of plain', () => {
   /**
    * Helper function used to ensure that plain.hasOwn determines if
    * the value has a non-inherited property with the given key.

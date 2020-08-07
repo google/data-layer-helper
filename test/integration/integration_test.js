@@ -5,7 +5,8 @@ describe('The data layer helper library', () => {
     expect(window['helper']).toBeUndefined();
     expect(window['plain']).toBeUndefined();
     expect(window['isPlainObject']).toBeUndefined();
-    expect(window['explandKeyValue_']).toBeUndefined();
+    expect(window['expandKeyValue']).toBeUndefined();
+    expect(window['LogLevel']).toBeUndefined();
   });
 
   describe('the DataLayerHelper API', () => {
@@ -27,9 +28,10 @@ describe('The data layer helper library', () => {
 
     it('does not expose any private helper functions', () => {
       expect(helper.processStates_).toBeUndefined();
-      expect(helper.expandKeyValue_).toBeUndefined();
-      expect(helper.isArray_).toBeUndefined();
-      expect(helper.merge_).toBeUndefined();
+      expect(helper.processCommand_).toBeUndefined();
+      expect(helper.expandKeyValue).toBeUndefined();
+      expect(helper.isArray).toBeUndefined();
+      expect(helper.merge).toBeUndefined();
     });
   });
 

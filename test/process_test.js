@@ -1,7 +1,7 @@
-goog.module('datalayerhelper.helper.testing.process');
+goog.module('dataLayerHelper.helper.testing.process');
 goog.setTestOnly();
 
-const {DataLayerHelper} = goog.require('helper');
+const DataLayerHelper = goog.require('dataLayerHelper.helper.DataLayerHelper');
 
 describe('The `process` function of helper', () => {
   let dataLayer;
