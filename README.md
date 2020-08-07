@@ -21,7 +21,6 @@ This library provides the ability to process messages passed onto a data layer q
 - [License](#license)
   
 
-<<<<<<< HEAD
 ## Quick Start
 First, install the package with your favorite package manager:
 ```bash
