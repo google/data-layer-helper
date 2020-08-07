@@ -26,56 +26,48 @@ module.exports = function(grunt) {
         closureLibraryPath: 'node_modules/google-closure-library',
       },
       helperDeps: {
-        src: 'src/helper/helper.js',
+        src: 'src/helper/data-layer-helper.js',
         dest: 'src/deps.js',
       },
     },
 
     // Using https://www.npmjs.com/package/google-closure-compiler
     'closure-compiler': {
+      options: {
+        js: [
+          'node_modules/google-closure-library/closure/goog/base.js',
+          'src/logging.js',
+          'src/plain/plain.js',
+          'src/helper/utils.js',
+        ],
+        hide_warnings_for: 'google-closure-library',
+        warning_level: 'VERBOSE',
+        compilation_level: 'ADVANCED_OPTIMIZATIONS',
+        language_in: 'ECMASCRIPT6_STRICT',
+        language_out: 'ECMASCRIPT5_STRICT',
+        output_wrapper: '(function(){%output%})();',
+        jscomp_warning: 'lintChecks',
+        generate_exports: true,
+      },
       distribution: {
         files: {
-          'dist/data-layer-helper.js': 'src/helper/**.js',
+          'dist/data-layer-helper.js': 'src/helper/data-layer-helper.js',
         },
         options: {
-          js: [
-            'node_modules/google-closure-library/closure/goog/base.js',
-            'src/plain/**.js',
-          ],
-          hide_warnings_for: 'google-closure-library',
-          warning_level: 'VERBOSE',
-          compilation_level: 'ADVANCED_OPTIMIZATIONS',
-          language_in: 'ECMASCRIPT6_STRICT',
-          language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){%output%})();',
           // A source map can be used by other applications using this library
           // to debug their code.
           create_source_map: 'dist/data-layer-helper.js.map',
-          jscomp_warning: 'lintChecks',
-          generate_exports: true,
         },
       },
       debug: {
         files: {
-          'dist/data-layer-helper-debug.js': 'src/helper/**.js',
+          'dist/data-layer-helper-debug.js': 'src/helper/data-layer-helper.js',
         },
         options: {
-          js: [
-            'node_modules/google-closure-library/closure/goog/base.js',
-            'src/plain/**.js',
-          ],
-          hide_warnings_for: 'google-closure-library',
-          warning_level: 'VERBOSE',
-          compilation_level: 'ADVANCED_OPTIMIZATIONS',
-          language_in: 'ECMASCRIPT6_STRICT',
-          language_out: 'ECMASCRIPT5_STRICT',
-          define: 'DLH_DEBUG=true',
-          output_wrapper: '(function(){%output%})();',
           // A source map can be used by other applications using this library
           // to debug their code.
+          define: 'DLH_DEBUG=true',
           create_source_map: 'dist/data-layer-helper-debug.js.map',
-          jscomp_warning: 'lintChecks',
-          generate_exports: true,
         },
       },
     },

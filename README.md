@@ -1,6 +1,7 @@
 # Data Layer Helper Library
 This library provides the ability to process messages passed onto a data layer queue.
 
+- [Quick Start](#quick-start)
 - [Background](#what-is-a-data-layer-queue)
 - [Why Do We Need a Library?](#why-do-we-need-a-library)
 - [The Abstract Data Model](#the-abstract-data-model)
@@ -19,6 +20,25 @@ This library provides the ability to process messages passed onto a data layer q
 - [Build and Test](#build-and-test)
 - [License](#license)
   
+
+<<<<<<< HEAD
+## Quick Start
+First, install the package with your favorite package manager:
+```bash
+npm install data-layer-helper
+// or
+yarn add data-layer-helper
+```
+
+Next, import the code into your javascript:
+```js
+import 'node_modules/data-layer-helper/dist/data-layer-helper';
+```
+
+For the development version (bigger file size, but reports possible errors to the console):
+```js
+import 'node_modules/data-layer-helper/dist/data-layer-helper-test-debug';
+```
 
 ## What is a Data Layer Queue?
 A data layer queue is simply a JavaScript array that lives on a webpage. 
@@ -63,9 +83,9 @@ This project provides the ability to listen for data layer messages and to read 
 that have been set by all the previous messages. It can be used by the tools/vendors mentioned above, 
 or by page authors that need to read back the data they've emitted.
 
-To use this library, you'll need to get it onto the page. You can do this by hosting a copy and 
-sourcing it from the page, or by compiling it into your own JavaScript library. Once it's on the 
-page, you can create a new helper object like this:
+To use this library, you'll need to get it onto the page. The easiest way to do this
+is by [following these instructions.](#quick-start)
+Once it's on the page, you can create a new helper object like this:
 
 ```js
 const helper = new DataLayerHelper(dataLayer);
@@ -100,6 +120,7 @@ Using the helper, you can retrieve the nested value using dot-notation:
 helper.get('one.two.three');     // Returns 4.
 helper.get('one.two');           // Returns {three: 4}.
 ```
+
 ## The Abstract Data Model
 As mentioned above, the abstract data model is an internal representation, which holds
 the most recent value for all keys that have been set by a data layer message. This 

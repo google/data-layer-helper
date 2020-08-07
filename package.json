@@ -48,8 +48,8 @@
     "karma-spec-reporter": "~0.0.32"
   },
   "dependencies": {
-    "google-closure-compiler": "~20200614.0.0",
-    "google-closure-library": "~20200614.0.0"
+    "google-closure-compiler": "~20200719.0.0",
+    "google-closure-library": "~20200628.0.0"
   },
   "repository": {
     "type": "git",
