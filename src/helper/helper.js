@@ -96,8 +96,7 @@ class DataLayerHelper {
       };
     } else {
       options = {
-        listener: options['listener'] || (() => {
-        }),
+        listener: options['listener'] || (() => {}),
         listenToPast: options['listenToPast'] || false,
         processNow: options['processNow'] === undefined ?
             true : options['processNow'],
@@ -192,8 +191,7 @@ class DataLayerHelper {
       let toMerge = {};
       if (arguments.length === 1 && type(arguments[0]) === 'object') {
         toMerge = arguments[0];
-      } else if (arguments.length === 2 &&
-          type(arguments[0]) === 'string') {
+      } else if (arguments.length === 2 && type(arguments[0]) === 'string') {
         // Maintain consistency with how objects are merged
         // outside of the set command (overwrite or recursively merge).
         toMerge = expandKeyValue_(arguments[0], arguments[1]);

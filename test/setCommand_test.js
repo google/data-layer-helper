@@ -21,7 +21,6 @@ describe('The set command', () => {
     targetModel = {};
   });
 
-
   describe('with 2 argument format', () => {
     it('updates model without corrupting it.', () => {
       commandAPI('set', 'foo', 'bar');
@@ -144,5 +143,23 @@ describe('The set command', () => {
           expect(dlh.model_).toEqual(targetModel);
         },
     );
+  });
+
+  it('does not modify the abstractModelInterface', () => {
+    commandAPI('set', 'a key', 'value');
+    commandAPI('set', {'b key': 'value'});
+
+    expect(dlh.abstractModelInterface_).toEqual({
+      get: jasmine.any(Function),
+      set: jasmine.any(Function),
+    });
+  });
+
+  it('creates values accessible by the abstract model interface', () => {
+    commandAPI('set', 'a key', 'value');
+    commandAPI('set', {'b key': 'value2'});
+
+    expect(dlh.abstractModelInterface_.get('a key')).toEqual('value');
+    expect(dlh.abstractModelInterface_.get('b key')).toEqual('value2');
   });
 });
