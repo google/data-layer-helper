@@ -55,7 +55,7 @@ const {isPlainObject, type} = goog.require('dataLayerHelper.plain');
  *   listenToPast: (boolean|undefined),
  *   processNow: (boolean|undefined),
  *   commandProcessors: (!Object<string,
- *       !Array<function(...*):(!Object<string, *>|undefined)>>|undefined)
+ *       !Array<function(...):(!Object<string, *>|undefined)>>|undefined)
  * }}
  */
 const DataLayerOptions = {};
@@ -149,7 +149,7 @@ class DataLayerHelper {
     /**
      * The internal map of processors to run.
      * @private @const {!Object<string,
-     *     !Array<function(...*):(!Object<string, *>|undefined)>>}
+     *     !Array<function(...):(!Object<string, *>|undefined)>>}
      */
     this.commandProcessors_ = options['commandProcessors'];
 
@@ -271,7 +271,7 @@ class DataLayerHelper {
    *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
-   * @param {function(...*):(!Object|undefined)} processor The callback function
+   * @param {function(...):(!Object|undefined)} processor The callback function
    *    to register. Will be invoked when an arguments object whose first
    *    parameter is name is pushed to the data layer.
    * @this {DataLayerHelper}
