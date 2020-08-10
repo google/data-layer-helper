@@ -192,8 +192,7 @@ class DataLayerHelper {
 
       if (arguments.length === 1 && type(arguments[0]) === 'object') {
         merge(arguments[0], model);
-      } else if (arguments.length === 2 &&
-          type(arguments[0]) === 'string') {
+      } else if (arguments.length === 2 && type(arguments[0]) === 'string') {
         // Maintain consistency with how objects are merged
         // outside of the set command (overwrite or recursively merge).
         const obj = expandKeyValue(arguments[0], arguments[1]);
