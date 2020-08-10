@@ -15,8 +15,8 @@ const {type, hasOwn, isPlainObject} = goog.require('dataLayerHelper.plain');
  *
  * @param {string} key The key's path, where dots are the path separators.
  * @param {*} value The value to set on the given key path.
- * @return {!Object<*>} An object representing the given key/value which can be
- *     merged onto the dataLayer's model.
+ * @return {!Object<string, *>} An object representing the given key/value
+ *     which can be merged onto the dataLayer's model.
  * @package
  */
 function expandKeyValue(key, value) {
@@ -72,8 +72,8 @@ function isString(value) {
  * objects get cloned and which get copied. More work is needed to flesh
  * out the details here.
  *
- * @param {!Array<*>|!Object<*>} from The object or array to merge from.
- * @param {!Array<*>|!Object<*>} to The object or array to merge into.
+ * @param {!Array<*>|!Object<string, *>} from The object or array to merge from.
+ * @param {!Array<*>|!Object<string, *>} to The object or array to merge into.
  * @package
  */
 function merge(from, to) {
