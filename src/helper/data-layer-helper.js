@@ -51,16 +51,16 @@ const {isPlainObject, type} = goog.require('dataLayerHelper.plain');
 
 /**
  * @typedef {{
- *   listener: (function(!Object,!Object)|undefined),
+ *   listener: (function(!Object<string, *>, *)|undefined),
  *   listenToPast: (boolean|undefined),
  *   processNow: (boolean|undefined),
- *   commandProcessors:
- *     (!Object<string,!Array<function(...*):(!Object|undefined)>>|undefined)
+ *   commandProcessors: (!Object<string,
+ *       !Array<function(...):(!Object<string, *>|undefined)>>|undefined)
  * }}
  */
 const DataLayerOptions = {};
 
-/**
+  /**
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -74,7 +74,8 @@ class DataLayerHelper {
    * Creates a new helper object for the given dataLayer.
    *
    * @param {!Array<*>} dataLayer The dataLayer to help with.
-   * @param {(!DataLayerOptions|(function(!Object,!Object):undefined))=} options
+   * @param {(!DataLayerOptions|
+   *     (function(!Object<string, *>, *):undefined))=} options
    * @param {boolean=} listenToPast
    */
   constructor(dataLayer, options = {}, listenToPast = false) {
@@ -109,7 +110,7 @@ class DataLayerHelper {
 
     /**
      * The listener to notify of changes to the dataLayer.
-     * @private @const {function(!Object<*>, *)}
+     * @private @const {function(!Object<string, *>, *)}
      */
     this.listener_ = options['listener'];
 
@@ -135,7 +136,7 @@ class DataLayerHelper {
     /**
      * The internal representation of the dataLayer's state at the time of the
      * update currently being processed.
-     * @private @const {!Object<*>}
+     * @private @const {!Object<string, *>}
      */
     this.model_ = {};
 
@@ -148,7 +149,7 @@ class DataLayerHelper {
     /**
      * The internal map of processors to run.
      * @private @const {!Object<string,
-     *     !Array<function(...*):(!Object|undefined)>>}
+     *     !Array<function(...):(!Object<string, *>|undefined)>>}
      */
     this.commandProcessors_ = options['commandProcessors'];
 
@@ -157,7 +158,7 @@ class DataLayerHelper {
      * methods. Custom methods will the executed with this interface as the
      * value of 'this', allowing users to manipulate the model using
      * this.get and this.set.
-     * @private @const {!Object<*>}
+     * @private @const {!Object<string, *>}
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
 
@@ -240,7 +241,7 @@ class DataLayerHelper {
   flatten() {
     this.dataLayer_.splice(0, this.dataLayer_.length);
     this.dataLayer_[0] = {};
-    merge(this.model_, /** @type {!Object<*>} */ (this.dataLayer_[0]));
+    merge(this.model_, /** @type {!Object<string, *>} */ (this.dataLayer_[0]));
   }
 
   /**
@@ -267,7 +268,7 @@ class DataLayerHelper {
    *
    * @param {string} name The string which should be passed into the command API
    *     to call the processor.
-   * @param {function(...*):(!Object|undefined)} processor The callback function
+   * @param {function(...):(!Object|undefined)} processor The callback function
    *    to register. Will be invoked when an arguments object whose first
    *    parameter is name is pushed to the data layer.
    * @this {DataLayerHelper}
@@ -287,7 +288,7 @@ class DataLayerHelper {
    *
    * @param {!Array<*>} args The arguments object containing the command
    *     to execute and optional arguments for the processor.
-   * @return {!Array<!Object<*>>} states The updates requested to
+   * @return {!Array<!Object<string, *>>} states The updates requested to
    *     the model state, in the order they should be processed.
    * @private
    */
@@ -370,7 +371,7 @@ window['DataLayerHelper'] = DataLayerHelper;
  *
  * @param {!DataLayerHelper} dataLayerHelper The helper class to construct the
  *     abstract model interface for.
- * @return {!Object<*>} The interface to the abstract data layer model that is
+ * @return {!Object<string, *>} The interface to the abstract data layer model that is
  *     given to Custom Methods.
  * @private
  */
@@ -393,7 +394,7 @@ function buildAbstractModelInterface_(dataLayerHelper) {
  *
  * @param {!Array<*>} command The array containing the key with the
  *     method to execute and optional arguments for the method.
- * @param {!Object<*>} model The current dataLayer model.
+ * @param {!Object<string, *>} model The current dataLayer model.
  * @private
  */
 function processCommand_(command, model) {
