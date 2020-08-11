@@ -184,23 +184,20 @@ class DataLayerHelper {
         `run a single time to prepare the helper.`, LogLevel.ERROR);
     }
 
-    // Process the existing/past states.
-    this.processStates_(this.dataLayer_, !(this.listenToPast_));
-
     // Register a processor for set command.
     this.registerProcessor('set', function() {
-      const model = this;
-
+      let toMerge = {};
       if (arguments.length === 1 && type(arguments[0]) === 'object') {
-        merge(arguments[0], model);
-      } else if (arguments.length === 2 &&
-          type(arguments[0]) === 'string') {
+        toMerge = arguments[0];
+      } else if (arguments.length === 2 && type(arguments[0]) === 'string') {
         // Maintain consistency with how objects are merged
         // outside of the set command (overwrite or recursively merge).
-        const obj = expandKeyValue(arguments[0], arguments[1]);
-        merge(obj, model);
+        toMerge = expandKeyValue(arguments[0], arguments[1]);
       }
+      return toMerge;
     });
+    // Process the existing/past states.
+    this.processStates_(this.dataLayer_, !(this.listenToPast_));
 
     // Mark helper as having been processed.
     this.processed_ = true;
