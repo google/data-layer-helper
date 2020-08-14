@@ -60,7 +60,7 @@ const {isPlainObject, type} = goog.require('dataLayerHelper.plain');
  */
 const DataLayerOptions = {};
 
-  /**
+/*
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -141,10 +141,18 @@ class DataLayerHelper {
     this.model_ = {};
 
     /**
-     * The internal queue of dataLayer updates that have not yet been processed.
+     * The internal queue of dataLayer updates that have not yet been processed
+     * because process() has not been called.
+     * @private {!Array<*>}
+     */
+    this.commandQueue_ = [];
+
+    /**
+     * The internal queue of dataLayer updates that have not yet been processed
+     * because another command is in the process of running.
      * @private @const {!Array<*>}
      */
-    this.unprocessed_ = [];
+    this.processingQueue_ = [];
 
     /**
      * The internal map of processors to run.
@@ -161,6 +169,16 @@ class DataLayerHelper {
      * @private @const {!Object<string, *>}
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
+
+    // Add listener for future state changes.
+    const oldPush = this.dataLayer_.push;
+    const that = this;
+    this.dataLayer_.push = function() {
+      const states = [].slice.call(arguments, 0);
+      const result = oldPush.apply(that.dataLayer_, states);
+      that.processStates_(states);
+      return result;
+    };
 
     if (options['processNow']) {
       this.process();
@@ -196,21 +214,15 @@ class DataLayerHelper {
       }
       return toMerge;
     });
-    // Process the existing/past states.
-    this.processStates_(this.dataLayer_, !(this.listenToPast_));
-
     // Mark helper as having been processed.
     this.processed_ = true;
 
-    // Add listener for future state changes.
-    const oldPush = this.dataLayer_.push;
-    const that = this;
-    this.dataLayer_.push = function() {
-      const states = [].slice.call(arguments, 0);
-      const result = oldPush.apply(that.dataLayer_, states);
-      that.processStates_(states);
-      return result;
-    };
+    // Process the existing/past states (in the dataLayer)
+    this.commandQueue_.push.apply(this.commandQueue_, this.dataLayer_);
+    // Before process() is called, put everything in an external queue.
+    // This way we can simulate the processingQueue later as being the length
+    // it would have been at the time that any command is to be processed.
+    this.processStates_([], !(this.listenToPast_));
   }
 
   /**
@@ -319,25 +331,31 @@ class DataLayerHelper {
    *
    * @param {!Array<*>} states The update objects to process, each
    *     representing a change to the state of the page.
-   * @param {boolean=} skipListener If true, the listener the given states
+   * @param {boolean=} skipListener If true, the existing states
    *     will be applied to the internal model, but will not cause the listener
    *     to be executed. This is useful for processing past states that the
    *     listener might not care about.
    * @private
    */
   processStates_(states, skipListener = false) {
-    this.unprocessed_.push.apply(this.unprocessed_, states);
+    if (!this.processed_) {
+      return;
+    }
+    this.processingQueue_.push.apply(this.processingQueue_, states);
+    if (this.executingListener_) {
+      return;
+    }
     // Checking executingListener here protects against multiple levels of
     // loops trying to process the same queue. This can happen if the listener
     // itself is causing new states to be pushed onto the dataLayer.
-    while (this.executingListener_ === false && this.unprocessed_.length > 0) {
-      const update = this.unprocessed_.shift();
+    while (this.processingQueue_.length > 0) {
+      const update = this.processingQueue_.shift();
       if (isArray(update)) {
         processCommand_(/** @type {!Array<*>} */ (update), this.model_);
       } else if (isArguments(update)) {
         const newStates = this.processArguments_(
             /** @type {!Array<*>} */(update));
-        this.unprocessed_.push.apply(this.unprocessed_, newStates);
+        this.processingQueue_.push.apply(this.processingQueue_, newStates);
       } else if (typeof update == 'function') {
         try {
           update.call(this.abstractModelInterface_);
@@ -360,6 +378,14 @@ class DataLayerHelper {
         this.executingListener_ = false;
       }
     }
+    // If we have processed the whole queue, then look in the commandQueue for
+    // any additional commands to do.
+    if (this.processingQueue_.length === 0 && this.commandQueue_.length > 0) {
+      this.processingQueue_.push(this.commandQueue_.shift());
+    }
+    if (this.processingQueue_.length > 0) {
+      this.processStates_([], skipListener);
+    }
   }
 }
 
@@ -371,8 +397,8 @@ window['DataLayerHelper'] = DataLayerHelper;
  *
  * @param {!DataLayerHelper} dataLayerHelper The helper class to construct the
  *     abstract model interface for.
- * @return {!Object<string, *>} The interface to the abstract data layer model that is
- *     given to Custom Methods.
+ * @return {!Object<string, *>} The interface to the abstract data layer model
+ *     that is given to Custom Methods.
  * @private
  */
 function buildAbstractModelInterface_(dataLayerHelper) {

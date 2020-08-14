@@ -106,9 +106,9 @@ describe('The `processCommand` function of helper', () => {
             assertCommand(['a.b.sort'],
                 {a: {b: [5, 4, 3, 2, 1]}}, {a: {b: [1, 2, 3, 4, 5]}});
             assertCommand([
-                  'a.b.sort', function(a, b) {
-                    return b - a;
-                  }],
+              'a.b.sort', function(a, b) {
+                return b - a;
+              }],
                 {a: {b: [1, 2, 3, 4, 5]}}, {a: {b: [5, 4, 3, 2, 1]}});
             assertCommand(['a.b.reverse'],
                 {a: {b: [5, 4, 3, 2, 1]}}, {a: {b: [1, 2, 3, 4, 5]}});
