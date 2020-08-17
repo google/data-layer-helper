@@ -36,8 +36,7 @@ describe('The `processStates_` function of helper', () => {
       expect(listenerCalls)
           .toEqual(skipListener ? [] : expectedListenerCalls);
 
-      expect(helper.commandQueue_).toEqual([]);
-      expect(helper.processingQueue_).toEqual([]);
+      expect(helper.unprocessed_).toEqual([]);
       expect(helper.executingListener_).toBeFalse();
     };
 

@@ -60,7 +60,7 @@ const {isPlainObject, type} = goog.require('dataLayerHelper.plain');
  */
 const DataLayerOptions = {};
 
-/*
+/**
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -142,17 +142,10 @@ class DataLayerHelper {
 
     /**
      * The internal queue of dataLayer updates that have not yet been processed
-     * because process() has not been called.
-     * @private {!Array<*>}
-     */
-    this.commandQueue_ = [];
-
-    /**
-     * The internal queue of dataLayer updates that have not yet been processed
      * because another command is in the process of running.
      * @private @const {!Array<*>}
      */
-    this.processingQueue_ = [];
+    this.unprocessed_ = [];
 
     /**
      * The internal map of processors to run.
@@ -217,12 +210,12 @@ class DataLayerHelper {
     // Mark helper as having been processed.
     this.processed_ = true;
 
-    // Process the existing/past states (in the dataLayer)
-    this.commandQueue_.push.apply(this.commandQueue_, this.dataLayer_);
-    // Before process() is called, put everything in an external queue.
-    // This way we can simulate the processingQueue later as being the length
-    // it would have been at the time that any command is to be processed.
-    this.processStates_([], !(this.listenToPast_));
+    const curLength = this.dataLayer_.length;
+    for (let i = 0; i < curLength; i++) {
+     // Run the commands one at a time to maintain the correct
+     // length of the queue on each command.
+     this.processStates_([this.dataLayer_[i]], !(this.listenToPast_));
+    }
   }
 
   /**
@@ -248,6 +241,8 @@ class DataLayerHelper {
    * Flattens the dataLayer's history into a single object that represents the
    * current state. This is useful for long running apps, where the dataLayer's
    * history may get very large.
+   * Use of this method with a command API is not supported and may break
+   * something.
    * @export
    */
   flatten() {
@@ -341,21 +336,21 @@ class DataLayerHelper {
     if (!this.processed_) {
       return;
     }
-    this.processingQueue_.push.apply(this.processingQueue_, states);
+    this.unprocessed_.push.apply(this.unprocessed_, states);
     if (this.executingListener_) {
       return;
     }
     // Checking executingListener here protects against multiple levels of
     // loops trying to process the same queue. This can happen if the listener
     // itself is causing new states to be pushed onto the dataLayer.
-    while (this.processingQueue_.length > 0) {
-      const update = this.processingQueue_.shift();
+    while (this.unprocessed_.length > 0) {
+      const update = this.unprocessed_.shift();
       if (isArray(update)) {
         processCommand_(/** @type {!Array<*>} */ (update), this.model_);
       } else if (isArguments(update)) {
         const newStates = this.processArguments_(
             /** @type {!Array<*>} */(update));
-        this.processingQueue_.push.apply(this.processingQueue_, newStates);
+        this.unprocessed_.push.apply(this.unprocessed_, newStates);
       } else if (typeof update == 'function') {
         try {
           update.call(this.abstractModelInterface_);
@@ -377,14 +372,6 @@ class DataLayerHelper {
         this.listener_(this.model_, update);
         this.executingListener_ = false;
       }
-    }
-    // If we have processed the whole queue, then look in the commandQueue for
-    // any additional commands to do.
-    if (this.processingQueue_.length === 0 && this.commandQueue_.length > 0) {
-      this.processingQueue_.push(this.commandQueue_.shift());
-    }
-    if (this.processingQueue_.length > 0) {
-      this.processStates_([], skipListener);
     }
   }
 }
