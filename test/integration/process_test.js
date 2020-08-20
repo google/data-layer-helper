@@ -27,7 +27,6 @@ describe('The process function of helper', () => {
     const spy = jasmine.createSpy('spy');
     commandAPI('event');
     commandAPI('fireworks');
-
     const helper = new DataLayerHelper(dataLayer,
         {processNow: false});
     helper.registerProcessor('event', () => {
@@ -38,5 +37,23 @@ describe('The process function of helper', () => {
     helper.process();
 
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('registers set commands pushed before process in other ' +
+    'commands pushed before process', () => {
+    const helper = new DataLayerHelper(dataLayer,
+        {processNow: false});
+    commandAPI('set', 'two', 2);
+    commandAPI('event');
+    commandAPI('eventTwo');
+    helper.registerProcessor('event', function() {
+      return {'two': this.get('two') + 3};
+    });
+    helper.registerProcessor('eventTwo', function() {
+      return {'two': this.get('two') * 5};
+    });
+    helper.process();
+
+    expect(helper.get('two')).toBe(25);
   });
 });

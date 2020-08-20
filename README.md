@@ -13,9 +13,10 @@ This library provides the ability to process messages passed onto a data layer q
     - [Custom Methods](#custom-methods)
         - [The Abstract Data Model Interface](#the-abstract-data-model-interface)
 - [Listening for Messages](#listening-for-messages)
-    - [Listening to the Past](#listening-to-the-past)
-    - [Registering Processors](#registering-processors)
-    - [Delaying Processing](#delaying-processing)
+   - [With a Listener Function](#with-a-listener-function)
+        - [Listening to the Past](#listening-to-the-past)
+    - [By Registering Processors](#by-registering-processors)
+        - [Delaying Processing](#delaying-processing)
 - [Summary](#summary)
 - [Build and Test](#build-and-test)
 - [License](#license)
@@ -424,8 +425,15 @@ The following example demonstrates overwriting a value:
 When creating a `DataLayerHelper` object, you can also specify a callback function to be called 
 whenever a message is pushed onto the given dataLayer. This allows your code to be notified
 immediately whenever the dataLayer has been updated, which is a key advantage of the message
-queue approach. To do so, add the function under the `listener` attribute in an options object for
-the second parameter of the `DataLayerHelper` constructor.
+queue approach. 
+
+Listener functions are attached to a data layer helper, not the data layer itself.
+As such, they should **not** modify the dataLayer (e.g. call dataLayer.push()), as this
+may cause other helpers listening to the data layer to see conflicting history.
+
+### With a Listener Function
+To add a callback that listens to every push to the data layer, 
+Add a function under the `listener` attribute in the second parameter of the `DataLayerHelper` constructor.
 
 ```js
 function listener(model, message) {
@@ -436,7 +444,7 @@ function listener(model, message) {
 const helper = new DataLayerHelper(dataLayer, {listener: listener});
 ```
 
-### Listening to the Past
+#### Listening to the Past
 Tools that are loaded onto the page asynchronously or lazily will appreciate that you can also
 opt to listen to message that were pushed onto the dataLayer in the past. To do so, mark the
 `listenToPast` attribute as true in an options object for the second parameter of the `DataLayerHelper`
@@ -458,7 +466,7 @@ Using this option means that your listener callback will be called once for ever
 has ever been pushed onto the given data layer. And on each call to the callback, the model
 will represent the abstract model at the time of the message.
 
-### Registering Processors
+### By Registering Processors
 If you are using a command API to bring messages to the data layer, you may want to run
 different processors to respond to different commands pushed to the data layer instead of just
 having one global listener for all commands. You can register a function to run whenever commands
@@ -531,7 +539,7 @@ const helper = new DataLayerHelper(dataLayer, {
 Similar to the `registerProcessor` method, the `add` command will invoke the two functions passed in to
 the `add` attribute in order.
 
-### Delaying Processing
+#### Delaying Processing
 
 Tools that are loaded onto the page asynchronously or lazily will appreciate that you can also
 opt to delay the processing the dataLayer until all command API processors are registered. Since

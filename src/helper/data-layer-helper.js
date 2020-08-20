@@ -60,7 +60,7 @@ const {isPlainObject, type} = goog.require('dataLayerHelper.plain');
  */
 const DataLayerOptions = {};
 
-  /**
+/**
  * A helper that will listen for new messages on the given dataLayer.
  * Each new message will be merged into the helper's "abstract data model".
  * This internal model object holds the most recent value for all keys which
@@ -141,7 +141,8 @@ class DataLayerHelper {
     this.model_ = {};
 
     /**
-     * The internal queue of dataLayer updates that have not yet been processed.
+     * The internal queue of dataLayer updates that have not yet been processed
+     * because another command is in the process of running.
      * @private @const {!Array<*>}
      */
     this.unprocessed_ = [];
@@ -161,6 +162,16 @@ class DataLayerHelper {
      * @private @const {!Object<string, *>}
      */
     this.abstractModelInterface_ = buildAbstractModelInterface_(this);
+
+    // Add listener for future state changes.
+    const oldPush = this.dataLayer_.push;
+    const that = this;
+    this.dataLayer_.push = function() {
+      const states = [].slice.call(arguments, 0);
+      const result = oldPush.apply(that.dataLayer_, states);
+      that.processStates_(states);
+      return result;
+    };
 
     if (options['processNow']) {
       this.process();
@@ -196,21 +207,15 @@ class DataLayerHelper {
       }
       return toMerge;
     });
-    // Process the existing/past states.
-    this.processStates_(this.dataLayer_, !(this.listenToPast_));
-
     // Mark helper as having been processed.
     this.processed_ = true;
 
-    // Add listener for future state changes.
-    const oldPush = this.dataLayer_.push;
-    const that = this;
-    this.dataLayer_.push = function() {
-      const states = [].slice.call(arguments, 0);
-      const result = oldPush.apply(that.dataLayer_, states);
-      that.processStates_(states);
-      return result;
-    };
+    const startingLength = this.dataLayer_.length;
+    for (let i = 0; i < startingLength; i++) {
+     // Run the commands one at a time to maintain the correct
+     // length of the queue on each command.
+     this.processStates_([this.dataLayer_[i]], !(this.listenToPast_));
+    }
   }
 
   /**
@@ -236,6 +241,8 @@ class DataLayerHelper {
    * Flattens the dataLayer's history into a single object that represents the
    * current state. This is useful for long running apps, where the dataLayer's
    * history may get very large.
+   * Use of this method with a command API is not supported and may break
+   * something.
    * @export
    */
   flatten() {
@@ -319,18 +326,24 @@ class DataLayerHelper {
    *
    * @param {!Array<*>} states The update objects to process, each
    *     representing a change to the state of the page.
-   * @param {boolean=} skipListener If true, the listener the given states
+   * @param {boolean=} skipListener If true, the existing states
    *     will be applied to the internal model, but will not cause the listener
    *     to be executed. This is useful for processing past states that the
    *     listener might not care about.
    * @private
    */
   processStates_(states, skipListener = false) {
+    if (!this.processed_) {
+      return;
+    }
     this.unprocessed_.push.apply(this.unprocessed_, states);
+    if (this.executingListener_) {
+      return;
+    }
     // Checking executingListener here protects against multiple levels of
     // loops trying to process the same queue. This can happen if the listener
     // itself is causing new states to be pushed onto the dataLayer.
-    while (this.executingListener_ === false && this.unprocessed_.length > 0) {
+    while (this.unprocessed_.length > 0) {
       const update = this.unprocessed_.shift();
       if (isArray(update)) {
         processCommand_(/** @type {!Array<*>} */ (update), this.model_);
@@ -371,8 +384,8 @@ window['DataLayerHelper'] = DataLayerHelper;
  *
  * @param {!DataLayerHelper} dataLayerHelper The helper class to construct the
  *     abstract model interface for.
- * @return {!Object<string, *>} The interface to the abstract data layer model that is
- *     given to Custom Methods.
+ * @return {!Object<string, *>} The interface to the abstract data layer model
+ *     that is given to Custom Methods.
  * @private
  */
 function buildAbstractModelInterface_(dataLayerHelper) {
