@@ -55,8 +55,10 @@ describe('The helper when listening to the past', () => {
     });
   });
 
-  // This test was failing in version 0.4.0
   describe('when pushing functions with model side effects', () => {
+    // It's not recommended to push to the model inside of a listener
+    // function since it can mess up public history, but ideally it should not
+    // break anything if you are using a single data layer helper.
     it('Can recursively push to the model', () => {
       dataLayer.push({a: 1});
       const listenFunction = (model, message) => {
@@ -84,6 +86,11 @@ describe('The helper when listening to the past', () => {
             [[{a: 1}, {a: 1}], [{a: 2}, {a: 2}], [{a: 3}, {a: 3}],
               [{a: 3, b: 2}, {b: 2}]],
             listenFunction)});
+      // Public history is broken now - this helper sees {a: 1}, {a: 2}, {a: 3}
+      // {b: 2}, but the data layer sees {a: 1}, {b:2}, {a: 2}, {a: 3}. This
+      // can't be resolved. https://github.com/google/data-layer-helper/pull/59
+      expect(dataLayer).toEqual(
+          jasmine.objectContaining([{a: 1}, {b: 2}, {a: 2}, {a: 3}]));
     });
   });
 });
