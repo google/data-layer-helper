@@ -210,8 +210,8 @@ class DataLayerHelper {
     // Mark helper as having been processed.
     this.processed_ = true;
 
-    const curLength = this.dataLayer_.length;
-    for (let i = 0; i < curLength; i++) {
+    const startingLength = this.dataLayer_.length;
+    for (let i = 0; i < startingLength; i++) {
      // Run the commands one at a time to maintain the correct
      // length of the queue on each command.
      this.processStates_([this.dataLayer_[i]], !(this.listenToPast_));
