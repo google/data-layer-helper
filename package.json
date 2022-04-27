@@ -30,7 +30,7 @@
     "eslint-config-closure-es6": "~0.1.1",
     "eslint-config-google": "~0.14.0",
     "eslint-plugin-jasmine": "~4.1.1",
-    "grunt": "~1.2.1",
+    "grunt": "~1.5.2",
     "grunt-closure-tools": "~1.0.0",
     "grunt-karma": "~4.0.0",
     "jasmine": "~3.5.0",
