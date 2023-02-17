@@ -416,6 +416,7 @@ function processCommand_(command, model) {
         `argument must be of type string, but was of type ` +
         `${typeof command[0]}.\nThe command run was ${command}`,
         LogLevel.WARNING);
+    return;
   }
   const path = command[0].split('.');
   const method = path.pop();
